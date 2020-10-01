@@ -1,4 +1,5 @@
 /build
 /out
 /test-module
+/node_modules
 sdk-generator.build.log

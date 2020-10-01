@@ -1,56 +1,56 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import { JsonValue, Option, println, unimplemented } from 'typescript-core'
+import { JsonValue, None, Option, println, unimplemented } from 'typescript-core'
 
-import { SdkContent, analyze } from '../analyzer'
+import { SdkContent, analyzerCli } from '../analyzer'
 import { CENTRAL_FILE } from './central'
-import { cmdArgs } from './cmdargs'
+import { CmdArgs } from './cmdargs'
 import { decodeSdkContent } from './decode'
 import { generateSdkModules } from './genmodules'
 import { generateSdkTypeFiles } from './gentypes'
 import { findPrettierConfig, prettify } from './prettier'
 
-export default async function cli(): Promise<void> {
+export default async function generatorCli(args: CmdArgs): Promise<void> {
   const started = Date.now()
 
-  if (cmdArgs.prettify) {
+  if (args.prettify) {
     println("NOTE: '--prettify' option was provided, files will be prettified with Prettier")
   }
 
-  const sdkContent: SdkContent = await Option.bool(fs.existsSync(cmdArgs.input) && fs.lstatSync(cmdArgs.input).isFile()).match({
+  const sdkContent: SdkContent = await Option.bool(fs.existsSync(args.input) && fs.lstatSync(args.input).isFile()).match({
     Some: async () => {
       println("> Decoding SDK's content...")
 
       return decodeSdkContent(
-        JsonValue.parse(fs.readFileSync(cmdArgs.input, 'utf8')).expect('Input file is not a valid JSON file!')
+        JsonValue.parse(fs.readFileSync(args.input, 'utf8')).expect('Input file is not a valid JSON file!')
       ).unwrapWith((err) => 'Failed to decode JSON input file:\n' + err.render().replace(/\t/g, '  '))
     },
 
     None: async () => {
       println('> Analyzing project to generate a SDK model...')
 
-      return analyze({
-        input: cmdArgs.input,
+      return analyzerCli({
+        input: args.input,
         output: undefined,
         pretty: false,
-        allowAllImportExt: cmdArgs.allowAllImportExt,
+        //allowAllImportExt: args.allowAllImportExt,
       })
     },
   })
 
-  if (fs.existsSync(cmdArgs.output)) {
+  if (fs.existsSync(args.output)) {
     unimplemented("Please provide an output directory that doesn't exist yet")
   }
 
-  fs.mkdirSync(cmdArgs.output)
+  fs.mkdirSync(args.output)
 
   const writeScriptTo = (parentDir: null | string, file: string, utf8Content: string) => {
-    const fullPath = path.resolve(cmdArgs.output, parentDir ?? '', file)
+    const fullPath = path.resolve(args.output, parentDir ?? '', file)
     fs.mkdirSync(path.dirname(fullPath), { recursive: true })
-    fs.writeFileSync(fullPath, prettify(utf8Content, prettierConfig), 'utf8')
+    fs.writeFileSync(fullPath, args.prettify ? prettify(utf8Content, prettierConfig) : utf8Content, 'utf8')
   }
 
-  const prettierConfig = findPrettierConfig()
+  const prettierConfig = args.prettify ? findPrettierConfig(args) : None<JsonValue>()
 
   println('> Generating type files...')
 

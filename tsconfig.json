@@ -15,5 +15,5 @@
     "inlineSourceMap": true,
     "incremental": true
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "src/cli.ts"]
 }

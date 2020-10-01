@@ -1,7 +1,5 @@
 import * as path from 'path'
-import { Err, List, Ok, RecordDict, Result, Some, format, panic, warn } from 'typescript-core'
-
-import { cmdArgs } from './cmdargs'
+import { Err, List, Ok, RecordDict, Result, Some, format, panic } from 'typescript-core'
 
 // Pre-compile the regexp for better performances
 const IMPORT_REGEXP = /import\("((?:[^"\\]|\\.)*)"\)\.([A-Za-zÀ-ÖØ-öø-ÿ_][A-Za-zÀ-ÖØ-öø-ÿ_\d]+)(?=[,\.<>\[\]]|$)/g
@@ -34,8 +32,7 @@ export interface ResolvedTypeDeps {
 export function resolveTypeDependencies(
   rawType: string,
   relativeFilePath: string,
-  absoluteSrcPath: string,
-  restrictFileEndName = false
+  absoluteSrcPath: string
 ): Result<ResolvedTypeDeps, string[]> {
   const absoluteFilePath = path.resolve(absoluteSrcPath, relativeFilePath)
   const absoluteFileParentPath = path.basename(absoluteFilePath)
@@ -54,7 +51,7 @@ export function resolveTypeDependencies(
 
     const relativeDepPath = path.relative(absoluteSrcPath, absoluteDepPath)
 
-    if (restrictFileEndName && !cmdArgs.allowAllImportExt && !depPath.endsWith('.dto') && !depPath.endsWith('.enum')) {
+    /*if (!allowAllImportNames && !depPath.endsWith('.dto') && !depPath.endsWith('.enum')) {
       warn(
         `>>>> Warning: Type {magentaBright} comes from file {magentaBright} which does not end in {magentaBright} or {magentaBright}. ` +
           `This type will be ignored and replace by the {magentaBright} type.`,
@@ -68,7 +65,7 @@ export function resolveTypeDependencies(
       resolvedStr.push('unknown')
       accept.push(false)
       continue
-    }
+    }*/
 
     if (dependencies.get(relativeDepPath).toBoolean((list) => list.includes(relativeDepPath))) {
       resolvedStr.push(depType)

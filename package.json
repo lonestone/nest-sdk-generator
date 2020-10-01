@@ -9,12 +9,12 @@
   "scripts": {
     "prepare": "npm run build",
     "build": "tsc -p tsconfig.json --outDir build",
-    "start-built": "node bin/cli.js",
+    "start-built": "node build/bin.js",
     "lint": "eslint --ext .tsx,.ts src/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "nsdkgen": "bin/cli.js"
+    "nsdkgen": "build/bin.js"
   },
   "private": true,
   "dependencies": {

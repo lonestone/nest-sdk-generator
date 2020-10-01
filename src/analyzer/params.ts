@@ -98,7 +98,7 @@ export function analyzeParams(
       debug('>>> Mapping argument to parameter: {yellow}', paramName.data.data)
 
       // Get the route parameter's type
-      const typ = resolveTypeDependencies(arg.getType().getText(), filePath, absoluteSrcPath, true)
+      const typ = resolveTypeDependencies(arg.getType().getText(), filePath, absoluteSrcPath)
 
       if (typ.isErr()) return Err(unifyDepsResolutionErrors(typ.err))
 
@@ -144,7 +144,7 @@ export function analyzeParams(
       debug('>>> Mapping argument to query: {yellow}', queryName.data.data)
 
       // Get the parameter's type
-      const typ = resolveTypeDependencies(arg.getType().getText(), filePath, absoluteSrcPath, true)
+      const typ = resolveTypeDependencies(arg.getType().getText(), filePath, absoluteSrcPath)
 
       if (typ.isErr()) return Err(unifyDepsResolutionErrors(typ.err))
 
@@ -185,7 +185,7 @@ export function analyzeParams(
       if (fieldName.isErr()) return fieldName.asErr()
 
       // Get the field's type
-      const typ = resolveTypeDependencies(arg.getType().getText(), filePath, absoluteSrcPath, true)
+      const typ = resolveTypeDependencies(arg.getType().getText(), filePath, absoluteSrcPath)
 
       if (typ.isErr()) return Err(unifyDepsResolutionErrors(typ.err))
 

@@ -140,7 +140,7 @@ export function analyzeMethods(
 
     // Get the method's return type
     debug('>> Resolving return type...')
-    const returnType = resolveTypeDependencies(method.getReturnType().getText(), filePath, absoluteSrcPath, true)
+    const returnType = resolveTypeDependencies(method.getReturnType().getText(), filePath, absoluteSrcPath)
 
     if (returnType.isErr()) return Err(unifyDepsResolutionErrors(returnType.err))
 

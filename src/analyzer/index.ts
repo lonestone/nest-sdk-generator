@@ -5,7 +5,7 @@ import { JsonValue, debug, format, panic, println, stringify } from 'typescript-
 
 import { globalCmdArgs } from '../cmdargs'
 import { findFilesRecursive, findJsonConfig } from '../fileUtils'
-import { CmdArgs, cmdArgs } from './cmdargs'
+import { CmdArgs } from './cmdargs'
 import { SdkModules, analyzeControllers } from './controllers'
 import { TypesExtractor, TypesExtractorContent, flattenSdkResolvedTypes, locateTypesFile } from './extractor'
 
@@ -14,12 +14,7 @@ export interface SdkContent {
   readonly types: TypesExtractorContent
 }
 
-export default async function cli(): Promise<void> {
-  await analyze(cmdArgs)
-  return
-}
-
-export async function analyze(args: CmdArgs): Promise<SdkContent> {
+export async function analyzerCli(args: CmdArgs): Promise<SdkContent> {
   const started = Date.now()
 
   const sourcePath = path.resolve(
