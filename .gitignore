@@ -1,0 +1,4 @@
+/build
+/out
+/test-module
+sdk-generator.build.log

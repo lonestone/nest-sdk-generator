@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "declaration": true,
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "lib": ["esnext"],
+    "target": "es6",
+    "inlineSourceMap": true,
+    "incremental": true
+  },
+  "include": ["src/**/*.ts"]
+}

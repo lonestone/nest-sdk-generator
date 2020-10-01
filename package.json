@@ -1,0 +1,33 @@
+{
+  "name": "@boilerplate/sdk-generator",
+  "author": "Clément Eraud <clement.eraud@lonestone.studio>",
+  "license": "ISC",
+  "version": "1.0.0",
+  "description": "A full-powered SDK generator for NestJS\"",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "prepare": "npm run build",
+    "build": "tsc -p tsconfig.json --outDir build",
+    "start-built": "node bin/cli.js",
+    "lint": "eslint --ext .tsx,.ts src/",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "nsdkgen": "bin/cli.js"
+  },
+  "private": true,
+  "dependencies": {
+    "@types/minimist": "~1.2.0",
+    "chalk": "~4.1.0",
+    "minimist": "~1.2.5",
+    "prettier": "^2.1.2",
+    "ts-morph": "~8.1.1",
+    "typescript-core": "^7.5.9"
+  },
+  "devDependencies": {
+    "@types/node": "~14.11.2",
+    "@types/prettier": "^2.1.1",
+    "typescript": "~4.0.3"
+  }
+}
