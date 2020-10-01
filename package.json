@@ -1,5 +1,5 @@
 {
-  "name": "@boilerplate/sdk-generator",
+  "name": "nestjs-sdk-generator",
   "author": "Clément Eraud <clement.eraud@lonestone.studio>",
   "license": "ISC",
   "version": "1.0.0",
