@@ -1,13 +1,15 @@
 export const CENTRAL_FILE = (relativePath: string, nameToImport: string | null) =>
   `
 
-import { default as axios, AxiosRequestConfig } from "axios";
+import { default as axios, AxiosRequestConfig, AxiosResponse } from "axios";
 import { ${nameToImport ?? 'default'} as importedCentralConfig } from "${relativePath.replace(/\\/g, '/').replace(/\.([jt]sx?)$/, '')}";
 
 export interface CentralConfig {
   readonly axios?: AxiosRequestConfig,
   readonly apiUrl: string,
   readonly logRequests?: boolean,
+  readonly requestsLogger?: ((method: string, uri: string, query: Record<string, unknown>, body: unknown) => void),
+  readonly requestsResponseLogger?: ((response: AxiosResponse, method: string, uri: string, query: Record<string, unknown>, body: unknown) => void),
   readonly hideBodyInLogs?: boolean
 }
 
@@ -25,10 +27,14 @@ export async function req(
     body: unknown
 ): Promise<any> {
     if (config.logRequests) {
-        console.debug("[NSDK] Starting Axios request with route '" + uri + "'", {
-            query,
-            body: config.hideBodyInLogs ? '<hidden by config>' : body,
-        });
+        if (config.requestsLogger) {
+            config.requestsLogger(method, uri, query, body);
+        } else {
+            console.debug("[NSDK] Starting Axios request with route '" + uri + "'", {
+                query,
+                body: config.hideBodyInLogs ? '<hidden by config>' : body,
+            });
+        }
     }
 
     return axiosClient({
@@ -40,7 +46,11 @@ export async function req(
     })
       .then((response) => {
           if (config.logRequests) {
-              console.debug('[NSDK] Received ' + response.status + " response after Axios request for route '" + uri + "'", response.data);
+              if (config.requestsResponseLogger) {
+                  config.requestsResponseLogger(response, method, uri, query, body);
+              } else {
+                  console.debug('[NSDK] Received ' + response.status + " response after Axios request for route '" + uri + "'", response.data);
+              }
           }
 
           return response.data;
