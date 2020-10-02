@@ -96,9 +96,9 @@ export function stringifySdkMethodParams(params: SdkMethodParams): string {
   )
 
   return [
-    `args: {${args.mapStr((args) => ' ' + args + ' ')}}`,
-    `query: {${query.mapStr((query) => ' ' + query + ' ')}}`,
-    `body: ${body.unwrapOr('{}')}`,
+    `args: {${args.mapStr((args) => ' ' + args + ' ')}}${args.isNone() && body.isNone() && query.isNone() ? ' = {}' : ''}`,
+    `body: ${body.unwrapOr('{}')}${body.isNone() && query.isNone() ? ' = {}' : ''}`,
+    `query: {${query.mapStr((query) => ' ' + query + ' ')}}${query.isNone() ? ' = {}' : ''}`,
   ].join(', ')
 }
 

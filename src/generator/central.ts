@@ -6,7 +6,7 @@ export async function req(
     query: Record<string, unknown>,
     body: unknown
 ): Promise<any> {
-    console.warn('Not implemented: calling route from Central: ' + route);
+    console.warn('Not implemented: calling route from Central: ' + uri);
     throw new Error('not implemented yet!');
 }
 
