@@ -96,6 +96,13 @@ at-least-node@^1.0.0:
   resolved "https://registry.yarnpkg.com/at-least-node/-/at-least-node-1.0.0.tgz#602cd4b46e844ad4effc92a8011a3c46e0238dc2"
   integrity sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==
 
+axios@^0.20.0:
+  version "0.20.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.20.0.tgz#057ba30f04884694993a8cd07fa394cff11c50bd"
+  integrity sha512-ANA4rr2BDcmmAQLOKft2fufrtuvlqR+cXNNinUmvfeSNCOF98PZL+7M/v1zIdGo7OLjEA9J2gXJL+j4zGsl0bA==
+  dependencies:
+    follow-redirects "^1.10.0"
+
 balanced-match@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
@@ -171,6 +178,11 @@ fill-range@^7.0.1:
   integrity sha512-qOo9F+dMUmC2Lcb4BbVvnKJxTPjCm+RRpe4gDuGrzkL7mEVl/djYSu2OdQ2Pa302N4oqkSg9ir6jaLWJ2USVpQ==
   dependencies:
     to-regex-range "^5.0.1"
+
+follow-redirects@^1.10.0:
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.13.0.tgz#b42e8d93a2a7eea5ed88633676d6597bc8e384db"
+  integrity sha512-aq6gF1BEKje4a9i9+5jimNFIpq4Q1WiwBToeRK5NvZBd/TRsmW8BsJfOEGkr76TbOyPVD3OVDN910EcUNtRYEA==
 
 fs-extra@^9.0.1:
   version "9.0.1"
@@ -336,10 +348,10 @@ ts-morph@~8.1.1:
     "@ts-morph/common" "~0.6.0"
     code-block-writer "^10.1.0"
 
-typescript-core@^7.5.9:
-  version "7.5.9"
-  resolved "https://registry.yarnpkg.com/typescript-core/-/typescript-core-7.5.9.tgz#ba5fc8134927ea29fe0153c52583757b72c79036"
-  integrity sha512-fzMdNHOVKKuF0vE7QnNWruBl0dXOmIsEw4LmB1jWCv3kQfYcqaYRV960Ud+oxvLVK4I+TVzcc6vBX4ESqOxOaA==
+typescript-core@^7.6.1:
+  version "7.6.1"
+  resolved "https://registry.yarnpkg.com/typescript-core/-/typescript-core-7.6.1.tgz#85f2f21b859745f63f53c31f7126ba920cdde990"
+  integrity sha512-4kpKdCjmqcmPFUXvayQo4Fa5QsPcAt3wNXPJuWV+acg8JDQH1dBXWmEU5MMIK6nUJYjrBRRdCDTlkVLbjmvbdQ==
 
 typescript@~4.0.2, typescript@~4.0.3:
   version "4.0.3"

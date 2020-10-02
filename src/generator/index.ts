@@ -64,8 +64,7 @@ export default async function generatorCli(args: CmdArgs): Promise<void> {
     writeScriptTo('modules', file, content)
   }
 
-  // TODO: Populate 'central.ts'!
-  writeScriptTo(null, 'central.ts', CENTRAL_FILE)
+  writeScriptTo(null, 'central.ts', CENTRAL_FILE(args.configScriptPath, args.configNameToImport ?? null))
 
   println('{green}', '@ Done in ' + ((Date.now() - started) / 1000).toFixed(2) + 's')
 }
