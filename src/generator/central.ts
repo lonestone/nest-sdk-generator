@@ -23,7 +23,7 @@ export async function req(
     uri: string,
     query: Record<string, unknown>,
     body: unknown
-): Promise<object> {
+): Promise<any> {
     if (config.logRequests) {
         console.debug("[NSDK] Starting Axios request with route '" + uri + "'", {
             query,
