@@ -31,7 +31,7 @@ export async function req(
         });
     }
 
-    return axios({
+    return axiosClient({
         method,
         url: uri,
         params: query,
