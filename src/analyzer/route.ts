@@ -1,4 +1,4 @@
-import { Err, None, Ok, Option, Result, Some } from 'typescript-core'
+import { Collection, Err, ErrMsg, None, Ok, Option, Result, Some } from 'typescript-core'
 
 /**
  * A single URI part
@@ -110,4 +110,50 @@ export function unparseRoute(route: Route): string {
  */
 export function debugUri(route: Route, color: (str: string) => string): string {
   return (route.isRoot ? '/' : '') + route.parts.map((part) => ('segment' in part ? part.segment : color(':' + part.param))).join('/')
+}
+
+/**
+ * Resolve a route by providing its required parameters
+ * @param route
+ * @param params
+ */
+export function resolveRoute(route: Route, params: Collection<string>): Result<string, string> {
+  let uri: string[] = []
+
+  for (const part of route.parts) {
+    if ('segment' in part) {
+      uri.push(part.segment)
+    } else if (!params.hasOwnProperty(part.param)) {
+      return ErrMsg('Missing route parameter {}', part.param)
+    } else {
+      uri.push(params[part.param])
+    }
+  }
+
+  return Ok((route.isRoot ? '/' : '') + uri.join('/'))
+}
+
+/**
+ * Resolve a route by providing its required parameters through a callback
+ * @param route
+ * @param paramsProvider
+ */
+export function resolveRouteWith(route: Route, paramsProvider: (param: string) => string | null): Result<string, string> {
+  let uri: string[] = []
+
+  for (const part of route.parts) {
+    if ('segment' in part) {
+      uri.push(part.segment)
+    } else {
+      const param = paramsProvider(part.param)
+
+      if (param === null) {
+        return ErrMsg('Missing route parameter {}', part.param)
+      } else {
+        uri.push(param)
+      }
+    }
+  }
+
+  return Ok((route.isRoot ? '/' : '') + uri.join('/'))
 }
