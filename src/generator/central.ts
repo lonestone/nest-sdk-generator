@@ -40,7 +40,7 @@ export async function req(
     })
       .then((response) => {
           if (config.logRequests) {
-              console.debug('[NSDK] Received ' + response.status + " response after Axios request for route '" + uri + "'", response);
+              console.debug('[NSDK] Received ' + response.status + " response after Axios request for route '" + uri + "'", response.data);
           }
 
           return response.data;
