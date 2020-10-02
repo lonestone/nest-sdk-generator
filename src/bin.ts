@@ -1,13 +1,13 @@
 #!/usr/bin/node
 
-import { panic } from 'typescript-core'
+import { panic, setupTypeScriptCore } from 'typescript-core'
 
 import { analyzerCli } from './analyzer'
 import { rawCmdArgs } from './cmdargs'
-import { setupEnv } from './env'
+import { tsCoreEnv } from './env'
 import generatorCli from './generator'
 
-setupEnv()
+setupTypeScriptCore(tsCoreEnv)
 
 switch (process.argv[2]) {
   case 'analyze':
