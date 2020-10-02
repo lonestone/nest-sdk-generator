@@ -100,7 +100,7 @@ export function analyzeControllers(controllers: string[], absoluteSrcPath: strin
           )
         }
 
-        moduleSdkInfos.set(metadata.registrationName, metadata)
+        moduleSdkInfos.set(metadata.camelClassName, metadata)
       })
   })
 

@@ -24,6 +24,8 @@ export interface SdkController {
   readonly path: string
   /** Types of properties */
   readonly classDeps: List<ResolvedTypeDeps>
+  /** Name of the controller's class, camel cased */
+  readonly camelClassName: string
   /** Name the controller is registered under */
   readonly registrationName: string
   /** Controller's methods */
@@ -133,7 +135,8 @@ export function analyzeController(
   return Ok(
     Some({
       path: controllerPath,
-      registrationName: registrationName,
+      camelClassName: camelcase(className),
+      registrationName,
       classDeps: classDeps.data,
       methods: methods.data,
     })

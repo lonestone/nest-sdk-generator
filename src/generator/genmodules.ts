@@ -47,7 +47,7 @@ export function generateSdkModules(modules: SdkModules): RecordDict<string> {
       }
 
       out.push('')
-      out.push(`export const ${controller.registrationName} = {`)
+      out.push(`export const ${controller.camelClassName} = {`)
 
       for (const [methodName, method] of controller.methods) {
         const ret = method.returnType.resolvedType
@@ -63,7 +63,7 @@ export function generateSdkModules(modules: SdkModules): RecordDict<string> {
       out.push('')
       out.push('};')
 
-      genFiles.set(path.join(moduleName, controller.registrationName + '.ts'), out.join('\n'))
+      genFiles.set(path.join(moduleName, controller.camelClassName + '.ts'), out.join('\n'))
     }
 
     // TODO: Generate module file that simply re-exports controllers
@@ -76,8 +76,8 @@ export function generateSdkModules(modules: SdkModules): RecordDict<string> {
     moduleContent.push('/// Module name: ' + moduleName)
     moduleContent.push('')
 
-    for (const controller of controllers.values()) {
-      moduleContent.push(`import { ${controller.registrationName} } from "./${controller.registrationName}";`)
+    for (const controller of controllers.keys()) {
+      moduleContent.push(`import { ${controller} } from "./${controller}";`)
     }
 
     genFiles.set(path.join(moduleName, 'index.ts'), moduleContent.join('\n'))

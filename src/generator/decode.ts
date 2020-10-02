@@ -61,6 +61,7 @@ export const decodeSdkMethod: JsonDecoder<SdkMethod> = j.mapped({
 
 export const decodeSdkController: JsonDecoder<SdkController> = j.mapped({
   path: j.string,
+  camelClassName: j.string,
   registrationName: j.string,
   classDeps: j.listOf(decodeResolvedType),
   methods: j.recordOf(decodeSdkMethod),
