@@ -144,8 +144,6 @@ const user = await userController.getOne({ id: 'some_id' })
 // typeof user == UserDTO
 ```
 
-If you want to use the original types, 
-
 ### Importing API types
 
 It's also possible to manually import types the API depends on.
