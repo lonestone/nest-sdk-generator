@@ -85,8 +85,8 @@ export function analyzeControllers(controllers: string[], absoluteSrcPath: strin
     const moduleSdkInfos = collected.getOrSet(moduleName, new RecordDict())
 
     if (i === 0) {
-      if (process.platform === 'linux' && os.release().toLocaleLowerCase().includes('microsoft')) {
-        warn('NOTE: On WSL, the first type analysis may take a long time to complete (~ 30 seconds), this is perfectly normal.')
+      if (process.platform === 'linux' && os.release().toLocaleLowerCase().includes('microsoft') && absoluteSrcPath.startsWith('/mnt/')) {
+        warn("NOTE: On WSL, the first type analysis on a project located in Windows's filesystem may take a long time to complete.")
       }
     }
 
