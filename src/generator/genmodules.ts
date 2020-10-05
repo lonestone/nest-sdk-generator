@@ -30,9 +30,9 @@ export function generateSdkModules(modules: SdkModules): RecordDict<string> {
       for (const controller of controllers.values()) {
         for (const method of controller.methods.values()) {
           depsToImport.push(method.returnType)
-          method.params.arguments.some((deps) => depsToImport.push(...deps.values()))
-          method.params.query.some((deps) => depsToImport.push(...deps.values()))
-          method.params.body.some((body) => (body.full ? depsToImport.push(body.type) : depsToImport.push(...body.fields.values())))
+          method.params.arguments.ifSome((deps) => depsToImport.push(...deps.values()))
+          method.params.query.ifSome((deps) => depsToImport.push(...deps.values()))
+          method.params.body.ifSome((body) => (body.full ? depsToImport.push(body.type) : depsToImport.push(...body.fields.values())))
         }
       }
 

@@ -104,7 +104,7 @@ export class TypesExtractor {
       return ErrMsg(`Type {yellow} was not found in file {magenta}`, loc.typename, filePath)
     }
 
-    this.findExtractedTypeWithoutExt(loc).some((typ) => {
+    this.findExtractedTypeWithoutExt(loc).ifSome((typ) => {
       if (typ.path !== filePath) {
         unimplemented(
           'Found two conflicting files at same path but with different extensions:\n> {magentaBright}\n> {magentaBright}',

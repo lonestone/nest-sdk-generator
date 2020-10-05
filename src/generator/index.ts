@@ -42,9 +42,9 @@ export default async function generatorCli(args: CmdArgs): Promise<void> {
     unimplemented("Please provide an output directory that doesn't exist yet")
   }
 
-  if (args.output && !fs.existsSync(path.dirname(args.output))) {
-    panic("Output directory's parent {magentaBright} does not exist.", path.dirname(args.output))
-  }
+  Option.maybe(args.output)
+    .map((dir) => path.dirname(path.resolve(process.cwd(), dir)))
+    .ifSome((dir) => !fs.existsSync(dir) && panic("Output directory's parent {magentaBright} does not exist.", path.dirname(dir)))
 
   fs.mkdirSync(args.output)
 

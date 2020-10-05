@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import { Project } from 'ts-morph'
-import { JsonValue, debug, format, panic, println, stringify } from 'typescript-core'
+import { JsonValue, Option, debug, format, panic, println, stringify } from 'typescript-core'
 
 import { globalCmdArgs } from '../cmdargs'
 import { findFilesRecursive, findJsonConfig } from '../fileUtils'
@@ -29,9 +29,9 @@ export async function analyzerCli(args: CmdArgs): Promise<SdkContent> {
 
   debug(`Analyzing from source directory {yellow}`, sourcePath)
 
-  if (args.output && !fs.existsSync(path.dirname(args.output))) {
-    panic("Output file's parent directory {magentaBright} does not exist.", path.dirname(args.output))
-  }
+  Option.maybe(args.output)
+    .map((dir) => path.dirname(path.resolve(process.cwd(), dir)))
+    .ifSome((dir) => !fs.existsSync(dir) && panic("Output file's parent directory {magentaBright} does not exist.", path.dirname(dir)))
 
   if (globalCmdArgs.logFile) {
     debug('Logging to {yellow}', globalCmdArgs.logFile)

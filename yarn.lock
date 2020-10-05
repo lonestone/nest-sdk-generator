@@ -348,10 +348,10 @@ ts-morph@~8.1.1:
     "@ts-morph/common" "~0.6.0"
     code-block-writer "^10.1.0"
 
-typescript-core@^7.6.2:
-  version "7.6.2"
-  resolved "https://registry.yarnpkg.com/typescript-core/-/typescript-core-7.6.2.tgz#c41d4464ee9d57af2d1b8c4e7e50cc333edefc24"
-  integrity sha512-ouvJOawvImfUD9hAFTeboni82ultcnHtpmICESBSwbyrjwwzcNTsAThL4fnKf7/t9dbX2YJ7gQi/EhTjPDWrtw==
+typescript-core@^7.7.1:
+  version "7.7.1"
+  resolved "https://registry.yarnpkg.com/typescript-core/-/typescript-core-7.7.1.tgz#d926f59a98744bcd756cd4bc51de29788abefbe3"
+  integrity sha512-QbfBDTn8UoptUsGmNs21wh+c4DPmJCLFL7QLh1DMssYhzspvDkdGKsxXM70PK/csU3nbbj3sGZ8KMdLfaIzBcA==
 
 typescript@~4.0.2, typescript@~4.0.3:
   version "4.0.3"

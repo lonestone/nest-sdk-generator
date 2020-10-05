@@ -64,7 +64,7 @@ export function analyzeControllers(controllers: string[], absoluteSrcPath: strin
       // Ensure this module is unique
       declaredModulesPath
         .get(moduleName.data)
-        .some((existingModule) =>
+        .ifSome((existingModule) =>
           panic(
             `Two modules were declared with the same name {yellow}:\n` + `- One in {yellow}\n` + `- One in {yellow}`,
             moduleName,
@@ -92,7 +92,7 @@ export function analyzeControllers(controllers: string[], absoluteSrcPath: strin
 
     analyzeController(project, relativeControllerPath, absoluteSrcPath)
       .unwrapWith((err) => panic('Failed to analyze controller at path {magenta}:\n{}', relativeControllerPath, err))
-      .some((metadata) => {
+      .ifSome((metadata) => {
         if (metadata.registrationName in {}) {
           panic(
             `Detected controller whose registration name {yellow} collides with a JavaScript's native object property`,
