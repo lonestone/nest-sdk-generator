@@ -12,11 +12,11 @@ The project is split in two parts:
 - [Features](#features)
 - [Instructions](#instructions)
 - [Using the SDK](#using-the-sdk)
-- [Step-by-step tutorial](#step-by-step-tutorial)
-    - [Getting strict typing](#getting-strict-typing)
+- [Step-by-step generation tutorial](#step-by-step-generation-tutorial)
+    - [Typing the configuration object](#typing-the-configuration-object)
     - [Exporting configuration from an existing file](#exporting-configuration-from-an-existing-file)
     - [Clean the output directory automatically](#clean-the-output-directory-automatically)
-- [SDK usage example](#sdk-usage-example)
+- [SDK usage](#sdk-usage)
   - [Importing API types](#importing-api-types)
 
 ## Features
@@ -55,7 +55,7 @@ Methods return a typed `Promise<>` with the original method's return type.
 
 **WARNING:** As TypeScript does not allow derive macros or interface validations, although methods will return an object typed like the original method, no verification is performed when the response is received to ensure weither the response's JSON content matches the intended interface.
 
-## Step-by-step tutorial
+## Step-by-step generation tutorial
 
 Generating a SDK is made in two steps:
 
@@ -95,7 +95,7 @@ nsdkgen generate apps/api apps/front/sdk -c ../sdk-config.ts
 
 We now have a `apps/front/sdk` directory with our SDK inside!
 
-#### Getting strict typing
+#### Typing the configuration object
 
 Note, if you want to get strict typing for the configuration object, you can generate the SDK a first time and then add in your file:
 
@@ -133,7 +133,7 @@ You can force automatic removal of the previous output directory with the `-r` p
 
 Note that the removal will fail if either `nsdk.json` or `central.ts` are not found, as these are files always generated for the SDK, in order to avoid removing the directory if you specified a wrong path by accident.
 
-## SDK usage example
+## SDK usage
 
 Let's suppose the Nest.js server has an `UserModule` module, containing an `UserController` controller with a `getOne(id: string): Promise<UserDTO>` method. We can use it from the SDK:
 
