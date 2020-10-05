@@ -29,6 +29,10 @@ export async function analyzerCli(args: CmdArgs): Promise<SdkContent> {
 
   debug(`Analyzing from source directory {yellow}`, sourcePath)
 
+  if (args.output && !fs.existsSync(path.dirname(args.output))) {
+    panic("Output file's parent directory {magentaBright} does not exist.", path.dirname(args.output))
+  }
+
   if (globalCmdArgs.logFile) {
     debug('Logging to {yellow}', globalCmdArgs.logFile)
   }
