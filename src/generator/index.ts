@@ -73,13 +73,13 @@ export default async function generatorCli(args: CmdArgs): Promise<void> {
   println('> Generating type files...')
 
   for (const [file, content] of generateSdkTypeFiles(sdkContent.types)) {
-    writeScriptTo('types', file, content)
+    writeScriptTo('_types', file, content)
   }
 
   println('> Generating modules...')
 
   for (const [file, content] of generateSdkModules(sdkContent.modules)) {
-    writeScriptTo('modules', file, content)
+    writeScriptTo(null, file, content)
   }
 
   writeScriptTo(null, 'central.ts', CENTRAL_FILE(args.configScriptPath, args.configNameToImport ?? null))

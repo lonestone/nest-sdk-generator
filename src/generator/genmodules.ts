@@ -43,7 +43,7 @@ export function generateSdkModules(modules: SdkModules): RecordDict<string> {
       }
 
       for (const [file, types] of imports) {
-        out.push(`import { ${types.join(', ')} } from "../../types/${file.replace(/\\/g, '/')}";`)
+        out.push(`import { ${types.join(', ')} } from "../_types/${file.replace(/\\/g, '/')}";`)
       }
 
       out.push('')
