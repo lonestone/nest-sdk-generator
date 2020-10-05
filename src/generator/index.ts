@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import { JsonValue, None, Option, println, unimplemented } from 'typescript-core'
+import { JsonValue, None, Option, panic, println, unimplemented } from 'typescript-core'
 
 import { SdkContent, analyzerCli } from '../analyzer'
 import { CENTRAL_FILE } from './central'
@@ -40,6 +40,10 @@ export default async function generatorCli(args: CmdArgs): Promise<void> {
 
   if (fs.existsSync(args.output)) {
     unimplemented("Please provide an output directory that doesn't exist yet")
+  }
+
+  if (args.output && !fs.existsSync(path.dirname(args.output))) {
+    panic("Output directory's parent {magentaBright} does not exist.", path.dirname(args.output))
   }
 
   fs.mkdirSync(args.output)
