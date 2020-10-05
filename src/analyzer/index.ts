@@ -25,7 +25,7 @@ export async function analyzerCli(args: CmdArgs): Promise<SdkContent> {
   if (!sourcePath) panic('Please provide a source directory')
 
   if (!fs.existsSync(sourcePath)) panic('Provided source path does not exist')
-  if (!fs.lstatSync(sourcePath).isDirectory) panic('Provided source path is not a directory')
+  if (!fs.lstatSync(sourcePath).isDirectory()) panic('Provided source path is not a directory')
 
   debug(`Analyzing from source directory {yellow}`, sourcePath)
 
