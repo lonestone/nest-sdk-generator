@@ -21,6 +21,10 @@ export default async function generatorCli(args: CmdArgs): Promise<void> {
     panic('Input path does not exist.')
   }
 
+  if (fs.existsSync(args.output)) {
+    unimplemented("Please provide an output directory that doesn't exist yet")
+  }
+
   const sdkContent: SdkContent = await Option.bool(fs.lstatSync(args.input).isFile()).match({
     Some: async () => {
       println("> Decoding SDK's content...")
@@ -41,10 +45,6 @@ export default async function generatorCli(args: CmdArgs): Promise<void> {
       })
     },
   })
-
-  if (fs.existsSync(args.output)) {
-    unimplemented("Please provide an output directory that doesn't exist yet")
-  }
 
   Option.maybe(args.output)
     .map((dir) => path.dirname(path.resolve(process.cwd(), dir)))
