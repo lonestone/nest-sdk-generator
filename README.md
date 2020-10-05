@@ -17,7 +17,7 @@ The project is split in two parts:
     - [Exporting configuration from an existing file](#exporting-configuration-from-an-existing-file)
     - [Clean the output directory automatically](#clean-the-output-directory-automatically)
 - [SDK usage](#sdk-usage)
-  - [Importing API types](#importing-api-types)
+    - [Importing API types](#importing-api-types)
 
 ## Features
 
@@ -144,7 +144,7 @@ const user = await userController.getOne({ id: 'some_id' })
 // typeof user == UserDTO
 ```
 
-### Importing API types
+#### Importing API types
 
 It's also possible to manually import types the API depends on.
 
