@@ -65,6 +65,8 @@ export async function req(
                 console.error("[NSDK] Axios request failed when calling route '" + uri + "'", { query, axiosResponse: err });
             }
           }
+
+          return Promise.reject(err);
       })
 }
 
