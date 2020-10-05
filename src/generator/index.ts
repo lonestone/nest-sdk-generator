@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import { JsonValue, None, Option, panic, println, unimplemented } from 'typescript-core'
+import { JsonValue, None, Option, panic, println } from 'typescript-core'
 
 import { SdkContent, analyzerCli } from '../analyzer'
 import { CENTRAL_FILE } from './central'
@@ -21,8 +21,18 @@ export default async function generatorCli(args: CmdArgs): Promise<void> {
     panic('Input path does not exist.')
   }
 
-  if (fs.existsSync(args.output)) {
-    unimplemented("Please provide an output directory that doesn't exist yet")
+  const output = path.resolve(process.cwd(), args.output)
+
+  if (fs.existsSync(output)) {
+    if (args.removeOldOutputDir) {
+      if (!fs.existsSync(path.join(output, 'nsdk.json')) || !fs.existsSync(path.join(output, 'central.ts'))) {
+        panic('Provided output path exists but not seem to contain an SDK output. Please check the output directory.')
+      } else {
+        fs.rmdirSync(output, { recursive: true })
+      }
+    } else {
+      panic("Please provide an output directory that doesn't exist yet")
+    }
   }
 
   const sdkContent: SdkContent = await Option.bool(fs.lstatSync(args.input).isFile()).match({
@@ -46,14 +56,14 @@ export default async function generatorCli(args: CmdArgs): Promise<void> {
     },
   })
 
-  Option.maybe(args.output)
-    .map((dir) => path.dirname(path.resolve(process.cwd(), dir)))
+  Option.maybe(output)
+    .map((dir) => path.dirname(dir))
     .ifSome((dir) => !fs.existsSync(dir) && panic("Output directory's parent {magentaBright} does not exist.", path.dirname(dir)))
 
-  fs.mkdirSync(args.output)
+  fs.mkdirSync(output)
 
   const writeScriptTo = (parentDir: null | string, file: string, utf8Content: string) => {
-    const fullPath = path.resolve(args.output, parentDir ?? '', file)
+    const fullPath = path.resolve(output, parentDir ?? '', file)
     fs.mkdirSync(path.dirname(fullPath), { recursive: true })
     fs.writeFileSync(fullPath, args.prettify ? prettify(utf8Content, prettierConfig) : utf8Content, 'utf8')
   }
@@ -73,6 +83,12 @@ export default async function generatorCli(args: CmdArgs): Promise<void> {
   }
 
   writeScriptTo(null, 'central.ts', CENTRAL_FILE(args.configScriptPath, args.configNameToImport ?? null))
+
+  writeScriptTo(
+    null,
+    'nsdk.json',
+    JsonValue.stringify(sdkContent).unwrapWith((err) => err.error + ' | at:\n' + err.path.join('\n '))
+  )
 
   println('{green}', '@ Done in ' + ((Date.now() - started) / 1000).toFixed(2) + 's')
 }

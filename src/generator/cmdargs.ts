@@ -6,4 +6,5 @@ export interface CmdArgs {
   readonly allowAllImportExt: boolean
   readonly prettify: boolean
   readonly prettierConfig?: string
+  readonly removeOldOutputDir: boolean
 }

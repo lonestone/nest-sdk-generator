@@ -31,6 +31,7 @@ switch (process.argv[2]) {
       allowAllImportExt: !!rawCmdArgs['allow-all-import-ext'],
       prettify: !!rawCmdArgs['prettify'],
       prettierConfig: rawCmdArgs['prettier-config'],
+      removeOldOutputDir: !!rawCmdArgs['remove-old-output-dir'] || !!rawCmdArgs['r'],
     })
     break
 
