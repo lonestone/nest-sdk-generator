@@ -79,7 +79,7 @@ export const tsCoreEnv: TSCoreEnvUpdater = (prev) => ({
 
   logger: (context, message, params) => {
     if (globalCmdArgs.logFile) {
-      const formatted = formatAdvanced(message, params, 'logging')
+      const formatted = `[${context}] ` + formatAdvanced(message, params, 'logging')
 
       if (!fs.existsSync(globalCmdArgs.logFile)) {
         fs.writeFileSync(globalCmdArgs.logFile, formatted, 'utf8')
