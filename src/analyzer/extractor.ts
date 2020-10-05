@@ -1,7 +1,7 @@
 import * as path from 'path'
 import { Node, Project } from 'ts-morph'
 import {
-    Err, ErrMsg, List, ListLike, None, Ok, Option, RecordDict, Result, Some, debug, mapStrLines, todo, unimplemented, unreachable
+    Err, ErrMsg, List, ListLike, None, Ok, Option, RecordDict, Result, Some, debug, indentStr, todo, unimplemented, unreachable
 } from 'typescript-core'
 
 import { analyzeClassDeps } from './classdeps'
@@ -170,7 +170,7 @@ export class TypesExtractor {
           loc.typename,
           filePath,
           dependencyLoc.typename,
-          mapStrLines(extracted.err, (line) => '  ' + line)
+          indentStr(extracted.err, 2)
         )
       }
 
