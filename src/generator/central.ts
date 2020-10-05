@@ -59,8 +59,8 @@ export async function req(
       })
       .catch((err) => {
           if (!config.dontLogRequestErrors) {
-            if (config.erorrsLogger) {
-                config.errorsLogger(resopnse, method, uri, query, body);
+            if (config.errorsLogger) {
+                config.errorsLogger(response, method, uri, query, body);
             } else {
                 console.error("[NSDK] Axios request failed when calling route '" + uri + "'", { query, axiosResponse: err });
             }
