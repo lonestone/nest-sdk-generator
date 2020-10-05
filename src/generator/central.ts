@@ -62,7 +62,11 @@ export async function req(
             if (config.errorsLogger) {
                 config.errorsLogger(err, method, uri, query, body);
             } else {
-                console.error("[NSDK] Axios request failed when calling route '" + uri + "'", { query, axiosResponse: err });
+                console.error("[NSDK] Axios request failed when calling route '" + uri + "'", {
+                    query,
+                    body: config.hideBodyInLogs ? '<hidden by config>' : body,
+                    axiosResponse: err
+                });
             }
           }
 
