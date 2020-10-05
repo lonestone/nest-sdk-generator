@@ -17,7 +17,11 @@ export default async function generatorCli(args: CmdArgs): Promise<void> {
     println("NOTE: '--prettify' option was provided, files will be prettified with Prettier")
   }
 
-  const sdkContent: SdkContent = await Option.bool(fs.existsSync(args.input) && fs.lstatSync(args.input).isFile()).match({
+  if (args.input && !fs.existsSync(args.input)) {
+    panic('Input path does not exist.')
+  }
+
+  const sdkContent: SdkContent = await Option.bool(fs.lstatSync(args.input).isFile()).match({
     Some: async () => {
       println("> Decoding SDK's content...")
 
