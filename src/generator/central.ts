@@ -10,7 +10,9 @@ export interface CentralConfig {
   readonly logRequests?: boolean,
   readonly requestsLogger?: ((method: string, uri: string, query: Record<string, unknown>, body: unknown) => void),
   readonly requestsResponseLogger?: ((response: AxiosResponse, method: string, uri: string, query: Record<string, unknown>, body: unknown) => void),
-  readonly hideBodyInLogs?: boolean
+  readonly hideBodyInLogs?: boolean,
+  readonly dontLogRequestErrors?: boolean,
+  readonly errorsLogger?: ((response: AxiosResponse, method: string, uri: string, query: Record<string, unknown>, body: unknown) => void)
 }
 
 export const config: CentralConfig = {...importedCentralConfig};
@@ -56,8 +58,13 @@ export async function req(
           return response.data;
       })
       .catch((err) => {
-          console.error("[NSDK] Axios request failed when calling route '" + uri + "'", { query, body, axiosResponse: err });
-          throw new Error("Axios request failed at route '" + uri + "'");
+          if (!config.dontLogRequestErrors) {
+            if (config.erorrsLogger) {
+                config.errorsLogger(resopnse, method, uri, query, body);
+            } else {
+                console.error("[NSDK] Axios request failed when calling route '" + uri + "'", { query, axiosResponse: err });
+            }
+          }
       })
 }
 
