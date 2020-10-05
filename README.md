@@ -16,6 +16,7 @@ The project is split in two parts:
     - [Typing the configuration object](#typing-the-configuration-object)
     - [Exporting configuration from an existing file](#exporting-configuration-from-an-existing-file)
     - [Clean the output directory automatically](#clean-the-output-directory-automatically)
+    - [Recommandations](#recommandations)
 - [SDK usage](#sdk-usage)
     - [Importing API types](#importing-api-types)
 
@@ -132,6 +133,12 @@ By default, generating the SDK requires the output path to not exist yet, in ord
 You can force automatic removal of the previous output directory with the `-r` parameter.
 
 Note that the removal will fail if either `nsdk.json` or `central.ts` are not found, as these are files always generated for the SDK, in order to avoid removing the directory if you specified a wrong path by accident.
+
+#### Recommandations
+
+In most cases, you should add the SDK's output path to your `.gitignore` and perform the generation automatically in your CI.
+
+If you want to save time in the CI, you can save the generated SDK as an artifact and put it in the registry with the key being the hash of the server's source directory. This way, the SDK will only be rebuilt when the source directory changes.
 
 ## SDK usage
 
