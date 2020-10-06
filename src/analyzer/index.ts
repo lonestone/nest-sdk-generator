@@ -1,8 +1,8 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import { Project } from 'ts-morph'
-import { JsonValue, Option, debug, format, panic, println, stringify } from 'typescript-core'
 
+import { JsonValue, Option, debug, format, panic, println, stringify } from '../../../TSCore/src'
 import { globalCmdArgs } from '../cmdargs'
 import { findFilesRecursive, findJsonConfig } from '../fileUtils'
 import { CmdArgs } from './cmdargs'
@@ -60,9 +60,10 @@ export async function analyzerCli(args: CmdArgs): Promise<SdkContent> {
   // Add them
   debug('\nAdding them to the source project...')
 
-  const tenth = sourceTSFiles.length / 10
-  let step = 0
+  let progressByTenth = 0
   let strLen = sourceTSFiles.length.toString().length
+
+  const hasProgress = (filesTreated: number) => filesTreated / sourceTSFiles.length >= (progressByTenth + 1) / 10
 
   const controllers = []
 
@@ -74,13 +75,15 @@ export async function analyzerCli(args: CmdArgs): Promise<SdkContent> {
       controllers.push(file)
     }
 
-    if (i + 1 >= (step + 1) * tenth) {
-      step++
+    if (hasProgress(i + 1)) {
+      while (hasProgress(i + 1)) progressByTenth++
+
       debug(
-        '| Progress: {yellow} ({magentaBright} files) - {green} controllers found',
-        (step * 10).toString().padStart(3, ' ') + '%',
+        '| Progress: {yellow} ({magentaBright} files) - {green} controller{} found',
+        (progressByTenth * 10).toString().padStart(3, ' ') + '%',
         `${(i + 1).toString().padStart(strLen, ' ')} / ${sourceTSFiles.length}`,
-        controllers.length.toString().padStart(strLen, '')
+        controllers.length.toString().padStart(strLen, ''),
+        controllers.length > 1 ? 's' : ''
       )
     }
   }
