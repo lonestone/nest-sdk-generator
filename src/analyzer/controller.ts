@@ -1,10 +1,7 @@
 import * as path from 'path'
 import { Node, Project, StringLiteral } from 'ts-morph'
-import { Err, List, None, Ok, Option, Result, Some, debug, warn } from 'typescript-core'
-
-import { analyzeClassDeps } from './classdeps'
-import { SdkMethods, analyzeMethods } from './methods'
-import { ResolvedTypeDeps } from './typedeps'
+import { debug, Err, None, Ok, Option, Result, Some, warn } from 'typescript-core'
+import { analyzeMethods, SdkMethods } from './methods'
 
 function camelcase(str: string): string {
   return str
@@ -22,8 +19,8 @@ function camelcase(str: string): string {
 export interface SdkController {
   /** Original controller file's path */
   readonly path: string
-  /** Types of properties */
-  readonly classDeps: List<ResolvedTypeDeps>
+  // /** Types of properties */
+  // readonly classDeps: List<ResolvedTypeDeps>
   /** Name of the controller's class, camel cased */
   readonly camelClassName: string
   /** Name the controller is registered under */
@@ -117,12 +114,12 @@ export function analyzeController(
     debug('@Controller() was called without argument, registering controller under name {yellow}', registrationName)
   }
 
-  // Analyze the type of the controller's properties
-  const classDeps = analyzeClassDeps(classDecl, controllerPath, absoluteSrcPath)
+  // // Analyze the type of the controller's properties
+  // const classDeps = analyzeClassDeps(classDecl, controllerPath, absoluteSrcPath, true)
 
-  if (classDeps.isErr()) {
-    return classDeps.asErr()
-  }
+  // if (classDeps.isErr()) {
+  //   return classDeps.asErr()
+  // }
 
   // Generate a SDK interface for the controller's methods
   const methods = analyzeMethods(classDecl, controllerUriPrefix, controllerPath, absoluteSrcPath)
@@ -137,7 +134,7 @@ export function analyzeController(
       path: controllerPath,
       camelClassName: camelcase(className),
       registrationName,
-      classDeps: classDeps.data,
+      // classDeps: classDeps.data,
       methods: methods.data,
     })
   )

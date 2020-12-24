@@ -1,13 +1,12 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import { Project } from 'ts-morph'
-
-import { JsonValue, Option, debug, format, panic, println, stringify } from '../../../TSCore/src'
+import { debug, format, JsonValue, Option, panic, println } from 'typescript-core'
 import { globalCmdArgs } from '../cmdargs'
 import { findFilesRecursive, findJsonConfig } from '../fileUtils'
 import { CmdArgs } from './cmdargs'
-import { SdkModules, analyzeControllers } from './controllers'
-import { TypesExtractor, TypesExtractorContent, flattenSdkResolvedTypes, locateTypesFile } from './extractor'
+import { analyzeControllers, SdkModules } from './controllers'
+import { flattenSdkResolvedTypes, locateTypesFile, TypesExtractor, TypesExtractorContent } from './extractor'
 
 export interface SdkContent {
   readonly modules: SdkModules
@@ -31,7 +30,7 @@ export async function analyzerCli(args: CmdArgs): Promise<SdkContent> {
 
   Option.maybe(args.output)
     .map((dir) => path.dirname(path.resolve(process.cwd(), dir)))
-    .ifSome((dir) => !fs.existsSync(dir) && panic("Output file's parent directory {magentaBright} does not exist.", path.dirname(dir)))
+    .ifSome((dir) => !fs.existsSync(dir) && panic("Output file's parent directory {magentaBright} does not exist.", dir))
 
   if (globalCmdArgs.logFile) {
     debug('Logging to {yellow}', globalCmdArgs.logFile)
@@ -41,7 +40,7 @@ export async function analyzerCli(args: CmdArgs): Promise<SdkContent> {
 
   // ====== Find & parse 'tsconfig.json' ====== //
   const tsConfig = findJsonConfig('tsconfig.json', sourcePath).unwrapWith(() =>
-    format('No {yellow} file found provided source path {yellow}', 'tsconfig.json', sourcePath)
+    format('No {yellow} file found in provided source path {yellow}', 'tsconfig.json', sourcePath)
   )
 
   debug('Found {yellow} file at {yellow}', 'tsconfig.json', tsConfig.path)

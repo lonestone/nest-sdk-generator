@@ -1,7 +1,6 @@
 import * as chalk from 'chalk'
 import * as fs from 'fs'
-import { TSCoreEnvUpdater, formatAdvanced, matchString, panic } from 'typescript-core'
-
+import { formatAdvanced, matchString, panic, TSCoreEnvUpdater } from 'typescript-core'
 import { globalCmdArgs } from './cmdargs'
 
 export const tsCoreEnv: TSCoreEnvUpdater = (prev) => ({
@@ -30,6 +29,9 @@ export const tsCoreEnv: TSCoreEnvUpdater = (prev) => ({
               prefix: () => chalk.cyan(content),
               unknown: () => chalk.yellow(content),
               unknownWrapper: () => chalk.blue(content),
+              unknownTypename: () => chalk.magentaBright(content),
+              reference: () => chalk.blue(content),
+              referenceWrapper: () => chalk.yellow(content),
               punctuation: () => chalk.cyan(content),
               listIndex: () => chalk.magenta(content),
               listValue: () => chalk.blue(content),
@@ -40,6 +42,8 @@ export const tsCoreEnv: TSCoreEnvUpdater = (prev) => ({
               number: () => chalk.yellow(content),
               errorMessage: () => chalk.red(content),
               errorStack: () => chalk.red(content),
+              remainingProperties: () => chalk.yellow(content),
+              remainingPropertiesWrapper: () => chalk.blue(content),
               _: () => content,
             }),
     }),
@@ -61,7 +65,7 @@ export const tsCoreEnv: TSCoreEnvUpdater = (prev) => ({
   },
 
   panicWatcher: (message, params) => {
-    console.error(chalk.red('PANIC: ' + formatAdvanced(message, params, 'panic')))
+    console.error(chalk.red('SDK generator panicked: ' + formatAdvanced(message, params, 'panic')))
     process.exit(1)
   },
 

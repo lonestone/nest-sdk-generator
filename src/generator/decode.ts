@@ -1,5 +1,4 @@
-import { Decoders as d, DecodingError, Err, JsonDecoder, JsonDecoders as j, JsonValue, Ok, matchString, state } from 'typescript-core'
-
+import { Decoders as d, DecodingError, Err, JsonDecoder, JsonDecoders as j, JsonValue, matchString, Ok, state } from 'typescript-core'
 import { SdkContent } from '../analyzer'
 import { SdkController } from '../analyzer/controller'
 import { SdkModules } from '../analyzer/controllers'
@@ -14,7 +13,7 @@ export const decodeResolvedType: JsonDecoder<ResolvedTypeDeps> = j.mapped({
   resolvedType: j.string,
   relativeFilePath: j.string,
   dependencies: j.recordOf(j.listOf(j.string)),
-  nonNativeTypes: j.listOf(j.string),
+  localTypes: j.listOf(j.string),
 })
 
 export const decodeMethodParams: JsonDecoder<SdkMethodParams> = j.mapped({
@@ -63,7 +62,7 @@ export const decodeSdkController: JsonDecoder<SdkController> = j.mapped({
   path: j.string,
   camelClassName: j.string,
   registrationName: j.string,
-  classDeps: j.listOf(decodeResolvedType),
+  // classDeps: j.listOf(decodeResolvedType),
   methods: j.recordOf(decodeSdkMethod),
 })
 
@@ -71,19 +70,19 @@ export const decodeSdkModules: JsonDecoder<SdkModules> = j.recordOf(j.recordOf(d
 
 export const decodeTypeLocation: JsonDecoder<TypeLocation> = j.mapped({
   typename: j.string,
-  pathNoExt: j.string,
+  relativePathNoExt: j.string,
 })
 
 export const decodeTypeLocationWithExt: JsonDecoder<TypeLocationWithExt> = j.mapped({
   typename: j.string,
-  pathNoExt: j.string,
-  path: j.string,
+  relativePathNoExt: j.string,
+  relativePath: j.string,
 })
 
 export const decodeExtractedType: JsonDecoder<ExtractedType> = j.mapped({
   typename: j.string,
-  pathNoExt: j.string,
-  path: j.string,
+  relativePathNoExt: j.string,
+  relativePath: j.string,
   content: j.string,
   typeParams: j.arrayOf(j.string),
   dependencies: j.arrayOf(decodeTypeLocationWithExt),

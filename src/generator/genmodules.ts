@@ -1,10 +1,10 @@
 import * as path from 'path'
-import { List, RecordDict, indentStr } from 'typescript-core'
-
+import { indentStr, List, RecordDict } from 'typescript-core'
 import { SdkModules } from '../analyzer/controllers'
 import { SdkMethod } from '../analyzer/methods'
 import { SdkMethodParams } from '../analyzer/params'
 import { resolveRouteWith, unparseRoute } from '../analyzer/route'
+import { ResolvedTypeDeps } from '../analyzer/typedeps'
 
 // Returned codes are not formatted yet
 export function generateSdkModules(modules: SdkModules): RecordDict<string> {
@@ -25,7 +25,7 @@ export function generateSdkModules(modules: SdkModules): RecordDict<string> {
 
       const imports = new RecordDict<List<string>>()
 
-      const depsToImport = controller.classDeps
+      const depsToImport = new List<ResolvedTypeDeps>()
 
       for (const controller of controllers.values()) {
         for (const method of controller.methods.values()) {

@@ -1,6 +1,5 @@
 import * as path from 'path'
-import { RecordDict, indentStr } from 'typescript-core'
-
+import { indentStr, RecordDict } from 'typescript-core'
 import { TypesExtractorContent } from '../analyzer/extractor'
 
 // Returned codes are not formatted yet
@@ -14,8 +13,8 @@ export function generateSdkTypeFiles(sdkTypes: TypesExtractorContent): RecordDic
 
     for (const extracted of types.values()) {
       for (const dep of extracted.dependencies) {
-        if (dep.path !== file && !imports.get(dep.pathNoExt).toBoolean((types) => types.includes(dep.typename))) {
-          imports.getOrSet(dep.pathNoExt, []).push(dep.typename)
+        if (dep.relativePath !== file && !imports.get(dep.relativePathNoExt).mapOr((types) => types.includes(dep.typename), false)) {
+          imports.getOrSet(dep.relativePathNoExt, []).push(dep.typename)
         }
       }
     }

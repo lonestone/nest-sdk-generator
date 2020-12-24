@@ -1,7 +1,7 @@
 import * as chalk from 'chalk'
 import * as fs from 'fs'
 import * as path from 'path'
-import { JsonValue, None, Option, Some, debug, format, println, warn } from 'typescript-core'
+import { debug, format, JsonValue, None, Option, println, Some, warn } from 'typescript-core'
 
 /**
  * Find a file in the current directory or one of its parents

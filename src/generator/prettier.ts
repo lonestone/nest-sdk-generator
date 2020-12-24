@@ -1,7 +1,6 @@
 import * as fs from 'fs'
 import * as prettier from 'prettier'
 import { JsonValue, Option, panic } from 'typescript-core'
-
 import { findFileAbove } from '../fileUtils'
 import { CmdArgs } from './cmdargs'
 

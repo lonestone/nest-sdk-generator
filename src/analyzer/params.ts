@@ -1,10 +1,9 @@
 import { ParameterDeclaration } from 'ts-morph'
-import { Err, ErrMsg, None, Ok, Option, RecordDict, Result, Some, debug, format, unreachable, warn } from 'typescript-core'
-
+import { debug, Err, ErrMsg, format, None, Ok, Option, RecordDict, Result, Some, unreachable, warn } from 'typescript-core'
 import { expectSingleStrLitDecorator } from './decorator'
 import { SdkHttpMethodType } from './methods'
-import { Route, paramsOfRoute } from './route'
-import { ResolvedTypeDeps, resolveTypeDependencies, unifyDepsResolutionErrors } from './typedeps'
+import { paramsOfRoute, Route } from './route'
+import { ResolvedTypeDeps, resolveTypeDependencies } from './typedeps'
 
 /**
  * SDK interface for a controller's method's parameters
@@ -98,9 +97,9 @@ export function analyzeParams(
       debug('>>> Mapping argument to parameter: {yellow}', paramName.data.data)
 
       // Get the route parameter's type
-      const typ = resolveTypeDependencies(arg.getType().getText(), filePath, absoluteSrcPath)
+      const typ = resolveTypeDependencies(arg.getType(), filePath, absoluteSrcPath)
 
-      if (typ.isErr()) return Err(unifyDepsResolutionErrors(typ.err))
+      if (typ.isErr()) return typ.asErr()
 
       debug(
         '>>> Detected parameter type: {yellow} ({magentaBright} dependencies)',
@@ -144,9 +143,9 @@ export function analyzeParams(
       debug('>>> Mapping argument to query: {yellow}', queryName.data.data)
 
       // Get the parameter's type
-      const typ = resolveTypeDependencies(arg.getType().getText(), filePath, absoluteSrcPath)
+      const typ = resolveTypeDependencies(arg.getType(), filePath, absoluteSrcPath)
 
-      if (typ.isErr()) return Err(unifyDepsResolutionErrors(typ.err))
+      if (typ.isErr()) return typ.asErr()
 
       debug(
         `>>> Detected query type: {yellow} ({magentaBright} dependencies)`,
@@ -185,9 +184,9 @@ export function analyzeParams(
       if (fieldName.isErr()) return fieldName.asErr()
 
       // Get the field's type
-      const typ = resolveTypeDependencies(arg.getType().getText(), filePath, absoluteSrcPath)
+      const typ = resolveTypeDependencies(arg.getType(), filePath, absoluteSrcPath)
 
-      if (typ.isErr()) return Err(unifyDepsResolutionErrors(typ.err))
+      if (typ.isErr()) return typ.asErr()
 
       debug(
         `>>> Detected BODY type: {yellow} ({magentaBright} dependencies)`,
@@ -210,16 +209,12 @@ export function analyzeParams(
           warn('>>> Detected full @Body() decorator after a single parameter. This is considered a bad practice, avoid it if you can!')
         // Having two generic @Body() decorators is meaningless and will likey lead to errors, so we return a precise error here
         else if (body?.full) {
-          if (body.type.rawType === typ.data.rawType)
-            return Err(
-              format(
-                `Detected two @Body() decorators with mismatching type (found {yellow} previously, but method argument {yellow} indicates type {yellow})`,
-                body.type.resolvedType,
-                name,
-                typ.data.resolvedType
-              )
-            )
-          else return ErrMsg(`Detected two @Body() decorators (though with same mapping type ({yellow})`, typ.data.resolvedType)
+          return ErrMsg(
+            `Detected two @Body() decorators: found {yellow} previously, while method argument {yellow} indicates type {yellow}`,
+            body.type.resolvedType,
+            name,
+            typ.data.resolvedType
+          )
         }
 
         debug(">>> Mapping argument to full request's body")
@@ -230,7 +225,7 @@ export function analyzeParams(
         // Here we have an @Body(<string>) decorator
 
         // If we previously had an @Body() decorator, this can lead to several types of errors (see the big comment above for more informations)
-        if (collected.body.toBoolean((body) => body.full)) {
+        if (collected.body.mapOr((body) => body.full, false)) {
           warn('>>> Detected single @Body() decorator after a full parameter. This is considered a bad practice, avoid it if you can!')
         } else {
           debug('>>> Mapping argument to BODY field: {yellow}', fieldName.data.data)

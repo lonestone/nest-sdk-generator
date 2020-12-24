@@ -1,6 +1,6 @@
 import * as path from 'path'
 import { Node, Project } from 'ts-morph'
-import { Err, ErrMsg, Ok, Result, format } from 'typescript-core'
+import { Err, ErrMsg, format, Ok, Result } from 'typescript-core'
 
 /**
  * Get the name of a module

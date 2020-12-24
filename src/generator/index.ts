@@ -1,8 +1,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import { JsonValue, None, Option, panic, println } from 'typescript-core'
-
-import { SdkContent, analyzerCli } from '../analyzer'
+import { analyzerCli, SdkContent } from '../analyzer'
 import { CENTRAL_FILE } from './central'
 import { CmdArgs } from './cmdargs'
 import { decodeSdkContent } from './decode'

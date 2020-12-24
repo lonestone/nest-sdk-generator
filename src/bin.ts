@@ -1,7 +1,6 @@
 #!/usr/bin/node
 
 import { panic, setupTypeScriptCore } from 'typescript-core'
-
 import { analyzerCli } from './analyzer'
 import { rawCmdArgs } from './cmdargs'
 import { tsCoreEnv } from './env'

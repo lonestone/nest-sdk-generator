@@ -1,10 +1,9 @@
 import * as os from 'os'
 import * as path from 'path'
 import { Project } from 'ts-morph'
-import { Dictionary, RecordDict, debug, panic, warn } from 'typescript-core'
-
+import { debug, Dictionary, panic, RecordDict, warn } from 'typescript-core'
 import { findFileAbove } from '../fileUtils'
-import { SdkController, analyzeController } from './controller'
+import { analyzeController, SdkController } from './controller'
 import { getModuleName } from './module'
 
 export type SdkModules = RecordDict<RecordDict<SdkController>>

@@ -1,9 +1,8 @@
 import { ClassDeclaration, MethodDeclaration, Node } from 'ts-morph'
-import { Err, ErrMsg, Ok, Option, RecordDict, Result, debug } from 'typescript-core'
-
-import { SdkMethodParams, analyzeParams } from './params'
-import { Route, analyzeUri, debugUri } from './route'
-import { ResolvedTypeDeps, resolveTypeDependencies, unifyDepsResolutionErrors } from './typedeps'
+import { debug, Err, ErrMsg, Ok, Option, RecordDict, Result } from 'typescript-core'
+import { analyzeParams, SdkMethodParams } from './params'
+import { analyzeUri, debugUri, Route } from './route'
+import { ResolvedTypeDeps, resolveTypeDependencies } from './typedeps'
 
 /**
  * SDK interface for a controller's methods
@@ -140,9 +139,9 @@ export function analyzeMethods(
 
     // Get the method's return type
     debug('>> Resolving return type...')
-    const returnType = resolveTypeDependencies(method.getReturnType().getText(), filePath, absoluteSrcPath)
+    const returnType = resolveTypeDependencies(method.getReturnType(), filePath, absoluteSrcPath)
 
-    if (returnType.isErr()) return Err(unifyDepsResolutionErrors(returnType.err))
+    if (returnType.isErr()) return returnType.asErr()
 
     debug('>> Detected return type: {yellow}', returnType.data.resolvedType)
 
