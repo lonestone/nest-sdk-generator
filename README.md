@@ -42,6 +42,8 @@ The project is split in two parts:
 
 **WARNING:** The SDK generator does not check if the source files compile correctly. Therefore, if you try to use a type that doesn't exist, the generation may still succeed although compiling the code would fail. In such case, the resulting output type is `any`.
 
+**WARNING:** A current limitation of the SDK generator is that it finds a controller's module by looking for a `.module.ts` file in the current directory, and parent directories if none is found in the controller's one. This means controller files must be put under a module's directory, and two module files cannot be put in the same directory.
+
 ## Using the SDK
 
 The SDK exposes several directories:
