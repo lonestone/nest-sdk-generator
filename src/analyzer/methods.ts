@@ -90,8 +90,8 @@ export function analyzeMethods(
       return Err(`Multiple (${decArgs.length}) arguments were provided to the HTTP decorator`)
     } else if (decArgs.length === 0) {
       // If there is no argument, we take the method's name as the URI path
-      debug('>> No argument found for decorator, using default URI path.')
-      uriPath = methodName
+      debug('>> No argument found for decorator, using base URI path.')
+      uriPath = ''
     } else {
       // If we have exactly one argument, hurray! That's our URI path.
       const uriNameDec = decArgs[0]
@@ -110,11 +110,10 @@ export function analyzeMethods(
     debug('>> Detected URI name: {yellow}', uriPath)
 
     // Analyze the method's URI
-    //const route = uriPath.startsWith('/') ? analyzeUri(uriPath) : analyzeUri(`/${controllerUriPrefix}/${uriPath}`)
 
     const route = analyzeUri(
       controllerUriPrefix.match({
-        Some: (uriPrefix) => `/${uriPrefix}/${uriPath}`,
+        Some: (uriPrefix) => (uriPath ? `/${uriPrefix}/${uriPath}` : `/` + uriPrefix),
         None: () => uriPath,
       })
     )
