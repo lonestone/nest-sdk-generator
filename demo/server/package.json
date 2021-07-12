@@ -1,0 +1,49 @@
+{
+  "name": "server",
+  "version": "0.0.1",
+  "description": "",
+  "author": "",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "nest build",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "start:debug": "nest start --debug --watch",
+    "start:prod": "node dist/main",
+    "db:sync": "npx mikro-orm schema:update --run"
+  },
+  "mikro-orm": {
+    "useTsNode": true,
+    "configPaths": [
+      "./src/mikro-orm.config.ts",
+      "./dist/mikro-orm.config.js"
+    ]
+  },
+  "dependencies": {
+    "@mikro-orm/core": "^4.5.7",
+    "@mikro-orm/nestjs": "^4.2.0",
+    "@mikro-orm/sqlite": "^4.5.7",
+    "@nestjs/common": "^8.0.0",
+    "@nestjs/core": "^8.0.0",
+    "@nestjs/platform-express": "^8.0.0",
+    "class-validator": "^0.13.1",
+    "reflect-metadata": "^0.1.13",
+    "rimraf": "^3.0.2",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@mikro-orm/cli": "^4.5.7",
+    "@nestjs/cli": "^8.0.0",
+    "@types/express": "^4.17.13",
+    "@types/node": "^16.0.0",
+    "@types/uuid": "^8.3.1",
+    "prettier": "^2.3.2",
+    "ts-loader": "^9.2.3",
+    "ts-node": "^10.0.0",
+    "tsconfig-paths": "^3.10.1",
+    "typescript": "^4.3.5"
+  }
+}
