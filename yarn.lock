@@ -312,10 +312,10 @@ ts-morph@~9.1.0:
     "@ts-morph/common" "~0.7.0"
     code-block-writer "^10.1.1"
 
-typescript-core@^8.4.7:
-  version "8.4.7"
-  resolved "https://registry.yarnpkg.com/typescript-core/-/typescript-core-8.4.7.tgz#163bacf1ceaefdff072eec46c35220c1f6a9db7d"
-  integrity sha512-+Y+jS4FGOcqbn/2j7MZOjQK0s2EuA2cZcqFaFPpH5dyZz4D3GapmXd8yZC+BzjNDq+GVTurfbbFdrqX9kSTbCQ==
+typescript-core@^9.1.1:
+  version "9.1.1"
+  resolved "https://registry.yarnpkg.com/typescript-core/-/typescript-core-9.1.1.tgz#9fe1a301db25feb4bb82dc66eff2d3de169d7dd8"
+  integrity sha512-7VDtZ2kzmxQbtlG6JCHEgzIs++0bb8E87jr/Wc1OoHqPpccoEZcGT4nOY0Eg4osXMKf7nfUaWyeX2hsoobf0pA==
 
 typescript@~4.1.2, typescript@~4.1.3:
   version "4.1.3"

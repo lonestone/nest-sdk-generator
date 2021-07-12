@@ -1,8 +1,12 @@
-export const CENTRAL_FILE = (relativePath: string, nameToImport: string | null) =>
+import { Option } from 'typescript-core'
+
+export const CENTRAL_FILE = (relativePath: string, nameToImport: Option<string>) =>
   `
 
 import { default as axios, AxiosRequestConfig, AxiosResponse } from "axios";
-import { ${nameToImport ?? 'default'} as importedCentralConfig } from "${relativePath.replace(/\\/g, '/').replace(/\.([jt]sx?)$/, '')}";
+import { ${nameToImport.unwrapOr('default')} as importedCentralConfig } from "${relativePath
+    .replace(/\\/g, '/')
+    .replace(/\.([jt]sx?)$/, '')}";
 
 export interface CentralConfig {
   readonly axios?: AxiosRequestConfig,

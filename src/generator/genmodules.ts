@@ -1,5 +1,5 @@
 import * as path from 'path'
-import { indentStr, List, RecordDict } from 'typescript-core'
+import { List, RecordDict } from 'typescript-core'
 import { SdkModules } from '../analyzer/controllers'
 import { SdkMethod } from '../analyzer/methods'
 import { SdkMethodParams } from '../analyzer/params'
@@ -56,7 +56,7 @@ export function generateSdkModules(modules: SdkModules): RecordDict<string> {
         out.push('')
         out.push(`  // ${methodName} @ ${unparseRoute(method.route)}`)
         out.push(`  ${method.name}(${stringifySdkMethodParams(method.params)}): ${promised} {`)
-        out.push(indentStr(generateCentralRequest(method), 4))
+        out.push(generateCentralRequest(method).replace(/^/gm, '    '))
         out.push('  },')
       }
 

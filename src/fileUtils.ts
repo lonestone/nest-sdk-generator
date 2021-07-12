@@ -25,7 +25,7 @@ export function findJsonConfig(
     return None()
   }
 
-  println(chalk.green(format('{green} {yellow}', 'Found at path:', fpath.data)))
+  println(chalk.green(format('{green} {magentaBright} {green} {yellow}', 'Found file', name, 'at path:', fpath.data)))
 
   return Some({
     path: fpath.data,

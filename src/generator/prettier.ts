@@ -1,15 +1,15 @@
 import * as fs from 'fs'
 import * as prettier from 'prettier'
 import { JsonValue, Option, panic } from 'typescript-core'
+import { Config } from '../config'
 import { findFileAbove } from '../fileUtils'
-import { CmdArgs } from './cmdargs'
 
-export function findPrettierConfig(cmdArgs: CmdArgs): Option<JsonValue> {
-  return Option.maybe(cmdArgs.prettierConfig)
+export function findPrettierConfig(config: Config): Option<JsonValue> {
+  return config.generator.prettierConfig
     .map((path) =>
       fs.existsSync(path) ? fs.readFileSync(path, 'utf8') : panic('Prettier configuration was not found at specified path {magenta}', path)
     )
-    .orElse(() => findFileAbove('.prettier.rc', cmdArgs.output))
+    .orElse(() => findFileAbove('.prettier.rc', config.generator.output))
     .map((txt) => JsonValue.parse(txt).unwrapWith((err) => 'Failed to parse Prettier configuration: ' + err))
 }
 

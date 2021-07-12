@@ -1,10 +1,9 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import { Project } from 'ts-morph'
-import { debug, format, JsonValue, Option, panic, println } from 'typescript-core'
-import { globalCmdArgs } from '../cmdargs'
+import { debug, format, JsonValue, panic } from 'typescript-core'
+import { Config } from '../config'
 import { findFilesRecursive, findJsonConfig } from '../fileUtils'
-import { CmdArgs } from './cmdargs'
 import { analyzeControllers, SdkModules } from './controllers'
 import { flattenSdkResolvedTypes, locateTypesFile, TypesExtractor, TypesExtractorContent } from './extractor'
 
@@ -13,13 +12,16 @@ export interface SdkContent {
   readonly types: TypesExtractorContent
 }
 
-export async function analyzerCli(args: CmdArgs): Promise<SdkContent> {
+export interface MagicType {
+  readonly package: string
+  readonly typeName: string
+  readonly content: string
+}
+
+export async function analyzerCli(config: Config): Promise<SdkContent> {
   const started = Date.now()
 
-  const sourcePath = path.resolve(
-    process.cwd(),
-    args.input ?? panic('Please provide an input path to generate an SDK from (syntax: nsdkgen <src>)')
-  )
+  const sourcePath = path.resolve(process.cwd(), config.analyzer.input)
 
   if (!sourcePath) panic('Please provide a source directory')
 
@@ -28,15 +30,13 @@ export async function analyzerCli(args: CmdArgs): Promise<SdkContent> {
 
   debug(`Analyzing from source directory {yellow}`, sourcePath)
 
-  Option.maybe(args.output)
-    .map((dir) => path.dirname(path.resolve(process.cwd(), dir)))
-    .ifSome((dir) => !fs.existsSync(dir) && panic("Output file's parent directory {magentaBright} does not exist.", dir))
+  const jsonOutputParentDir = path.dirname(path.resolve(process.cwd(), config.analyzer.jsonOutput))
 
-  if (globalCmdArgs.logFile) {
-    debug('Logging to {yellow}', globalCmdArgs.logFile)
+  if (!fs.existsSync(jsonOutputParentDir)) {
+    panic("Output file's parent directory {magentaBright} does not exist.", jsonOutputParentDir)
   }
 
-  debug('Writing output to {yellow} ({magentaBright})', args.output ?? 'STDOUT', args.pretty ? 'beautified' : 'minified')
+  debug('Writing output to {yellow} ({magentaBright})', config.analyzer.jsonOutput, config.analyzer.pretty ? 'beautified' : 'minified')
 
   // ====== Find & parse 'tsconfig.json' ====== //
   const tsConfig = findJsonConfig('tsconfig.json', sourcePath).unwrapWith(() =>
@@ -91,7 +91,7 @@ export async function analyzerCli(args: CmdArgs): Promise<SdkContent> {
 
   const modules = analyzeControllers(controllers, sourcePath, project)
 
-  const typesCache = new TypesExtractor(project, sourcePath)
+  const typesCache = new TypesExtractor(project, sourcePath, config.analyzer.magicTypes)
 
   const typesToExtract = locateTypesFile(flattenSdkResolvedTypes(modules))
 
@@ -106,24 +106,12 @@ export async function analyzerCli(args: CmdArgs): Promise<SdkContent> {
     types: typesCache.extracted,
   }
 
-  if (!args.output) {
-    if (args.pretty) {
-      println('{#?}', content)
-    } else {
-      println(
-        '{}',
-        JsonValue.stringify(content).unwrapWith((err) => err.error + ' | at:\n' + err.path.join('\n '))
-      )
-    }
-  } else {
-    fs.writeFileSync(
-      args.output,
-      JsonValue.stringify(content, 4).unwrapWith((err) => err.error + ' | at:\n' + err.path.join('\n ')),
-      'utf8'
-    )
-  }
-
-  debug('\n===== Done in {green}! ====', ((Date.now() - started) / 1000).toFixed(2) + 's')
+  fs.writeFileSync(
+    config.analyzer.jsonOutput,
+    JsonValue.stringify(content, 4).unwrapWith((err) => err.error + ' | at:\n' + err.path.join('\n ')),
+    'utf8'
+  ),
+    debug('\n===== Done in {green}! ====', ((Date.now() - started) / 1000).toFixed(2) + 's')
 
   return content
 }

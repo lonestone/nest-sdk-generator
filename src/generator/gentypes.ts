@@ -1,5 +1,5 @@
 import * as path from 'path'
-import { indentStr, RecordDict } from 'typescript-core'
+import { RecordDict } from 'typescript-core'
 import { TypesExtractorContent } from '../analyzer/extractor'
 
 // Returned codes are not formatted yet
@@ -30,7 +30,7 @@ export function generateSdkTypeFiles(sdkTypes: TypesExtractorContent): RecordDic
     )
 
     for (const extracted of types.values()) {
-      out.push(indentStr(extracted.content, 2))
+      out.push(extracted.content.replace(/^/gm, '  '))
     }
 
     genFiles.set(file, out.join('\n'))

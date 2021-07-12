@@ -21,7 +21,7 @@
     "minimist": "~1.2.5",
     "prettier": "^2.2.1",
     "ts-morph": "~9.1.0",
-    "typescript-core": "^8.4.7"
+    "typescript-core": "^9.1.2"
   },
   "devDependencies": {
     "@types/minimist": "^1.2.1",

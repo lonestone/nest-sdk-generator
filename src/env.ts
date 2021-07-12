@@ -1,17 +1,25 @@
 import * as chalk from 'chalk'
 import * as fs from 'fs'
 import { formatAdvanced, matchString, panic, TSCoreEnvUpdater } from 'typescript-core'
-import { globalCmdArgs } from './cmdargs'
+import { config } from './config-loader'
 
 export const tsCoreEnv: TSCoreEnvUpdater = (prev) => ({
+  devMode: () => false,
+
   verbosity: (devMode, context) =>
-    matchString(globalCmdArgs.verbosity, {
-      'full-silent': () => false,
-      silent: () => context === 'error',
-      warnings: () => context === 'error' || context === 'warn',
-      default: () => (context !== 'debug' && context !== 'dump') || devMode,
-      verbose: () => true,
-    }),
+    matchString(
+      config
+        .value()
+        .andThen((config) => config.verbosity)
+        .unwrapOr('default'),
+      {
+        'full-silent': () => false,
+        silent: () => context === 'error',
+        warnings: () => context === 'error' || context === 'warn',
+        default: () => (context !== 'debug' && context !== 'dump') || devMode,
+        verbose: () => true,
+      }
+    ),
 
   defaultFormattingOptions: () => ({
     ...prev.defaultFormattingOptions(),
@@ -22,7 +30,7 @@ export const tsCoreEnv: TSCoreEnvUpdater = (prev) => ({
       ...prev.defaultFormattingOptions().stringifyOptions(devMode, context, prettify),
 
       highlighter: (type, content) =>
-        globalCmdArgs.noColor
+        config.mapKeyOr('noColor', false)
           ? content
           : matchString(type, {
               typename: () => chalk.yellow(content),
@@ -61,7 +69,7 @@ export const tsCoreEnv: TSCoreEnvUpdater = (prev) => ({
     }
 
     // @ts-ignore
-    return globalCmdArgs.noColor ? param.toString() : chalk[color](param.toString())
+    return config.mapKeyOr('noColor', false) ? param.toString() : chalk[color](param.toString())
   },
 
   panicWatcher: (message, params) => {
@@ -82,13 +90,15 @@ export const tsCoreEnv: TSCoreEnvUpdater = (prev) => ({
   },
 
   logger: (context, message, params) => {
-    if (globalCmdArgs.logFile) {
+    const logFile = config.value().andThen((config) => config.logFile)
+
+    if (logFile.isSome()) {
       const formatted = `[${context}] ` + formatAdvanced(message, params, 'logging')
 
-      if (!fs.existsSync(globalCmdArgs.logFile)) {
-        fs.writeFileSync(globalCmdArgs.logFile, formatted, 'utf8')
+      if (!fs.existsSync(logFile.data)) {
+        fs.writeFileSync(logFile.data, formatted, 'utf8')
       } else {
-        fs.appendFileSync(globalCmdArgs.logFile, formatted, 'utf8')
+        fs.appendFileSync(logFile.data, formatted, 'utf8')
       }
     }
   },

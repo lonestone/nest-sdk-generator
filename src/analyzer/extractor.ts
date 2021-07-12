@@ -4,7 +4,6 @@ import {
   debug,
   dump,
   ErrMsg,
-  indentStr,
   List,
   ListLike,
   None,
@@ -15,8 +14,9 @@ import {
   Some,
   unimplemented,
   unreachable,
-  warn,
+  warn
 } from 'typescript-core'
+import { MagicType } from '../config'
 import { analyzeClassDeps } from './classdeps'
 import { SdkModules } from './controllers'
 import { getImportResolvedType, ResolvedTypeDeps, resolveTypeDependencies } from './typedeps'
@@ -45,6 +45,7 @@ export class TypesExtractor {
   constructor(
     public readonly project: Project,
     public readonly absoluteSrcPath: string,
+    public readonly magicTypes: Array<MagicType>,
     public readonly extracted: TypesExtractorContent = new RecordDict()
   ) {}
 
@@ -142,11 +143,33 @@ export class TypesExtractor {
 
     const [file, relativeFilePath] = tryFile.data
 
-    debug(
-      '-> '.repeat(typesPath.length + 1) + 'Extracting type {yellow} from file {magentaBright}...',
-      loc.typename,
-      loc.relativePathNoExt + path.extname(file.getFilePath())
-    )
+    for (const magicType of this.magicTypes) {
+      if (relativeFilePath.endsWith(`/node_modules/${magicType.nodeModuleFilePath}`) && loc.typename === magicType.typeName) {
+        debug(
+          '-> '.repeat(typesPath.length + 1) +
+            'Found magic type {yellow} from external module file {magentaBright}, using provided placeholder.',
+          loc.typename,
+          relativeFilePath
+        )
+
+        const extracted: ExtractedType = {
+          content: '/** @file Magic placeholder from configuration file */\n\n' + magicType.placeholderContent,
+          relativePath: relativeFilePath,
+          relativePathNoExt: loc.relativePathNoExt,
+          typename: loc.typename,
+          typeParams: [], // TODO: UNSAFE
+          dependencies: [],
+        }
+
+        typesPath.pop()
+
+        this.extracted.getOrSet(relativeFilePath, new RecordDict()).set(loc.typename, extracted)
+
+        return Ok(extracted)
+      }
+    }
+
+    debug('-> '.repeat(typesPath.length + 1) + 'Extracting type {yellow} from file {magentaBright}...', loc.typename, relativeFilePath)
 
     const decl = file.forEachChildAsArray().find((node) => {
       return (
@@ -289,14 +312,12 @@ export class TypesExtractor {
           loc.typename,
           dependencyLoc.typename,
           relativeFilePath,
-          indentStr(fallibleRelativePath.err, 2)
+          fallibleRelativePath.err.replace(/^/gm, '  ')
         )
       }
 
       dependencies.push({ ...dependencyLoc, relativePath: fallibleRelativePath.data })
     }
-
-    typesPath.pop()
 
     const extracted: ExtractedType = {
       ...loc,
@@ -306,44 +327,9 @@ export class TypesExtractor {
       dependencies,
     }
 
+    typesPath.pop()
+
     this.extracted.getOrSet(relativeFilePath, new RecordDict()).set(loc.typename, extracted)
-
-    // if (typesPath.length === 0) {
-    //   while (toExtractLater.length > 0) {
-    //     debug(
-    //       'Going to extract {yellow} reported cycling types: {yellow}',
-    //       toExtractLater.length,
-    //       toExtractLater.map((entry) => entry[0].typename).join(format('{magenta}', ' / '))
-    //     )
-
-    //     const toExtract = [...toExtractLater]
-    //     toExtractLater = []
-
-    //     for (const [dependencyLoc, typesPath] of toExtract) {
-    //       if (this.findExtractedTypeWithoutExt(dependencyLoc).isSome()) {
-    //         continue
-    //       }
-
-    //       debug(
-    //         '> Extracting reported cycling type {yellow} from path {yellow}',
-    //         dependencyLoc.typename,
-    //         typesPath.join(format('{magenta}', ' -> '))
-    //       )
-
-    //       const extracted = this.extractType(dependencyLoc, typesPath, toExtractLater)
-
-    //       if (extracted.isErr()) {
-    //         return ErrMsg(
-    //           '> Failed to extract type {yellow} due to an error in dependency type {yellow}\nfrom file {magenta} :\n{}',
-    //           loc.typename,
-    //           dependencyLoc.typename,
-    //           relativeFilePath,
-    //           indentStr(extracted.err, 2)
-    //         )
-    //       }
-    //     }
-    //   }
-    // }
 
     return Ok(extracted)
   }
