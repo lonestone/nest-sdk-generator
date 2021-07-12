@@ -11,6 +11,7 @@ The project is split in two parts:
 
 - [Features](#features)
 - [Instructions](#instructions)
+- [Limitations](#limitations)
 - [Using the SDK](#using-the-sdk)
 - [Step-by-step generation tutorial](#step-by-step-generation-tutorial)
     - [Typing the configuration object](#typing-the-configuration-object)
@@ -40,9 +41,19 @@ The project is split in two parts:
 1. Create a configuration file exporting your API's url (`{ apiUrl: '<some_url>' }`)
 2. Run `nsdkgen <nest api path> <sdk output path> -c <path of config file relative to sdk output path>`
 
-**WARNING:** The SDK generator does not check if the source files compile correctly. Therefore, if you try to use a type that doesn't exist, the generation may still succeed although compiling the code would fail. In such case, the resulting output type is `any`.
+## Limitations
 
-**WARNING:** A current limitation of the SDK generator is that it finds a controller's module by looking for a `.module.ts` file in the current directory, and parent directories if none is found in the controller's one. This means controller files must be put under a module's directory, and two module files cannot be put in the same directory.
+The SDK generator comes with a set of limitations which can find below:
+
+1. The SDK generator does not check if the source files compile correctly. Therefore, if you try to use a type that doesn't exist, the generation may still succeed although compiling the code would fail. In such case, the resulting output type is `any`.
+
+2. A current limitation of the SDK generator is that it finds a controller's module by looking for a `.module.ts` file in the current directory, and parent directories if none is found in the controller's one. This means controller files must be put under a module's directory, and two module files cannot be put in the same directory.
+
+3. Types belonging to namespaces are currently not supported and will result in error in the generated code
+
+4. Due to limitations of the TypeScript compiler, importing from the project's root (e.g. `import { SomeType } from "src/file.ts"`) will result in an `any` type at generation, because such types are not recognized when manipulating types
+
+5. Due to limitations of the TypeScript compiler, all dependent types must be declared in separate files. For instance, if a type `A` has a property of type `B`, `B` must be declared in another file. The opposite will result in invalid code at generation
 
 ## Using the SDK
 

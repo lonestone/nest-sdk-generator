@@ -1,5 +1,5 @@
 import * as path from 'path'
-import { Node, Project, StringLiteral } from 'ts-morph'
+import { Node, Project } from 'ts-morph'
 import { debug, Err, None, Ok, Option, Result, Some, warn } from 'typescript-core'
 import { analyzeMethods, SdkMethods } from './methods'
 
@@ -100,7 +100,7 @@ export function analyzeController(
     const nameArg = decExpr[0]
 
     // Variables are not supported
-    if (!(nameArg instanceof StringLiteral)) {
+    if (!Node.isStringLiteral(nameArg)) {
       warn("Skipping this controller as its @Controller() decorator's argument is not a string literal")
       return Ok(None())
     }

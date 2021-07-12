@@ -64,7 +64,11 @@ export default async function generatorCli(args: CmdArgs): Promise<void> {
   const writeScriptTo = (parentDir: null | string, file: string, utf8Content: string) => {
     const fullPath = path.resolve(output, parentDir ?? '', file)
     fs.mkdirSync(path.dirname(fullPath), { recursive: true })
-    fs.writeFileSync(fullPath, args.prettify ? prettify(utf8Content, prettierConfig) : utf8Content, 'utf8')
+    fs.writeFileSync(
+      fullPath,
+      args.prettify ? prettify(utf8Content, prettierConfig, file.endsWith('.json') ? 'json' : 'typescript') : utf8Content,
+      'utf8'
+    )
   }
 
   const prettierConfig = args.prettify ? findPrettierConfig(args) : None<JsonValue>()

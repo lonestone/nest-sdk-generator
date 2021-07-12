@@ -13,9 +13,9 @@ export function findPrettierConfig(cmdArgs: CmdArgs): Option<JsonValue> {
     .map((txt) => JsonValue.parse(txt).unwrapWith((err) => 'Failed to parse Prettier configuration: ' + err))
 }
 
-export function prettify(source: string, config: Option<JsonValue>): string {
+export function prettify(source: string, config: Option<JsonValue>, parser: 'typescript' | 'json'): string {
   return prettier.format(source, {
-    parser: 'typescript',
+    parser,
     ...config.cast<any>().unwrapOr({}),
   })
 }

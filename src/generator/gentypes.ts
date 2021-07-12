@@ -24,7 +24,7 @@ export function generateSdkTypeFiles(sdkTypes: TypesExtractorContent): RecordDic
         .mapToArray((depFile, types) => {
           let depPath = path.relative(path.dirname(file), depFile).replace(/\\/g, '/')
           if (!depPath.includes('/')) depPath = './' + depPath
-          return `import { ${types.join(', ')} } from "${depPath}"`
+          return `import { ${types.join(', ')} } from "${depPath.startsWith('./') || depPath.startsWith('../') ? depPath : './' + depPath}"`
         })
         .join('\n')
     )

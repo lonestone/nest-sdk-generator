@@ -101,11 +101,7 @@ export function analyzeParams(
 
       if (typ.isErr()) return typ.asErr()
 
-      debug(
-        '>>> Detected parameter type: {yellow} ({magentaBright} dependencies)',
-        typ.data.resolvedType,
-        Reflect.ownKeys(typ.data.dependencies).length
-      )
+      debug('>>> Detected parameter type: {yellow} ({magentaBright} dependencies)', typ.data.resolvedType, typ.data.dependencies.size)
 
       // Update the method's route parameters
 
@@ -147,11 +143,7 @@ export function analyzeParams(
 
       if (typ.isErr()) return typ.asErr()
 
-      debug(
-        `>>> Detected query type: {yellow} ({magentaBright} dependencies)`,
-        typ.data.resolvedType,
-        Reflect.ownKeys(typ.data.dependencies).length
-      )
+      debug(`>>> Detected query type: {yellow} ({magentaBright} dependencies)`, typ.data.resolvedType, typ.data.dependencies.size)
 
       // Update the method's query parameter
 
@@ -188,11 +180,7 @@ export function analyzeParams(
 
       if (typ.isErr()) return typ.asErr()
 
-      debug(
-        `>>> Detected BODY type: {yellow} ({magentaBright} dependencies)`,
-        typ.data.resolvedType,
-        Reflect.ownKeys(typ.data.dependencies).length
-      )
+      debug(`>>> Detected BODY type: {yellow} ({magentaBright} dependencies)`, typ.data.resolvedType, typ.data.dependencies.size)
 
       // If there no name was provided to the decorator, then the decorator is a generic receiver which means it maps to the full body type
       // This also means we can map the BODY type to this argument's type
