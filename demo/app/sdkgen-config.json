@@ -16,8 +16,8 @@
     },
     "generator": {
         "output": "./sdk",
-        "configScriptPath": "../config.ts",
-        "configNameToImport": null,
+        "configScriptPath": "../src/config.ts",
+        "configNameToImport": "config",
         "prettify": true,
         "prettierConfig": null,
         "removeOldOutputDir": true

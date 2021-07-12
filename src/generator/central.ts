@@ -3,79 +3,43 @@ import { Option } from 'typescript-core'
 export const CENTRAL_FILE = (relativePath: string, nameToImport: Option<string>) =>
   `
 
-import { default as axios, AxiosRequestConfig, AxiosResponse } from "axios";
 import { ${nameToImport.unwrapOr('default')} as importedCentralConfig } from "${relativePath
     .replace(/\\/g, '/')
-    .replace(/\.([jt]sx?)$/, '')}";
+    .replace(/\.([jt]sx?)$/, '')}"
 
-export interface CentralConfig {
-  readonly axios?: AxiosRequestConfig,
-  readonly apiUrl: string,
-  readonly logRequests?: boolean,
-  readonly requestsLogger?: ((method: string, uri: string, query: Record<string, unknown>, body: unknown) => void),
-  readonly requestsResponseLogger?: ((response: AxiosResponse, method: string, uri: string, query: Record<string, unknown>, body: unknown) => void),
-  readonly hideBodyInLogs?: boolean,
-  readonly dontLogRequestErrors?: boolean,
-  readonly errorsLogger?: ((response: AxiosResponse, method: string, uri: string, query: Record<string, unknown>, body: unknown) => void)
+export type CentralMethodType = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
+
+export interface CentralHandlerRequest {
+    readonly method: CentralMethodType,
+    readonly uri: string,
+    readonly query: Record<string, unknown>,
+    readonly body: unknown
 }
 
-export const config: CentralConfig = {...importedCentralConfig};
+export type CentralHandler = (request: CentralHandlerRequest) => Promise<unknown>
 
-export const axiosClient = axios.create({
-  ...(config.axios ?? {}),
-  baseURL: config.apiUrl.endsWith('/') ? config.apiUrl : config.apiUrl + '/'
-})
+export interface CentralConfig {
+    readonly handler: CentralHandler,
+    readonly init?: () => void,
+    readonly errorsLogger?: ((error: unknown, request: CentralHandlerRequest) => void)
+}
+
+export const config: CentralConfig = {...importedCentralConfig}
+
+config.init?.()
 
 export async function req(
-    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+    method: CentralMethodType,
     uri: string,
     query: Record<string, unknown>,
     body: unknown
 ): Promise<any> {
-    if (config.logRequests) {
-        if (config.requestsLogger) {
-            config.requestsLogger(method, uri, query, body);
-        } else {
-            console.debug("[NSDK] Starting Axios request with route '" + uri + "'", {
-                query,
-                body: config.hideBodyInLogs ? '<hidden by config>' : body,
-            });
-        }
-    }
+    const req: CentralHandlerRequest = { method, uri, query, body }
 
-    return axiosClient({
-        method,
-        url: uri,
-        params: query,
-        data: body,
-        responseType: 'json',
+    return config.handler(req).catch((err) => {
+        config.errorsLogger?.(err, req);
+        return Promise.reject(err);
     })
-      .then((response) => {
-          if (config.logRequests) {
-              if (config.requestsResponseLogger) {
-                  config.requestsResponseLogger(response, method, uri, query, body);
-              } else {
-                  console.debug('[NSDK] Received ' + response.status + " response after Axios request for route '" + uri + "'", response.data);
-              }
-          }
-
-          return response.data;
-      })
-      .catch((err) => {
-          if (!config.dontLogRequestErrors) {
-            if (config.errorsLogger) {
-                config.errorsLogger(err, method, uri, query, body);
-            } else {
-                console.error("[NSDK] Axios request failed when calling route '" + uri + "'", {
-                    query,
-                    body: config.hideBodyInLogs ? '<hidden by config>' : body,
-                    axiosResponse: err
-                });
-            }
-          }
-
-          return Promise.reject(err);
-      })
 }
 
 `.trim()
