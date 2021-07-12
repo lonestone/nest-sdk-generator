@@ -14,9 +14,7 @@
     "lint": "eslint --ext .tsx,.ts src/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "bin": {
-    "nsdkgen": "build/bin.js"
-  },
+  "bin": "./build/bin.js",
   "private": true,
   "dependencies": {
     "chalk": "~4.1.0",

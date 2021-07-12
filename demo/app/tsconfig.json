@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -7,13 +8,13 @@
     "strictNullChecks": true,
     "downlevelIteration": true,
     "experimentalDecorators": true,
-    "declaration": true,
+    "incremental": true,
     "moduleResolution": "node",
     "module": "commonjs",
-    "lib": ["esnext"],
-    "target": "es6",
+    "lib": ["ESNext", "DOM"],
+    "target": "es2019",
     "inlineSourceMap": true,
-    "incremental": true
+    "outDir": "dist"
   },
-  "include": ["src/**/*.ts", "src/cli.ts"]
+  "include": ["src/**/*.ts"]
 }
