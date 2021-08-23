@@ -9,6 +9,7 @@ The project is split in two parts:
 
 **Table of contents:**
 
+- [What is the SDK generator and why should I use it?](#what-is-the-sdk-generator-and-why-should-i-use-it)
 - [Features](#features)
 - [Instructions](#instructions)
 - [Limitations](#limitations)
@@ -20,6 +21,21 @@ The project is split in two parts:
     - [Recommandations](#recommandations)
 - [SDK usage](#sdk-usage)
     - [Importing API types](#importing-api-types)
+
+## What is the SDK generator and why should I use it?
+
+The SDK generator is a tool that creates a client-side SDK based on a Nest.js REST API. The SDK can be used to call the API's routes seamlessly without any friction, and also enforces type safety by typing all parameters and return values based on the API itself.
+
+This brings several advantages, including:
+
+- Missing or bad parameters and return types will be detected at compilation time
+- IDE autocompletion for parameters and return values without needing to look at the doc
+- All API routes are listed in a single block allowing to list all at once
+- Routes are split across controllers, themselves split across modules, keeping the same hierarchy as your API even if the routes don't
+- Global request and response handler acting as the main request actor, allowing to customize requests by providing additional values like headers if required
+- Simple & clean placeholders for server-side types that can't be ported to client-side (e.g. ORM dictionary types)
+
+The generator also allows you to (re-)generate a full SDK in seconds with a single command. And in case something goes wrong, you'll be able to pinpoint exactly what the problem is thanks to the colorful (can be disabled) verbose output. A log file can also be used to store all output informations in one place.
 
 ## Features
 
