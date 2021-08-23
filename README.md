@@ -21,6 +21,14 @@ The project is split in two parts:
     - [Recommandations](#recommandations)
 - [SDK usage](#sdk-usage)
     - [Importing API types](#importing-api-types)
+- [Frequently-asked questions](#frequently-asked-questions)
+  - [Does this replace Swagger?](#does-this-replace-swagger)
+  - [I have a GraphQL API, what can this project do for me?](#i-have-a-graphql-api-what-can-this-project-do-for-me)
+  - [Does the SDK has any performance overhead?](#does-the-sdk-has-any-performance-overhead)
+  - [How do I update the SDK once I change the API's source code?](#how-do-i-update-the-sdk-once-i-change-the-apis-source-code)
+  - [Is the SDK documented?](#is-the-sdk-documented)
+  - [Can I add header or other data on-the-fly when making requests?](#can-i-add-header-or-other-data-on-the-fly-when-making-requests)
+  - [Is there a way to log the requests or responses somewhere?](#is-there-a-way-to-log-the-requests-or-responses-somewhere)
 
 ## What is the SDK generator and why should I use it?
 
@@ -202,3 +210,34 @@ import { UserDTO } from '<sdk path>/_types/node_modules/@project/dtos/user.d'
 
 const user: UserDTO = await userController.getOne({ id: 'some_id' })
 ```
+
+## Frequently-asked questions
+
+### Does this replace Swagger?
+
+No, the SDK generator only generates a client-side SDK to make requests more easily to the server ; it doesn't generate a documentation by itself. Although all routes are organized with their original name and split across controllers and modules the same way they were in the API, that doesn't make a full documentation in itself.
+
+### I have a GraphQL API, what can this project do for me?
+
+Unfortunately, the SDK generator isn't compatible with GraphQL API, and for a good reason: the whole point of this project is to bring structural typing to an API, but GraphQL already provides that. So there would be no point in this tool being compatible with GraphQL projects.
+
+### Does the SDK has any performance overhead?
+
+Absolutely not. The generated SDK is only made of simple objets that will call the handler you provided through the configuration script, and the said script will be in charge of making the request (e.g. with Axios). This means that no kind of data transformation/conversion happens behind-the-scenes.
+
+### How do I update the SDK once I change the API's source code?
+
+You simply run the same shell command you used to generate the source code originally. There isn't a special subcommand for it, as it will simply delete the old SDK and replace it with the new one.
+
+### Is the SDK documented?
+
+Each file in the SDK uses a generic documentation, including the exact route model for route methods. This means you will be able to check what route is called by which method each time.
+
+### Can I add header or other data on-the-fly when making requests?
+
+All of the SDK's methods use a central handler which calls a function you provided, where you can absolutely everything you can. You are in charge of making the requests thanks to the provided URI and query/body parameters, which means you can add, edit or remove whatever data you want.
+
+### Is there a way to log the requests or responses somewhere?
+
+All of the SDK's methods use a central handler which calls a function you provided, where you can absolutely everything you can. You are in charge of making 
+the requests thanks to the provided URI and query/body parameters, which means you can write the requests and responses to the local storage, send them to a log server, or anything else.
