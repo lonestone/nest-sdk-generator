@@ -59,6 +59,7 @@ The generator also allows you to (re-)generate a full SDK in seconds with a sing
 - Less than 2k lines of code unminified
 - Complete logging options
 - Extremely detailed output by default for easier debugging in case of errors
+- Tree-shaking so the compiled code will only contain the methods you use from the generated SDK, no matter its size
 
 ## Instructions
 
