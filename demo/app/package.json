@@ -1,7 +1,7 @@
 {
     "private": true,
     "scripts": {
-        "sdk:build": "node ../../build/bin.js analyze+generate ./sdkgen-config.json",
+        "sdk:build": "node ../../build/bin.js generate ../sdkgen-config.json",
         "start:dev": "tsc && node dist/src/index.js"
     },
     "dependencies": {
