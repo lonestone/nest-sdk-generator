@@ -19,8 +19,8 @@ export default async function generatorCli(config: Config, sdkContent: SdkConten
 
   if (fs.existsSync(output)) {
     if (config.removeOldOutputDir.unwrapOr(false)) {
-      if (!fs.existsSync(path.join(output, 'nsdk.json')) || !fs.existsSync(path.join(output, 'central.ts'))) {
-        panic('Provided output path exists but not seem to contain an SDK output. Please check the output directory.')
+      if (!fs.existsSync(path.join(output, 'central.ts'))) {
+        panic("Provided output path exists but doesn't seem to contain an SDK output. Please check the output directory.")
       } else {
         fs.rmSync(output, { recursive: true })
       }
