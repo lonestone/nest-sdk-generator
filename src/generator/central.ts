@@ -7,7 +7,7 @@ import { ${nameToImport.unwrapOr('default')} as importedCentralConfig } from "${
     .replace(/\\/g, '/')
     .replace(/\.([jt]sx?)$/, '')}"
 
-export type CentralMethodType = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
+export type CentralMethodType = 'get' | 'post' | 'put' | 'patch' | 'delete'
 
 export interface CentralHandlerRequest {
     readonly method: CentralMethodType,
