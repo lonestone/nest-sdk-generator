@@ -14,7 +14,7 @@ import {
   Some,
   unimplemented,
   unreachable,
-  warn
+  warn,
 } from 'typescript-core'
 import { MagicType } from '../config'
 import { analyzeClassDeps } from './classdeps'
@@ -98,8 +98,8 @@ export class TypesExtractor {
     }
 
     const tryFile = Result.any(
-      MODULE_EXTENSIONS.map((ext) => () =>
-        [this.project.getSourceFileOrThrow(absolutePathNoExt + ext), loc.relativePathNoExt + ext] as const
+      MODULE_EXTENSIONS.map(
+        (ext) => () => [this.project.getSourceFileOrThrow(absolutePathNoExt + ext), loc.relativePathNoExt + ext] as const
       )
     )
 
@@ -132,8 +132,8 @@ export class TypesExtractor {
     }
 
     const tryFile = Result.any(
-      MODULE_EXTENSIONS.map((ext) => () =>
-        [this.project.getSourceFileOrThrow(absolutePathNoExt + ext), loc.relativePathNoExt + ext] as const
+      MODULE_EXTENSIONS.map(
+        (ext) => () => [this.project.getSourceFileOrThrow(absolutePathNoExt + ext), loc.relativePathNoExt + ext] as const
       )
     )
 

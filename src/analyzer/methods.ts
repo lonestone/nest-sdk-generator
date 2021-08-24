@@ -76,7 +76,7 @@ export function analyzeMethods(
     // @ts-ignore
     const httpMethod = SdkHttpMethodType[dec.getName()]
 
-    debug('>> Detected HTTP method: {yellow}', httpMethod)
+    debug('>> Detected HTTP method: {magentaBright}', httpMethod.toLocaleUpperCase())
 
     // Get the arguments provided to the HTTP decorator (we expect one, the URI path)
     const decArgs = dec.getArguments()
@@ -142,7 +142,7 @@ export function analyzeMethods(
 
     if (returnType.isErr()) return returnType.asErr()
 
-    debug('>> Detected return type: {yellow}', returnType.data.resolvedType)
+    debug('>> Detected return type: {cyan}', returnType.data.resolvedType)
 
     // Success!
     collected.set(methodName, {

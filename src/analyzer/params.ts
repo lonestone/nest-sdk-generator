@@ -75,7 +75,7 @@ export function analyzeParams(
 
     // Treat the @Param() decorator
     if (decName === 'Param') {
-      debug('>>> Detected decorator {yellow}', '@Param')
+      debug('>>> Detected decorator {blue}', '@Param')
 
       // We expect a single string argument for this decorator,
       // which is the route parameter's name
@@ -120,7 +120,7 @@ export function analyzeParams(
 
     // Treat the @Query() decorator
     else if (decName === 'Query') {
-      debug('>>> Detected decorator {yellow}', '@Query')
+      debug('>>> Detected decorator {blue}', '@Query')
 
       // We expect a single string argument for this decorator,
       // which is the query parameter's name
@@ -162,7 +162,7 @@ export function analyzeParams(
 
     // Treat the @Body() decorator
     else if (decName === 'Body') {
-      debug('>>> Detected decorator {yellow}', '@Body')
+      debug('>>> Detected decorator {blue}', '@Body')
 
       // GET requests cannot have a BODY
       if (httpMethod === SdkHttpMethodType.Get) {
@@ -180,7 +180,15 @@ export function analyzeParams(
 
       if (typ.isErr()) return typ.asErr()
 
-      debug(`>>> Detected BODY type: {yellow} ({magentaBright} dependencies)`, typ.data.resolvedType, typ.data.dependencies.size)
+      const depsCount = typ.data.dependencies.size
+
+      debug(
+        `>>> Detected BODY type: {cyan} ({magentaBright} ${
+          depsCount === 0 ? 'no dependency' : depsCount > 1 ? 'dependencies' : 'dependency'
+        })`,
+        typ.data.resolvedType,
+        depsCount
+      )
 
       // If there no name was provided to the decorator, then the decorator is a generic receiver which means it maps to the full body type
       // This also means we can map the BODY type to this argument's type
