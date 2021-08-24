@@ -252,5 +252,5 @@ All of the SDK's methods use a central handler which calls a function you provid
 
 ### Is there a way to log the requests or responses somewhere?
 
-All of the SDK's methods use a central handler which calls a function you provided, where you can absolutely everything you can. You are in charge of making 
+All of the SDK's methods use a central handler which calls a function you provided, where you can do absolutely everything you can. You are in charge of making 
 the requests thanks to the provided URI and query/body parameters, which means you can write the requests and responses to the local storage, send them to a log server, or anything else.
