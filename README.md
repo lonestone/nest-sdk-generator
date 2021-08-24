@@ -14,6 +14,7 @@ The project is split in two parts:
 - [Instructions](#instructions)
 - [Limitations](#limitations)
 - [Using the SDK](#using-the-sdk)
+- [Architecture](#architecture)
 - [Step-by-step generation tutorial](#step-by-step-generation-tutorial)
     - [Typing the configuration object](#typing-the-configuration-object)
     - [Recommandations](#recommandations)
@@ -85,6 +86,10 @@ Methods return a typed `Promise<>` with the original method's return type.
 
 - If the requests succeeds and returns a valid JSON string, it is parse and returned by the method
 - If the requests fail or cannot be decoded correctly, the promise fails with an `AxiosResponse` object
+
+## Architecture
+
+The SDK generator analyzes your Nest.js API using a provided configuration file, and produces a client-side SDK. This SDK is made of modules containing route methods that all call a central handler with the corresponding URI and parameters. The handler makes the request to the server and transmits the response. This is where you can customize the data to send to the server, if they need normalization, encryption, hashing, parsing, authentication, or anything else.
 
 ## Step-by-step generation tutorial
 
