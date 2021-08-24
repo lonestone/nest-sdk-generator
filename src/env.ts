@@ -1,6 +1,6 @@
 import * as chalk from 'chalk'
 import * as fs from 'fs'
-import { formatAdvanced, matchString, panic, TSCoreEnvUpdater } from 'typescript-core'
+import { formatAdvanced, matchString, None, panic, TSCoreEnvUpdater } from 'typescript-core'
 import { config } from './config-loader'
 
 export const tsCoreEnv: TSCoreEnvUpdater = (prev) => ({
@@ -30,7 +30,7 @@ export const tsCoreEnv: TSCoreEnvUpdater = (prev) => ({
       ...prev.defaultFormattingOptions().stringifyOptions(devMode, context, prettify),
 
       highlighter: (type, content) =>
-        config.mapKeyOr('noColor', false)
+        config.mapKeyOr('noColor', None()).unwrapOr(false)
           ? content
           : matchString(type, {
               typename: () => chalk.yellow(content),

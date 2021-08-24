@@ -22,7 +22,7 @@
     "ncu": "^0.2.1",
     "prettier": "^2.3.2",
     "ts-morph": "~11.0.3",
-    "typescript-core": "^9.1.2"
+    "typescript-core": "^9.2.0"
   },
   "devDependencies": {
     "@types/minimist": "^1.2.2",

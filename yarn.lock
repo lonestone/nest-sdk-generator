@@ -717,10 +717,10 @@ tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   resolved "https://registry.npmjs.org/tweetnacl/-/tweetnacl-0.14.5.tgz"
   integrity sha1-WuaBd/GS1EViadEIr6k/+HQ/T2Q=
 
-typescript-core@^9.1.2:
-  version "9.1.2"
-  resolved "https://registry.npmjs.org/typescript-core/-/typescript-core-9.1.2.tgz"
-  integrity sha512-LMvcqww6LqzG76BrxHW4VNI1L6vjBE8Egpf3xbAh8zBaDXhrXumP9zmAWkwRnHDhSTosoZngWMTCb5gY1Wn6/w==
+typescript-core@^9.2.0:
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/typescript-core/-/typescript-core-9.2.0.tgz#89fd0ebdf564786d4f90352cde111e4c3fd7b383"
+  integrity sha512-sW484qz+w2SkMXg8JlX8IEToNLAsJlqJMrVt/VYNPYiuffsZ2NJpvRsZLepqVzirCbncm0nOQGy3wFaeFejIiA==
 
 typescript@~4.3.5:
   version "4.3.5"

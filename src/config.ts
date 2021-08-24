@@ -2,27 +2,20 @@ import { Decoders as d, JsonDecoder, JsonDecoders as j, Option } from 'typescrip
 
 export interface Config {
   readonly verbosity: Option<'verbose' | 'default' | 'warnings' | 'silent' | 'full-silent'>
-  readonly noColor: boolean
+  readonly noColor: Option<boolean>
   readonly logFile: Option<string>
 
-  readonly analyzer: AnalyzerConfig
-  readonly generator: GeneratorConfig
-}
-
-export interface AnalyzerConfig {
-  readonly input: string
-  readonly jsonOutput: string
-  readonly pretty: boolean
+  readonly apiInputPath: string
   readonly magicTypes: Array<MagicType>
-}
 
-export interface GeneratorConfig {
-  readonly output: string
+  readonly sdkOutput: string
   readonly configScriptPath: string
   readonly configNameToImport: Option<string>
   readonly prettify: boolean
+  readonly jsonOutput: Option<string>
+  readonly jsonPrettyOutput: Option<boolean>
   readonly prettierConfig: Option<string>
-  readonly removeOldOutputDir: boolean
+  readonly removeOldOutputDir: Option<boolean>
 }
 
 export interface MagicType {
@@ -37,29 +30,22 @@ export const magicTypeDecoder: JsonDecoder<MagicType> = j.mapped({
   placeholderContent: j.string,
 })
 
-export const analyzerConfigDecoder: JsonDecoder<AnalyzerConfig> = j.mapped({
-  input: j.string,
-  jsonOutput: j.string,
-  pretty: j.boolean,
-  magicTypes: j.arrayOf(magicTypeDecoder),
-})
-
-export const generatorConfigDecoder: JsonDecoder<GeneratorConfig> = j.mapped({
-  output: j.string,
-  configScriptPath: j.string,
-  configNameToImport: j.maybe(j.string),
-  prettify: j.boolean,
-  prettierConfig: j.maybe(j.string),
-  removeOldOutputDir: j.boolean,
-})
-
 export const configDecoder: JsonDecoder<Config> = j.mapped({
-  verbosity: j.maybe(
+  verbosity: j.optional(
     d.then(j.string, d.oneOf(['verbose' as const, 'default' as const, 'warnings' as const, 'silent' as const, 'full-silent' as const]))
   ),
-  noColor: j.boolean,
-  logFile: j.maybe(j.string),
+  noColor: j.optional(j.boolean),
+  logFile: j.optional(j.string),
 
-  analyzer: analyzerConfigDecoder,
-  generator: generatorConfigDecoder,
+  apiInputPath: j.string,
+  magicTypes: j.arrayOf(magicTypeDecoder),
+
+  sdkOutput: j.string,
+  configScriptPath: j.string,
+  configNameToImport: j.optional(j.string),
+  prettify: j.boolean,
+  prettierConfig: j.optional(j.string),
+  jsonOutput: j.optional(j.string),
+  jsonPrettyOutput: j.optional(j.boolean),
+  removeOldOutputDir: j.optional(j.boolean),
 })

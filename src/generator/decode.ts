@@ -17,9 +17,9 @@ export const decodeResolvedType: JsonDecoder<ResolvedTypeDeps> = j.mapped({
 })
 
 export const decodeMethodParams: JsonDecoder<SdkMethodParams> = j.mapped({
-  arguments: j.maybe(j.recordOf(decodeResolvedType)),
-  query: j.maybe(j.recordOf(decodeResolvedType)),
-  body: j.maybe(
+  arguments: j.optional(j.recordOf(decodeResolvedType)),
+  query: j.optional(j.recordOf(decodeResolvedType)),
+  body: j.optional(
     d.ensure<JsonValue, SdkMethodBodyParam>(
       j.mapped({
         full: d.then(j.boolean, d.typedPrimitive(true)),

@@ -21,7 +21,7 @@ export interface MagicType {
 export async function analyzerCli(config: Config): Promise<SdkContent> {
   const started = Date.now()
 
-  const sourcePath = path.resolve(process.cwd(), config.analyzer.input)
+  const sourcePath = path.resolve(process.cwd(), config.apiInputPath)
 
   if (!sourcePath) panic('Please provide a source directory')
 
@@ -30,13 +30,15 @@ export async function analyzerCli(config: Config): Promise<SdkContent> {
 
   debug(`Analyzing from source directory {yellow}`, sourcePath)
 
-  const jsonOutputParentDir = path.dirname(path.resolve(process.cwd(), config.analyzer.jsonOutput))
+  if (config.jsonOutput.isSome()) {
+    const jsonOutputParentDir = path.dirname(path.resolve(process.cwd(), config.jsonOutput.data))
 
-  if (!fs.existsSync(jsonOutputParentDir)) {
-    panic("Output file's parent directory {magentaBright} does not exist.", jsonOutputParentDir)
+    if (!fs.existsSync(jsonOutputParentDir)) {
+      panic("Output file's parent directory {magentaBright} does not exist.", jsonOutputParentDir)
+    }
+
+    debug('Writing output to {yellow}', config.jsonOutput.data, config.jsonPrettyOutput ? 'beautified' : 'minified')
   }
-
-  debug('Writing output to {yellow} ({magentaBright})', config.analyzer.jsonOutput, config.analyzer.pretty ? 'beautified' : 'minified')
 
   // ====== Find & parse 'tsconfig.json' ====== //
   const tsConfig = findJsonConfig('tsconfig.json', sourcePath).unwrapWith(() =>
@@ -91,7 +93,7 @@ export async function analyzerCli(config: Config): Promise<SdkContent> {
 
   const modules = analyzeControllers(controllers, sourcePath, project)
 
-  const typesCache = new TypesExtractor(project, sourcePath, config.analyzer.magicTypes)
+  const typesCache = new TypesExtractor(project, sourcePath, config.magicTypes)
 
   const typesToExtract = locateTypesFile(flattenSdkResolvedTypes(modules))
 
@@ -106,12 +108,17 @@ export async function analyzerCli(config: Config): Promise<SdkContent> {
     types: typesCache.extracted,
   }
 
-  fs.writeFileSync(
-    config.analyzer.jsonOutput,
-    JsonValue.stringify(content, 4).unwrapWith((err) => err.error + ' | at:\n' + err.path.join('\n ')),
-    'utf8'
-  ),
-    debug('\n===== Done in {green}! ====', ((Date.now() - started) / 1000).toFixed(2) + 's')
+  if (config.jsonOutput.isSome()) {
+    fs.writeFileSync(
+      config.jsonOutput.data,
+      JsonValue.stringify(content, config.jsonPrettyOutput.unwrapOr(false) ? 4 : 0).unwrapWith(
+        (err) => err.error + ' | at:\n' + err.path.join('\n ')
+      ),
+      'utf8'
+    )
+  }
+
+  debug('\n===== Done in {green}! ====', ((Date.now() - started) / 1000).toFixed(2) + 's')
 
   return content
 }
