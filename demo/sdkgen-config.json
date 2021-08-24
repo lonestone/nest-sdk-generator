@@ -1,15 +1,16 @@
 {
-    "apiInputPath": "server/src",
-    "magicTypes": [
-        {
-            "nodeModuleFilePath": "@mikro-orm/core/entity/Collection.d.ts",
-            "typeName": "Collection",
-            "placeholderContent": "export type Collection<T, _> = Array<T>;"
-        }
-    ],
-    "sdkOutput": "app/sdk",
-    "configScriptPath": "app/src/config.ts",
-    "configNameToImport": "config",
-    "prettify": true,
-    "removeOldOutputDir": true
+  "apiInputPath": "server/src",
+  "magicTypes": [
+    {
+      "nodeModuleFilePath": "@mikro-orm/core/entity/Collection.d.ts",
+      "typeName": "Collection",
+      "placeholderContent": "export type Collection<T, _> = Array<T>;"
+    }
+  ],
+  "sdkOutput": "app/sdk",
+  "configScriptPath": "app/src/config.ts",
+  "configNameToImport": "config",
+  "prettify": true,
+  "removeOldOutputDir": true,
+  "verbosity": "verbose"
 }
