@@ -42,10 +42,14 @@ export class ArticleService {
       throw new BadRequestException('Author was not found')
     }
 
-    return this.articleRepo.create({
+    const article = this.articleRepo.create({
       ...dto,
       author,
       category,
     })
+
+    await this.articleRepo.persistAndFlush(article)
+
+    return article
   }
 }

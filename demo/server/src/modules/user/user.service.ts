@@ -44,6 +44,10 @@ export class UserService {
       throw new BadRequestException('A user is already registered with this email address!')
     }
 
-    return this.userRepo.create(dto)
+    const user = this.userRepo.create(dto)
+
+    await this.userRepo.persistAndFlush(user)
+
+    return user
   }
 }

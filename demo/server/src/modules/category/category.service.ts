@@ -25,7 +25,7 @@ export class CategoryService {
     const category = await this.categoryRepo.findOne(categoryId)
 
     if (!category) {
-      throw new BadRequestException("Category not found")
+      throw new BadRequestException('Category not found')
     }
 
     return this.articleRepo.find({ category })
@@ -33,9 +33,13 @@ export class CategoryService {
 
   async create(dto: CategoryCreateDTO): Promise<Category> {
     if (await this.getByTitle(dto.title)) {
-      throw new BadRequestException("A category with this title already exists!")
+      throw new BadRequestException('A category with this title already exists!')
     }
 
-    return this.categoryRepo.create(dto)
+    const category = this.categoryRepo.create(dto)
+
+    await this.categoryRepo.persistAndFlush(category)
+
+    return category
   }
 }
