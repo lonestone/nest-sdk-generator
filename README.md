@@ -113,7 +113,7 @@ Let's suppose we have a monorepo, with our server being in `apps/api` and runnin
 
 We want the SDK to be located in `apps/front/sdk`.
 
-First, we must create a configuration file. Let's put it in `sdkgen-config.json` in the root directory:
+First, we must create a configuration file. Let's put it in `nsdkgen.json` in the root directory:
 
 ```json
 {
@@ -171,7 +171,7 @@ export const config = {
 Let's now generate the SDK:
 
 ```shell
-nsdkgen generate generator-config.json
+nsdkgen generate nsdkgen.json
 ```
 
 We now have a `apps/front/sdk` directory with our SDK inside!
