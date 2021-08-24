@@ -2,7 +2,7 @@ import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common'
 import { UserCreateDTO } from './dtos/user-create.dto'
 import { UserService } from './user.service'
 
-@Controller()
+@Controller('user')
 export class UserController {
   @Inject()
   private readonly userService!: UserService

@@ -2,7 +2,7 @@ import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common'
 import { CategoryService } from './category.service'
 import { CategoryCreateDTO } from './dtos/category-create.dto'
 
-@Controller()
+@Controller('category')
 export class CategoryController {
   @Inject()
   private readonly categoryService!: CategoryService

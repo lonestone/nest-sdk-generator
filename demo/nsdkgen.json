@@ -7,8 +7,7 @@
       "placeholderContent": "export type Collection<T, _> = Array<T>;"
     }
   ],
-  "sdkOutput": "app/sdk",
-  "configScriptPath": "app/src/config.ts",
-  "configNameToImport": "config",
-  "verbosity": "verbose"
+  "sdkOutput": "front/src/sdk",
+  "configScriptPath": "front/src/sdk-config.ts",
+  "configNameToImport": "config"
 }

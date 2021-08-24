@@ -1,7 +1,7 @@
 import { Controller, Get, Inject } from '@nestjs/common'
 import { ArticleService } from './article.service'
 
-@Controller()
+@Controller('article')
 export class ArticleController {
   @Inject()
   private readonly articleService!: ArticleService
