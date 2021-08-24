@@ -1,6 +1,6 @@
 import * as chalk from 'chalk'
 import * as fs from 'fs'
-import { formatAdvanced, matchString, None, panic, TSCoreEnvUpdater } from 'typescript-core'
+import { formatAdvanced, matchString, None, panic, Stringifyable, TSCoreEnvUpdater } from 'typescript-core'
 import { config } from './config-loader'
 
 export const tsCoreEnv: TSCoreEnvUpdater = (prev) => ({
@@ -68,8 +68,14 @@ export const tsCoreEnv: TSCoreEnvUpdater = (prev) => ({
       panic(`Internal error: unknown color ${chalk.magentaBright(color)}`)
     }
 
-    // @ts-ignore
-    return config.mapKeyOr('noColor', false) ? param.toString() : chalk[color](param.toString())
+    const text = (param as Stringifyable).toString()
+
+    if (config.mapKey('noColor').unwrapOr(None()).unwrapOr(false)) {
+      return text
+    } else {
+      // @ts-ignore
+      return chalk[color](text)
+    }
   },
 
   panicWatcher: (message, params) => {
