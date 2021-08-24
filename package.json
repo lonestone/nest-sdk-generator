@@ -1,5 +1,5 @@
 {
-  "name": "nestjs-sdk-generator",
+  "name": "nsdkgen",
   "author": "Clément Eraud <clement.eraud@lonestone.studio>",
   "license": "ISC",
   "version": "1.0.0",

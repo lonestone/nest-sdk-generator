@@ -1,4 +1,4 @@
-# SDK generator demo server
+# NSdkGen demo server
 
 To set up the demo server, simply run:
 

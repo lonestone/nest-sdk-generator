@@ -79,7 +79,7 @@ export const tsCoreEnv: TSCoreEnvUpdater = (prev) => ({
   },
 
   panicWatcher: (message, params) => {
-    console.error(chalk.red('SDK generator panicked: ' + formatAdvanced(message, params, 'panic')))
+    console.error(chalk.red('NSdkGen panicked: ' + formatAdvanced(message, params, 'panic')))
     process.exit(1)
   },
 

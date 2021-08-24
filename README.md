@@ -1,6 +1,6 @@
-# Nest.js SDK Generator
+# NSdkGen - A Nest.js SDK generator
 
-The Nest.js SDK Generator is a tool that aims to build a SDK for client applications to consume a Nest.js server's API.
+The Nest.js NSdkGen is a tool that aims to build a SDK for client applications to consume a Nest.js server's API.
 
 The project is split in two parts:
 
@@ -9,7 +9,7 @@ The project is split in two parts:
 
 **Table of contents:**
 
-- [What is the SDK generator and why should I use it?](#what-is-the-sdk-generator-and-why-should-i-use-it)
+- [What is NSdkGen and why should I use it?](#what-is-nsdkgen-and-why-should-i-use-it)
 - [Features](#features)
 - [Instructions](#instructions)
 - [Limitations](#limitations)
@@ -29,9 +29,9 @@ The project is split in two parts:
   - [Can I add header or other data on-the-fly when making requests?](#can-i-add-header-or-other-data-on-the-fly-when-making-requests)
   - [Is there a way to log the requests or responses somewhere?](#is-there-a-way-to-log-the-requests-or-responses-somewhere)
 
-## What is the SDK generator and why should I use it?
+## What is NSdkGen and why should I use it?
 
-The SDK generator is a tool that creates a client-side SDK based on a Nest.js REST API. The SDK can be used to call the API's routes seamlessly without any friction, and also enforces type safety by typing all parameters and return values based on the API itself.
+NSdkGen is a tool that creates a client-side SDK based on a Nest.js REST API. The SDK can be used to call the API's routes seamlessly without any friction, and also enforces type safety by typing all parameters and return values based on the API itself.
 
 This brings several advantages, including:
 
@@ -61,11 +61,11 @@ The generator also allows you to (re-)generate a full SDK in seconds with a sing
 
 ## Limitations
 
-The SDK generator comes with a set of limitations which can find below:
+NSdkGen comes with a set of limitations which can find below:
 
-1. The SDK generator does not check if the source files compile correctly. Therefore, if you try to use a type that doesn't exist, the generation may still succeed although compiling the code would fail. In such case, the resulting output type is `any`.
+1. NSdkGen does not check if the source files compile correctly. Therefore, if you try to use a type that doesn't exist, the generation may still succeed although compiling the code would fail. In such case, the resulting output type is `any`.
 
-2. A current limitation of the SDK generator is that it finds a controller's module by looking for a `.module.ts` file in the current directory, and parent directories if none is found in the controller's one. This means controller files must be put under a module's directory, and two module files cannot be put in the same directory.
+2. A current limitation of NSdkGen is that it finds a controller's module by looking for a `.module.ts` file in the current directory, and parent directories if none is found in the controller's one. This means controller files must be put under a module's directory, and two module files cannot be put in the same directory.
 
 3. Types belonging to namespaces are currently not supported and will result in error in the generated code
 
@@ -89,7 +89,7 @@ Methods return a typed `Promise<>` with the original method's return type.
 
 ## Architecture
 
-The SDK generator analyzes your Nest.js API using a provided configuration file, and produces a client-side SDK. This SDK is made of modules containing route methods that all call a central handler with the corresponding URI and parameters. The handler makes the request to the server and transmits the response. This is where you can customize the data to send to the server, if they need normalization, encryption, hashing, parsing, authentication, or anything else.
+NSdkGen analyzes your Nest.js API using a provided configuration file, and produces a client-side SDK. This SDK is made of modules containing route methods that all call a central handler with the corresponding URI and parameters. The handler makes the request to the server and transmits the response. This is where you can customize the data to send to the server, if they need normalization, encryption, hashing, parsing, authentication, or anything else.
 
 ## Step-by-step generation tutorial
 
@@ -228,11 +228,11 @@ const user: UserDTO = await userController.getOne({ id: 'some_id' })
 
 ### Does this replace Swagger?
 
-No, the SDK generator only generates a client-side SDK to make requests more easily to the server ; it doesn't generate a documentation by itself. Although all routes are organized with their original name and split across controllers and modules the same way they were in the API, that doesn't make a full documentation in itself.
+No, NSdkGen only generates a client-side SDK to make requests more easily to the server ; it doesn't generate a documentation by itself. Although all routes are organized with their original name and split across controllers and modules the same way they were in the API, that doesn't make a full documentation in itself.
 
 ### I have a GraphQL API, what can this project do for me?
 
-Unfortunately, the SDK generator isn't compatible with GraphQL API, and for a good reason: the whole point of this project is to bring structural typing to an API, but GraphQL already provides that. So there would be no point in this tool being compatible with GraphQL projects.
+Unfortunately, NSdkGen isn't compatible with GraphQL API, and for a good reason: the whole point of this project is to bring structural typing to an API, but GraphQL already provides that. So there would be no point in this tool being compatible with GraphQL projects.
 
 ### Does the SDK has any performance overhead?
 
