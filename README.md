@@ -48,14 +48,8 @@ The generator also allows you to (re-)generate a full SDK in seconds with a sing
 - Full support for idiomatic Nest.js modules and controllers
 - Recursive extraction of types controllers depend on, including types located in `node_modules`
 - Can extract classes, interfaces, enumerations and type aliases
-- Supports inheritance and implementation constraints (`extends X` and `implements Y`)
-- Built with tree-shaking in mind
 - Fully compatible with WSL, even if packages are installed using symbolic links from Windows
 - Compatible with alternative package managers like PNPM
-- SDK makes requests through a shared, configurable Axios instance
-- Minimal configuration (only the API's url is mandatory)
-- Less than 2k lines of code unminified
-- Complete logging options
 - Extremely detailed output by default for easier debugging in case of errors
 - Tree-shaking so the compiled code will only contain the methods you use from the generated SDK, no matter its size
 
