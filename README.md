@@ -69,7 +69,7 @@ The SDK generator comes with a set of limitations which can find below:
 
 3. Types belonging to namespaces are currently not supported and will result in error in the generated code
 
-4. Due to limitations of the TypeScript compiler, importing from the project's root (e.g. `import { SomeType } from "src/file.ts"`) will result in an `any` type at generation, because such types are not recognized when manipulating types
+4. Due to limitations of the TypeScript compiler, importing from the project's root (e.g. `import { SomeType } from "src/file.ts"` instead of `import { SomeType } from "../file.ts"`) will result in an `any` type at generation, because such types are not recognized when manipulating types
 
 5. Due to limitations of the TypeScript compiler, all dependent types must be declared in separate files. For instance, if a type `A` has a property of type `B`, `B` must be declared in another file. The opposite will result in invalid code at generation
 
