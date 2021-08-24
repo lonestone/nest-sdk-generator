@@ -11,21 +11,26 @@ import { findPrettierConfig, prettify } from './prettier'
 export default async function generatorCli(config: Config, sdkContent: SdkContent): Promise<void> {
   const started = Date.now()
 
-  if (config.prettify) {
-    debug("NOTE: '--prettify' option was provided, files will be prettified with Prettier")
+  const prettifyOutput = config.dontPrettify.match({
+    Some: (dont) => !dont,
+    None: () => true,
+  })
+
+  if (!prettifyOutput) {
+    debug('NOTE: files will not be prettified with Prettier')
   }
 
   const output = path.resolve(process.cwd(), config.sdkOutput)
 
   if (fs.existsSync(output)) {
-    if (config.removeOldOutputDir.unwrapOr(false)) {
+    if (config.dontOverwriteOldOutputDir.unwrapOr(false)) {
+      panic("Please provide an output directory that doesn't exist yet")
+    } else {
       if (!fs.existsSync(path.join(output, 'central.ts'))) {
         panic("Provided output path exists but doesn't seem to contain an SDK output. Please check the output directory.")
       } else {
         fs.rmSync(output, { recursive: true })
       }
-    } else {
-      panic("Please provide an output directory that doesn't exist yet")
     }
   }
 
@@ -42,12 +47,12 @@ export default async function generatorCli(config: Config, sdkContent: SdkConten
     fs.mkdirSync(path.dirname(fullPath), { recursive: true })
     fs.writeFileSync(
       fullPath,
-      config.prettify ? prettify(utf8Content, prettierConfig, file.endsWith('.json') ? 'json' : 'typescript') : utf8Content,
+      prettifyOutput ? prettify(utf8Content, prettierConfig, file.endsWith('.json') ? 'json' : 'typescript') : utf8Content,
       'utf8'
     )
   }
 
-  const prettierConfig = config.prettify ? findPrettierConfig(config) : None<JsonValue>()
+  const prettierConfig = prettifyOutput ? findPrettierConfig(config) : None<JsonValue>()
 
   println('> Generating type files...')
 

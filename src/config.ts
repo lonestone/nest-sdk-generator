@@ -11,11 +11,12 @@ export interface Config {
   readonly sdkOutput: string
   readonly configScriptPath: string
   readonly configNameToImport: Option<string>
-  readonly prettify: boolean
   readonly jsonOutput: Option<string>
   readonly jsonPrettyOutput: Option<boolean>
   readonly prettierConfig: Option<string>
-  readonly removeOldOutputDir: Option<boolean>
+
+  readonly dontPrettify: Option<boolean>
+  readonly dontOverwriteOldOutputDir: Option<boolean>
 }
 
 export interface MagicType {
@@ -43,9 +44,10 @@ export const configDecoder: JsonDecoder<Config> = j.mapped({
   sdkOutput: j.string,
   configScriptPath: j.string,
   configNameToImport: j.optional(j.string),
-  prettify: j.boolean,
   prettierConfig: j.optional(j.string),
   jsonOutput: j.optional(j.string),
   jsonPrettyOutput: j.optional(j.boolean),
-  removeOldOutputDir: j.optional(j.boolean),
+
+  dontOverwriteOldOutputDir: j.optional(j.boolean),
+  dontPrettify: j.optional(j.boolean),
 })

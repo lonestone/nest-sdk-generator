@@ -10,7 +10,5 @@
   "sdkOutput": "app/sdk",
   "configScriptPath": "app/src/config.ts",
   "configNameToImport": "config",
-  "prettify": true,
-  "removeOldOutputDir": true,
   "verbosity": "verbose"
 }
