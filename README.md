@@ -16,8 +16,6 @@ The project is split in two parts:
 - [Using the SDK](#using-the-sdk)
 - [Step-by-step generation tutorial](#step-by-step-generation-tutorial)
     - [Typing the configuration object](#typing-the-configuration-object)
-    - [Exporting configuration from an existing file](#exporting-configuration-from-an-existing-file)
-    - [Clean the output directory automatically](#clean-the-output-directory-automatically)
     - [Recommandations](#recommandations)
 - [SDK usage](#sdk-usage)
     - [Importing API types](#importing-api-types)
@@ -118,20 +116,65 @@ Let's suppose we have a monorepo, with our server being in `apps/api` and runnin
 
 We want the SDK to be located in `apps/front/sdk`.
 
-First, we must create a configuration file. Let's put it in `apps/front/sdk-config.ts`:
+First, we must create a configuration file. Let's put it in `sdkgen-config.json` in the root directory:
 
-```typescript
-export default {
-  apiUrl: 'http://localhost:3000',
+```json
+{
+  "apiInputPath": "apps/server/src",
+  "magicTypes": [
+    {
+      "nodeModuleFilePath": "@mikro-orm/core/entity/Collection.d.ts",
+      "typeName": "Collection",
+      "placeholderContent": "export type Collection<T, _> = Array<T>;"
+    }
+  ],
+  "sdkOutput": "apps/front/sdk",
+  "configScriptPath": "apps/front/src/sdk-config.ts",
+  "configNameToImport": "config",
+  "prettify": true,
+  "verbosity": "verbose"
 }
 ```
 
-Given the SDK will be located in `apps/front/sdk`, our configuration file is, relatively to the SDK, `../sdk-config.ts`.
+Now we have to create a SDK configuration file, in `apps/front/src/sdk-config.ts` (for the sake of this tutorial we'll use Axios to make the requests simply):
+
+```typescript
+import { AxiosRequestConfig, default as axios } from 'axios'
+
+// Base Axios configuration, used for all requests
+const axiosConfig: AxiosRequestConfig = {
+  baseURL: 'http://localhost:3000',
+}
+
+// SDK configuration
+export const config = {
+  // The method that is called on every request
+  handler: async ({ method, uri, query, body }) => {
+    // Axios configuration to use
+    const reqConfig = { ...axiosConfig, params: query }
+
+    // Make a request and get the server's response
+    const res = method === 'get' || method === 'delete' ? axios[method](uri, reqConfig) : axios[method](uri, body, reqConfig)
+
+    try {
+      // Try to wait for the server's response and get the returned data
+      return (await res).data
+    } catch (error) {
+      // If it failed, catch the error
+      if (!error.response) {
+        console.error('Unknown error happened: ' + error.code)
+      } else {
+        console.error(`Request failed: ${error.response.status} - ${error.response.data?.message ?? error.response.statusText}`)
+      }
+    }
+  },
+}
+```
 
 Let's now generate the SDK:
 
 ```shell
-nsdkgen generate apps/api apps/front/sdk -c ../sdk-config.ts
+nsdkgen generate generator-config.json
 ```
 
 We now have a `apps/front/sdk` directory with our SDK inside!
@@ -141,38 +184,10 @@ We now have a `apps/front/sdk` directory with our SDK inside!
 Note, if you want to get strict typing for the configuration object, you can generate the SDK a first time and then add in your file:
 
 ```typescript
-import { CentralConfig } from './sdk/central'
+import { CentralConfig } from '../sdk/central'
 
-const config: CentralConfig = {
-  apiUrl: 'http://localhost:3000',
-}
-
-export default config
+const config: CentralConfig = // ...
 ```
-
-#### Exporting configuration from an existing file
-
-It's also possible to export the object from an existing file, using the `-n` option which indicates to not get the configuration from the file's `default` export, but from a named export:
-
-```typescript
-import { CentralConfig } from './sdk/central'
-
-export const config: CentralConfig = {
-  apiUrl: 'http://localhost:3000',
-}
-```
-
-```shell
-nsdkgen generate apps/api apps/front/sdk -c ../sdk-config.ts -n config
-```
-
-#### Clean the output directory automatically
-
-By default, generating the SDK requires the output path to not exist yet, in order to avoid garbage files from a previous generation.
-
-You can force automatic removal of the previous output directory with the `-r` parameter.
-
-Note that the removal will fail if either `nsdk.json` or `central.ts` are not found, as these are files always generated for the SDK, in order to avoid removing the directory if you specified a wrong path by accident.
 
 #### Recommandations
 
