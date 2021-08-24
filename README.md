@@ -86,8 +86,6 @@ Methods return a typed `Promise<>` with the original method's return type.
 - If the requests succeeds and returns a valid JSON string, it is parse and returned by the method
 - If the requests fail or cannot be decoded correctly, the promise fails with an `AxiosResponse` object
 
-**WARNING:** As TypeScript does not allow derive macros or interface validations, although methods will return an object typed like the original method, no verification is performed when the response is received to ensure weither the response's JSON content matches the intended interface.
-
 ## Step-by-step generation tutorial
 
 Generating a SDK is made in two steps:
