@@ -1,9 +1,10 @@
 import { EntityRepository } from '@mikro-orm/core'
 import { InjectRepository } from '@mikro-orm/nestjs'
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
 import { Article } from '../article/article.entity'
 import { Category } from './category.entity'
 import { CategoryCreateDTO } from './dtos/category-create.dto'
+import { CategoryUpdateDTO } from './dtos/category-update.dto'
 
 @Injectable()
 export class CategoryService {
@@ -13,6 +14,16 @@ export class CategoryService {
   @InjectRepository(Article)
   private readonly articleRepo!: EntityRepository<Article>
 
+  private async getOrFail(id: string): Promise<Category> {
+    const category = await this.categoryRepo.findOne(id)
+
+    if (!category) {
+      throw new NotFoundException('Provided author ID was not found')
+    }
+
+    return category
+  }
+
   async getAll(): Promise<Category[]> {
     return this.categoryRepo.findAll()
   }
@@ -21,13 +32,8 @@ export class CategoryService {
     return this.categoryRepo.findOne({ title })
   }
 
-  async articles(categoryId: string): Promise<Article[]> {
-    const category = await this.categoryRepo.findOne(categoryId)
-
-    if (!category) {
-      throw new BadRequestException('Category not found')
-    }
-
+  async articles(id: string): Promise<Article[]> {
+    const category = await this.getOrFail(id)
     return this.articleRepo.find({ category })
   }
 
@@ -41,5 +47,20 @@ export class CategoryService {
     await this.categoryRepo.persistAndFlush(category)
 
     return category
+  }
+
+  async update(id: string, dto: CategoryUpdateDTO): Promise<Category> {
+    const category = await this.getOrFail(id)
+
+    category.title = dto.title
+
+    await this.categoryRepo.persistAndFlush(category)
+
+    return category
+  }
+
+  async delete(id: string) {
+    const category = await this.getOrFail(id)
+    await this.categoryRepo.removeAndFlush(category)
   }
 }

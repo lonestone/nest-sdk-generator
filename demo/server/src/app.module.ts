@@ -2,11 +2,11 @@ import { MikroOrmModule } from '@mikro-orm/nestjs'
 import { Module } from '@nestjs/common'
 import options from './mikro-orm.config'
 import { ArticleModule } from './modules/article/article.module'
+import { AuthorModule } from './modules/author/author.module'
 import { CategoryModule } from './modules/category/category.module'
-import { UserModule } from './modules/user/user.module'
 
 @Module({
-  imports: [MikroOrmModule.forRoot(options), UserModule, ArticleModule, CategoryModule],
+  imports: [MikroOrmModule.forRoot(options), AuthorModule, ArticleModule, CategoryModule],
   controllers: [],
   providers: [],
 })

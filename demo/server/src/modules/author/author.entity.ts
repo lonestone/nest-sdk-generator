@@ -3,9 +3,9 @@ import { v4 } from 'uuid'
 import { Article } from '../article/article.entity'
 
 @Entity()
-export class User {
+export class Author {
   @PrimaryKey({ type: 'string' })
-  uuid = v4()
+  id = v4()
 
   @Property({ unique: true })
   username!: string

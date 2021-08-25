@@ -1,12 +1,12 @@
 import { Entity, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core'
 import { v4 } from 'uuid'
+import { Author } from '../author/author.entity'
 import { Category } from '../category/category.entity'
-import { User } from '../user/user.entity'
 
 @Entity()
 export class Article {
   @PrimaryKey({ type: 'string' })
-  uuid = v4()
+  id = v4()
 
   @Property()
   title!: string
@@ -17,8 +17,8 @@ export class Article {
   @Property()
   content!: string
 
-  @ManyToOne(() => User)
-  author!: User
+  @ManyToOne(() => Author)
+  author!: Author
 
   @ManyToOne(() => Category)
   category!: Category
