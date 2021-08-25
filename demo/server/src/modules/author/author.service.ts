@@ -60,7 +60,9 @@ export class AuthorService {
   async update(id: string, dto: AuthorUpdateDTO): Promise<Author> {
     const author = await this.getOrFail(id)
 
-    author.displayName = dto.displayName
+    if (dto.displayName != null) {
+      author.displayName = dto.displayName
+    }
 
     await this.authorRepo.persistAndFlush(author)
 

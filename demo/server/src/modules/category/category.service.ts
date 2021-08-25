@@ -52,7 +52,9 @@ export class CategoryService {
   async update(id: string, dto: CategoryUpdateDTO): Promise<Category> {
     const category = await this.getOrFail(id)
 
-    category.title = dto.title
+    if (dto.title != null) {
+      category.title = dto.title
+    }
 
     await this.categoryRepo.persistAndFlush(category)
 
