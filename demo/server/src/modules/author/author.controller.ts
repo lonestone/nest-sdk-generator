@@ -14,16 +14,6 @@ export class AuthorController {
     return this.authorService.getAll()
   }
 
-  @Get('by-username/:username')
-  getByUsername(@Param('username') username: string) {
-    return this.authorService.getByEmail(username)
-  }
-
-  @Get('by-email/:email')
-  getByEmail(@Param('email') email: string) {
-    return this.authorService.getByEmail(email)
-  }
-
   @Get(':id/articles')
   articles(@Param('id') id: string) {
     return this.authorService.articles(id)

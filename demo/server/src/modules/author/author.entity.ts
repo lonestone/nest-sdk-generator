@@ -7,12 +7,6 @@ export class Author {
   @PrimaryKey({ type: 'string' })
   id = v4()
 
-  @Property({ unique: true })
-  username!: string
-
-  @Property({ unique: true })
-  email!: string
-
   @Property()
   displayName!: string
 
