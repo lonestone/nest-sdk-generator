@@ -89,6 +89,12 @@ export function resolveTypeDependencies(
   })
 }
 
+/**
+ * Extract an import type's name from a TS-Morph type
+ * @example "import('dir/file').TypeName" => "TypeName"
+ * @param type
+ * @returns
+ */
 export function getImportResolvedType(type: Type<ts.Type>): string {
   return type.getText().replace(IMPORTED_TYPE_REGEX, (_, __, typename) => typename)
 }
