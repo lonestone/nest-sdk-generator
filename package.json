@@ -1,5 +1,5 @@
 {
-  "name": "nsdkgen",
+  "name": "nest-sdk-generator",
   "author": "Clément Eraud <clement.eraud@lonestone.studio>",
   "license": "ISC",
   "version": "1.0.0",
@@ -11,7 +11,6 @@
     "build": "tsc -p tsconfig.json --outDir build",
     "start-built": "node build/bin.js",
     "start": "npm run build && node build/bin.js",
-    "lint": "eslint --ext .tsx,.ts src/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": "./build/bin.js",
