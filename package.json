@@ -1,6 +1,6 @@
 {
   "name": "nest-sdk-generator",
-  "author": "Clément Eraud <clement.eraud@lonestone.studio>",
+  "author": "Lonestone <contact@lonestone.io>",
   "license": "ISC",
   "version": "1.0.0",
   "description": "A full-powered SDK generator for NestJS\"",
