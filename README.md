@@ -11,6 +11,7 @@ The project is split in two parts:
 
 - [What is NSdkGen and why should I use it?](#what-is-nsdkgen-and-why-should-i-use-it)
 - [Features](#features)
+- [Examples](#examples)
 - [Instructions](#instructions)
 - [Limitations](#limitations)
 - [Using the SDK](#using-the-sdk)
@@ -53,6 +54,10 @@ The generator also allows you to (re-)generate a full SDK in seconds with a sing
 - Compatible with alternative package managers like PNPM
 - Extremely detailed output by default for easier debugging in case of errors
 - Tree-shaking so the compiled code will only contain the methods you use from the generated SDK, no matter its size
+
+## Examples
+
+You can find a demonstration API in the [`demo/server`](demo/server) directory, as well as a frontend using a SDK based on this API in [`demo/front`](demo/front). The SDK configuration is located in [`demo/nsdkgen.json`](demo/nsdkgen.json).
 
 ## Instructions
 
