@@ -9,8 +9,6 @@ import { generateSdkTypeFiles } from './gentypes'
 import { findPrettierConfig, prettify } from './prettier'
 
 export default async function generatorCli(config: Config, sdkContent: SdkContent): Promise<void> {
-  const started = Date.now()
-
   const prettifyOutput = config.dontPrettify.match({
     Some: (dont) => !dont,
     None: () => true,
@@ -69,6 +67,4 @@ export default async function generatorCli(config: Config, sdkContent: SdkConten
   const configScriptPath = path.resolve(process.cwd(), config.configScriptPath)
 
   writeScriptTo(null, 'central.ts', CENTRAL_FILE(path.relative(output, configScriptPath), config.configNameToImport))
-
-  println('{green}', '@ Done in ' + ((Date.now() - started) / 1000).toFixed(2) + 's')
 }
