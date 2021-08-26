@@ -1,7 +1,7 @@
 import * as chalk from 'chalk'
 import * as fs from 'fs'
 import * as path from 'path'
-import { debug, format, JsonValue, None, Option, println, Some, warn } from 'typescript-core'
+import { debug, format, panic, println, warn } from './logging'
 
 /**
  * Find a file in the current directory or one of its parents
@@ -12,30 +12,37 @@ import { debug, format, JsonValue, None, Option, println, Some, warn } from 'typ
 export function findJsonConfig(
   name: string,
   dir: string
-): Option<{
+): {
   path: string
-  content: JsonValue
-}> {
+  content: object
+} | null {
   debug('Looking for a {yellow} file...', `"${name}"`)
 
   const fpath = findFileAbove(name, dir)
 
-  if (fpath.isNone()) {
+  if (fpath === null) {
     warn('File was not found in destination directory or its parents.')
-    return None()
+    return null
   }
 
-  println(chalk.green(format('{green} {magentaBright} {green} {yellow}', 'Found file', name, 'at path:', fpath.data)))
+  println(chalk.green(format('{green} {magentaBright} {green} {yellow}', 'Found file', name, 'at path:', fpath)))
 
-  return Some({
-    path: fpath.data,
-    content: JsonValue.parse(fs.readFileSync(fpath.data, 'utf8')).unwrapWith(
-      (err) => `Failed to parse file "${name}" at "${dir}": ${err.message}`
-    ),
-  })
+  let text = fs.readFileSync(fpath, 'utf8')
+  let content: object
+
+  try {
+    content = JSON.parse(text)
+  } catch (err) {
+    panic(`Failed to parse file "${name}" at "${dir}": ${err.message}`)
+  }
+
+  return {
+    path: fpath,
+    content,
+  }
 }
 
-export function findFileAbove(pattern: string | RegExp, dir: string): Option<string> {
+export function findFileAbove(pattern: string | RegExp, dir: string): string | null {
   if (!path.isAbsolute(dir)) {
     // Get an absolute path to allow getting its parent using path.dirname()
     dir = path.resolve(process.cwd(), dir)
@@ -56,14 +63,14 @@ export function findFileAbove(pattern: string | RegExp, dir: string): Option<str
 
     // If the path is empty or equal to the previous path, we reached the top-level directory
     if (!dir || prevDir === dir) {
-      return None()
+      return null
     }
 
     prevDir = dir
   }
 
   // Success!
-  return Some(path.resolve(dir, items[0]))
+  return path.resolve(dir, items[0])
 }
 
 /**

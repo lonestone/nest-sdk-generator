@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import { JsonValue, MaybeUninit, panic } from 'typescript-core'
-import { Config, configDecoder } from './config'
+import { Config } from './config'
+import { panic } from './logging'
 
 /**
  * Load an existing configuration file and decode it
@@ -13,9 +13,14 @@ export function loadConfigFile(configPath: string): Config {
   }
 
   const text = fs.readFileSync(configPath, 'utf8')
-  const json = JsonValue.parse(text).unwrap()
 
-  return config.init(json.decode(configDecoder).unwrap())
+  try {
+    config = JSON.parse(text)
+  } catch (e) {
+    panic('Failed to parse configuration file: ' + e)
+  }
+
+  return config
 }
 
-export const config = new MaybeUninit<Config>()
+export let config: Config = loadConfigFile(process.argv[3] ?? panic('Please provide a path to the configuration file'))

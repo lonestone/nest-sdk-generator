@@ -5,9 +5,9 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import { Project } from 'ts-morph'
-import { debug, format, JsonValue, panic } from 'typescript-core'
 import { Config } from '../config'
 import { findFilesRecursive, findJsonConfig } from '../fileUtils'
+import { debug, panic } from '../logging'
 import { analyzeControllers, SdkModules } from './controllers'
 import { flattenSdkResolvedTypes, locateTypesFile, TypesExtractor, TypesExtractorContent } from './extractor'
 
@@ -34,20 +34,22 @@ export async function analyzerCli(config: Config): Promise<SdkContent> {
 
   debug(`Analyzing from source directory {yellow}`, sourcePath)
 
-  if (config.jsonOutput.isSome()) {
-    const jsonOutputParentDir = path.dirname(path.resolve(process.cwd(), config.jsonOutput.data))
+  if (config.jsonOutput) {
+    const jsonOutputParentDir = path.dirname(path.resolve(process.cwd(), config.jsonOutput))
 
     if (!fs.existsSync(jsonOutputParentDir)) {
       panic("Output file's parent directory {magentaBright} does not exist.", jsonOutputParentDir)
     }
 
-    debug('Writing output to {yellow}', config.jsonOutput.data, config.jsonPrettyOutput ? 'beautified' : 'minified')
+    debug('Writing output to {yellow}', config.jsonOutput, config.jsonPrettyOutput ? 'beautified' : 'minified')
   }
 
   // ====== Find & parse 'tsconfig.json' ====== //
-  const tsConfig = findJsonConfig('tsconfig.json', sourcePath).unwrapWith(() =>
-    format('No {yellow} file found in provided source path {yellow}', 'tsconfig.json', sourcePath)
-  )
+  const tsConfig = findJsonConfig('tsconfig.json', sourcePath)
+
+  if (!tsConfig) {
+    panic('No {yellow} file found in provided source path {yellow}', 'tsconfig.json', sourcePath)
+  }
 
   debug('Found {yellow} file at {yellow}', 'tsconfig.json', tsConfig.path)
 
@@ -104,7 +106,11 @@ export async function analyzerCli(config: Config): Promise<SdkContent> {
   debug('\n==== Extracting {} type' + (typesToExtract.length > 1 ? 's' : '') + ' ====\n', typesToExtract.length)
 
   for (const loc of typesToExtract) {
-    typesCache.extractType(loc).unwrap()
+    const result = typesCache.extractType(loc)
+
+    if (result instanceof Error) {
+      panic(result.message)
+    }
   }
 
   const content: SdkContent = {
@@ -112,12 +118,10 @@ export async function analyzerCli(config: Config): Promise<SdkContent> {
     types: typesCache.extracted,
   }
 
-  if (config.jsonOutput.isSome()) {
+  if (config.jsonOutput) {
     fs.writeFileSync(
-      config.jsonOutput.data,
-      JsonValue.stringify(content, config.jsonPrettyOutput.unwrapOr(false) ? 4 : 0).unwrapWith(
-        (err) => err.error + ' | at:\n' + err.path.join('\n ')
-      ),
+      config.jsonOutput,
+      JSON.stringify(content, (_, v) => (v instanceof Map ? Object.fromEntries(v) : v), config.jsonPrettyOutput ? 4 : 0),
       'utf8'
     )
   }

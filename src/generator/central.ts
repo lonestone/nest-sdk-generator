@@ -2,14 +2,10 @@
  * @file This file is the generator for Central, the main request interface used by all of the generated SDK's route methods
  */
 
-import { Option } from 'typescript-core'
-
-export const CENTRAL_FILE = (relativePath: string, nameToImport: Option<string>) =>
+export const CENTRAL_FILE = (relativePath: string, nameToImport: string | null) =>
   `
 
-import { ${nameToImport.unwrapOr('default')} as importedCentralConfig } from "${relativePath
-    .replace(/\\/g, '/')
-    .replace(/\.([jt]sx?)$/, '')}"
+import { ${nameToImport ?? 'default'} as importedCentralConfig } from "${relativePath.replace(/\\/g, '/').replace(/\.([jt]sx?)$/, '')}"
 
 export type CentralMethodType = 'get' | 'post' | 'put' | 'patch' | 'delete'
 

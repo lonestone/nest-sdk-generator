@@ -3,24 +3,9 @@
  */
 
 import * as path from 'path'
-import { Node, Project } from 'ts-morph'
-import {
-  debug,
-  dump,
-  ErrMsg,
-  List,
-  ListLike,
-  None,
-  Ok,
-  Option,
-  RecordDict,
-  Result,
-  Some,
-  unimplemented,
-  unreachable,
-  warn,
-} from 'typescript-core'
+import { Node, Project, SourceFile } from 'ts-morph'
 import { MagicType } from '../config'
+import { debug, format, panic, unreachable, warn } from '../logging'
 import { analyzeClassDeps } from './classdeps'
 import { SdkModules } from './controllers'
 import { getImportResolvedType, ResolvedTypeDeps, resolveTypeDependencies } from './typedeps'
@@ -43,53 +28,65 @@ export interface ExtractedType extends TypeLocationWithExt {
 }
 
 // Maps files to records mapping themselves type names to their declaration code
-export type TypesExtractorContent = RecordDict<RecordDict<ExtractedType>>
+export type TypesExtractorContent = Map<string, Map<string, ExtractedType>>
 
 export class TypesExtractor {
   constructor(
     public readonly project: Project,
     public readonly absoluteSrcPath: string,
     public readonly magicTypes: Array<MagicType>,
-    public readonly extracted: TypesExtractorContent = new RecordDict()
+    public readonly extracted: TypesExtractorContent = new Map()
   ) {}
 
   hasExtractedType(loc: TypeLocationWithExt): boolean {
-    return this.extracted
-      .get(loc.relativePath)
-      .map((files) => files.has(loc.typename))
-      .unwrapOr(false)
+    const files = this.extracted.get(loc.relativePath)
+    return files ? files.has(loc.typename) : false
   }
 
-  getExtractedType(loc: TypeLocationWithExt): Option<ExtractedType> {
-    return this.extracted.get(loc.relativePath).andThen((files) => files.get(loc.typename))
+  getExtractedType(loc: TypeLocationWithExt): ExtractedType | null {
+    return this.extracted.get(loc.relativePath)?.get(loc.typename) ?? null
   }
 
-  guessExtractedTypeExt(loc: TypeLocation): Option<string> {
+  guessExtractedTypeExt(loc: TypeLocation): string | null {
     for (const ext of MODULE_EXTENSIONS) {
       if (this.extracted.has(loc.relativePathNoExt + ext)) {
-        return Some(loc.relativePathNoExt + ext)
+        return loc.relativePathNoExt + ext
       }
     }
 
-    return None()
+    return null
   }
 
-  findExtractedTypeWithoutExt(loc: TypeLocation): Option<ExtractedType> {
-    return Option.any(
-      MODULE_EXTENSIONS.map((ext) => () => this.extracted.get(loc.relativePathNoExt + ext).andThen((files) => files.get(loc.typename)))
-    )
+  findExtractedTypeWithoutExt(loc: TypeLocation): ExtractedType | null {
+    for (const ext of MODULE_EXTENSIONS) {
+      const typ = this.extracted.get(loc.relativePathNoExt + ext)?.get(loc.typename)
+
+      if (typ) {
+        return typ
+      }
+    }
+
+    return null
   }
 
   memorizeExtractedType(loc: TypeLocationWithExt, extracted: ExtractedType) {
-    this.extracted.getOrSet(loc.relativePath, new RecordDict()).getOrSet(loc.typename, extracted)
+    let files = this.extracted.get(loc.relativePath)
+
+    if (!files) {
+      files = new Map()
+      this.extracted.set(loc.relativePath, files)
+    }
+
+    if (!files.has(loc.typename)) {
+      files.set(loc.typename, extracted)
+    }
   }
 
-  findTypeRelativeFilePath(loc: TypeLocation): Result<string, string> {
+  findTypeRelativeFilePath(loc: TypeLocation): string | Error {
     if (path.isAbsolute(loc.relativePathNoExt)) {
       unreachable(
-        'Internal error: got absolute file path in types extractor, when expecting a relative one (got {magentaBright})\n{}',
-        loc.relativePathNoExt,
-        new Error('Failed')
+        'Internal error: got absolute file path in types extractor, when expecting a relative one (got {magentaBright})',
+        loc.relativePathNoExt
       )
     }
 
@@ -97,33 +94,34 @@ export class TypesExtractor {
 
     const cached = this.findExtractedTypeWithoutExt(loc)
 
-    if (cached.isSome()) {
-      return Ok(cached.data.relativePath)
+    if (cached) {
+      return cached.relativePath
     }
 
-    const tryFile = Result.any(
-      MODULE_EXTENSIONS.map(
-        (ext) => () => [this.project.getSourceFileOrThrow(absolutePathNoExt + ext), loc.relativePathNoExt + ext] as const
+    let relativeFilePath: string | null = null
+
+    for (const ext of MODULE_EXTENSIONS) {
+      try {
+        this.project.getSourceFileOrThrow(absolutePathNoExt + ext)
+        relativeFilePath = loc.relativePathNoExt + ext
+      } catch (e) {
+        continue
+      }
+    }
+
+    return (
+      relativeFilePath ??
+      new Error(
+        format('File {magenta} was not found (was expected to contain dependency type {yellow})', loc.relativePathNoExt, loc.typename)
       )
     )
-
-    if (tryFile.isErr()) {
-      return ErrMsg('File {magenta} was not found (was expected to contain dependency type {yellow})', loc.relativePathNoExt, loc.typename)
-    }
-
-    return Ok(tryFile.data[1])
   }
 
-  extractType(
-    loc: TypeLocation,
-    typesPath: string[] = []
-    //toExtractLater: Array<[TypeLocation, string[]]> = []
-  ): Result<ExtractedType, string> {
+  extractType(loc: TypeLocation, typesPath: string[] = []): ExtractedType | Error {
     if (path.isAbsolute(loc.relativePathNoExt)) {
       unreachable(
-        'Internal error: got absolute file path in types extractor, when expecting a relative one (got {magentaBright})\n{}',
-        loc.relativePathNoExt,
-        new Error('Failed')
+        'Internal error: got absolute file path in types extractor, when expecting a relative one (got {magentaBright})',
+        loc.relativePathNoExt
       )
     }
 
@@ -131,21 +129,27 @@ export class TypesExtractor {
 
     const cached = this.findExtractedTypeWithoutExt(loc)
 
-    if (cached.isSome()) {
-      return Ok(cached.data)
+    if (cached) {
+      return cached
     }
 
-    const tryFile = Result.any(
-      MODULE_EXTENSIONS.map(
-        (ext) => () => [this.project.getSourceFileOrThrow(absolutePathNoExt + ext), loc.relativePathNoExt + ext] as const
+    let fileAndPath: [SourceFile, string] | null = null
+
+    for (const ext of MODULE_EXTENSIONS) {
+      try {
+        fileAndPath = [this.project.getSourceFileOrThrow(absolutePathNoExt + ext), loc.relativePathNoExt + ext]
+      } catch (e) {
+        continue
+      }
+    }
+
+    if (!fileAndPath) {
+      return new Error(
+        format('File {magenta} was not found (was expected to contain dependency type {yellow})', loc.relativePathNoExt, loc.typename)
       )
-    )
-
-    if (tryFile.isErr()) {
-      return ErrMsg('File {magenta} was not found (was expected to contain dependency type {yellow})', loc.relativePathNoExt, loc.typename)
     }
 
-    const [file, relativeFilePath] = tryFile.data
+    const [file, relativeFilePath] = fileAndPath
 
     for (const magicType of this.magicTypes) {
       if (relativeFilePath.endsWith(`/node_modules/${magicType.nodeModuleFilePath}`) && loc.typename === magicType.typeName) {
@@ -167,9 +171,16 @@ export class TypesExtractor {
 
         typesPath.pop()
 
-        this.extracted.getOrSet(relativeFilePath, new RecordDict()).set(loc.typename, extracted)
+        let types = this.extracted.get(relativeFilePath)
 
-        return Ok(extracted)
+        if (!types) {
+          types = new Map()
+          this.extracted.set(relativeFilePath, types)
+        }
+
+        types.set(loc.typename, extracted)
+
+        return extracted
       }
     }
 
@@ -187,18 +198,20 @@ export class TypesExtractor {
     })
 
     if (!decl) {
-      return ErrMsg(`Type {yellow} was not found in file {magenta}`, loc.typename, relativeFilePath)
+      return new Error(format(`Type {yellow} was not found in file {magenta}`, loc.typename, relativeFilePath))
     }
 
-    this.findExtractedTypeWithoutExt(loc).ifSome((typ) => {
+    const typ = this.findExtractedTypeWithoutExt(loc)
+
+    if (typ) {
       if (typ.relativePath !== relativeFilePath) {
-        unimplemented(
+        panic(
           'Found two conflicting files at same path but with different extensions:\n> {magentaBright}\n> {magentaBright}',
           typ.relativePath,
           relativeFilePath
         )
       }
-    })
+    }
 
     let resolvedDeps: ResolvedTypeDeps[]
     let typeParams: string[]
@@ -207,44 +220,25 @@ export class TypesExtractor {
 
     // Handle enumerations
     if (Node.isEnumDeclaration(decl)) {
-      // TODO: Handle imported values such as `enum A { A = ExternalEnum.A }`
       resolvedDeps = []
       typeParams = []
     }
 
     // Handle type aliases
     else if (Node.isTypeAliasDeclaration(decl)) {
-      dump(decl.getText())
-      dump(decl.getChildren().map((child) => child.getFullText()))
-      dump(decl.getTypeNodeOrThrow().getText())
-      dump(decl.getTypeNodeOrThrow().getFullText())
-      dump(decl.getTypeNodeOrThrow().getType().getText())
-      process.exit(1) as any
-
-      const resolved = resolveTypeDependencies(decl.getType(), relativeFilePath, this.absoluteSrcPath)
-      if (resolved.isErr()) return resolved.asErr()
-
-      resolvedDeps = [resolved.data]
+      resolvedDeps = [resolveTypeDependencies(decl.getType(), relativeFilePath, this.absoluteSrcPath)]
       typeParams = []
     }
 
     // Handle interfaces
     else if (Node.isInterfaceDeclaration(decl)) {
-      const classDeps = analyzeClassDeps(decl, relativeFilePath, this.absoluteSrcPath)
-
-      if (classDeps.isErr()) return classDeps.asErr()
-
-      resolvedDeps = classDeps.data.values().collectArray()
+      resolvedDeps = analyzeClassDeps(decl, relativeFilePath, this.absoluteSrcPath)
       typeParams = decl.getTypeParameters().map((tp) => tp.getText())
     }
 
     // Handle classes
     // Methods are not handled because they shouldn't be used as DTOs and won't be decodable from JSON in all cases
     else if (Node.isClassDeclaration(decl)) {
-      const classDeps = analyzeClassDeps(decl, relativeFilePath, this.absoluteSrcPath)
-
-      if (classDeps.isErr()) return classDeps.asErr()
-
       const classHead = decl.getText().match(/\b(export[^{]+class[^{]+{)/)
 
       if (!classHead) {
@@ -268,7 +262,7 @@ export class TypesExtractor {
 
       extractedDecl += '\n}'
 
-      resolvedDeps = classDeps.data.values().collectArray()
+      resolvedDeps = analyzeClassDeps(decl, relativeFilePath, this.absoluteSrcPath)
       typeParams = decl.getTypeParameters().map((tp) => tp.getText())
     }
 
@@ -296,33 +290,32 @@ export class TypesExtractor {
         continue
       }
 
-      let fallibleRelativePath: Result<string, string>
+      let fallibleRelativePath: string | Error
 
       const cached = this.findExtractedTypeWithoutExt(dependencyLoc)
 
-      if (cached.isSome()) {
-        fallibleRelativePath = Ok(cached.data.relativePath)
+      if (cached) {
+        fallibleRelativePath = cached.relativePath
       } else if (typesPath.includes(dependencyLoc.typename)) {
         fallibleRelativePath = this.findTypeRelativeFilePath(dependencyLoc)
-
-        // if (!toExtractLater.find((entry) => entry[0].typename === dependencyLoc.typename)) {
-        //   toExtractLater.push([dependencyLoc, [...typesPath]])
-        // }
       } else {
-        fallibleRelativePath = this.extractType(dependencyLoc, typesPath /*, toExtractLater*/).map((ex) => ex.relativePath)
+        const extracted = this.extractType(dependencyLoc, typesPath)
+        fallibleRelativePath = extracted instanceof Error ? extracted : extracted.relativePath
       }
 
-      if (fallibleRelativePath.isErr()) {
-        return ErrMsg(
-          '> Failed to extract type {yellow} due to an error in dependency type {yellow}\nfrom file {magenta} :\n{}',
-          loc.typename,
-          dependencyLoc.typename,
-          relativeFilePath,
-          fallibleRelativePath.err.replace(/^/gm, '  ')
+      if (fallibleRelativePath instanceof Error) {
+        return new Error(
+          format(
+            '> Failed to extract type {yellow} due to an error in dependency type {yellow}\nfrom file {magenta} :\n{}',
+            loc.typename,
+            dependencyLoc.typename,
+            relativeFilePath,
+            fallibleRelativePath.message.replace(/^/gm, '  ')
+          )
         )
       }
 
-      dependencies.push({ ...dependencyLoc, relativePath: fallibleRelativePath.data })
+      dependencies.push({ ...dependencyLoc, relativePath: fallibleRelativePath })
     }
 
     const extracted: ExtractedType = {
@@ -335,26 +328,33 @@ export class TypesExtractor {
 
     typesPath.pop()
 
-    this.extracted.getOrSet(relativeFilePath, new RecordDict()).set(loc.typename, extracted)
+    let types = this.extracted.get(relativeFilePath)
 
-    return Ok(extracted)
+    if (!types) {
+      types = new Map()
+      this.extracted.set(relativeFilePath, types)
+    }
+
+    types.set(loc.typename, extracted)
+
+    return extracted
   }
 }
 
-export function locateTypesFile(resolvedTypes: ListLike<ResolvedTypeDeps>): List<TypeLocation> {
-  const out = new List<TypeLocation>()
+export function locateTypesFile(resolvedTypes: Array<ResolvedTypeDeps>): TypeLocation[] {
+  const out = new Array<TypeLocation>()
 
   for (const resolved of resolvedTypes) {
     for (const [file, types] of resolved.dependencies) {
       for (const typename of types) {
-        if (!out.findHas((loc) => loc.typename === typename && loc.relativePathNoExt === file)) {
+        if (!out.find((loc) => loc.typename === typename && loc.relativePathNoExt === file)) {
           out.push({ typename, relativePathNoExt: file })
         }
       }
     }
 
     for (const typename of resolved.localTypes) {
-      if (!out.findHas((loc) => loc.typename === typename && loc.relativePathNoExt === resolved.relativeFilePath)) {
+      if (!out.find((loc) => loc.typename === typename && loc.relativePathNoExt === resolved.relativeFilePath)) {
         out.push({ typename, relativePathNoExt: resolved.relativeFilePath })
       }
     }
@@ -363,29 +363,29 @@ export function locateTypesFile(resolvedTypes: ListLike<ResolvedTypeDeps>): List
   return out
 }
 
-export function flattenSdkResolvedTypes(sdkModules: SdkModules): List<ResolvedTypeDeps> {
-  const flattened = new List<ResolvedTypeDeps>()
+export function flattenSdkResolvedTypes(sdkModules: SdkModules): ResolvedTypeDeps[] {
+  const flattened = new Array<ResolvedTypeDeps>()
 
   for (const module of sdkModules.values()) {
     for (const controller of module.values()) {
-      // flattened.push(...controller.classDeps)
-
       for (const method of controller.methods.values()) {
+        const { arguments: args, query, body } = method.params
+
         flattened.push(method.returnType)
 
-        if (method.params.arguments.isSome()) {
-          flattened.push(...method.params.arguments.data.values())
+        if (args) {
+          flattened.push(...args.values())
         }
 
-        if (method.params.query.isSome()) {
-          flattened.push(...method.params.query.data.values())
+        if (query) {
+          flattened.push(...query.values())
         }
 
-        if (method.params.body.isSome()) {
-          if (method.params.body.data.full) {
-            flattened.push(method.params.body.data.type)
+        if (body) {
+          if (body.full) {
+            flattened.push(body.type)
           } else {
-            flattened.push(...method.params.body.data.fields.values())
+            flattened.push(...body.fields.values())
           }
         }
       }

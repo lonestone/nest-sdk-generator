@@ -3,29 +3,37 @@
  */
 
 import * as path from 'path'
-import { RecordDict } from 'typescript-core'
 import { TypesExtractorContent } from '../analyzer/extractor'
 
 // Returned codes are not formatted yet
-export function generateSdkTypeFiles(sdkTypes: TypesExtractorContent): RecordDict<string> {
-  const genFiles = new RecordDict<string>()
+export function generateSdkTypeFiles(sdkTypes: TypesExtractorContent): Map<string, string> {
+  const genFiles = new Map<string, string>()
 
   for (const [file, types] of sdkTypes) {
     const out = []
 
-    const imports = new RecordDict<string[]>()
+    const imports = new Map<string, string[]>()
 
     for (const extracted of types.values()) {
       for (const dep of extracted.dependencies) {
-        if (dep.relativePath !== file && !imports.get(dep.relativePathNoExt).mapOr((types) => types.includes(dep.typename), false)) {
-          imports.getOrSet(dep.relativePathNoExt, []).push(dep.typename)
+        if (dep.relativePath !== file) {
+          let imported = imports.get(dep.relativePathNoExt)
+
+          if (!imported) {
+            imported = [dep.typename]
+            imports.set(dep.relativePathNoExt, imported)
+          }
+
+          if (imported.includes(dep.typename)) {
+            imported.push(dep.typename)
+          }
         }
       }
     }
 
     out.push(
-      imports
-        .mapToArray((depFile, types) => {
+      [...imports]
+        .map(([depFile, types]) => {
           let depPath = path.relative(path.dirname(file), depFile).replace(/\\/g, '/')
           if (!depPath.includes('/')) depPath = './' + depPath
           return `import type { ${types.join(', ')} } from "${

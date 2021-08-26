@@ -43,10 +43,10 @@
   resolved "https://registry.yarnpkg.com/@types/minimist/-/minimist-1.2.2.tgz#ee771e2ba4b3dc5b372935d549fd9617bf345b8c"
   integrity sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==
 
-"@types/node@~16.7.1":
-  version "16.7.1"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.7.1.tgz#c6b9198178da504dfca1fd0be9b2e1002f1586f0"
-  integrity sha512-ncRdc45SoYJ2H4eWU9ReDfp3vtFqDYhjOsKlFFUDEn8V1Bgr2RjYal8YT5byfadWIRluhPFU6JiDOl0H6Sl87A==
+"@types/node@~16.7.2":
+  version "16.7.2"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.7.2.tgz#0465a39b5456b61a04d98bd5545f8b34be340cb7"
+  integrity sha512-TbG4TOx9hng8FKxaVrCisdaxKxqEwJ3zwHoCWXZ0Jw6mnvTInpaB99/2Cy4+XxpXtjNv9/TgfGSvZFyfV/t8Fw==
 
 "@types/prettier@^2.3.2":
   version "2.3.2"
@@ -241,11 +241,6 @@ ts-morph@~11.0.3:
   dependencies:
     "@ts-morph/common" "~0.10.1"
     code-block-writer "^10.1.1"
-
-typescript-core@^9.2.0:
-  version "9.2.0"
-  resolved "https://registry.yarnpkg.com/typescript-core/-/typescript-core-9.2.0.tgz#89fd0ebdf564786d4f90352cde111e4c3fd7b383"
-  integrity sha512-sW484qz+w2SkMXg8JlX8IEToNLAsJlqJMrVt/VYNPYiuffsZ2NJpvRsZLepqVzirCbncm0nOQGy3wFaeFejIiA==
 
 typescript@~4.3.5:
   version "4.3.5"

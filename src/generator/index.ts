@@ -4,19 +4,16 @@
 
 import * as fs from 'fs'
 import * as path from 'path'
-import { debug, JsonValue, None, panic, println } from 'typescript-core'
 import { SdkContent } from '../analyzer'
 import { Config } from '../config'
+import { debug, panic, println } from '../logging'
 import { CENTRAL_FILE } from './central'
 import { generateSdkModules } from './genmodules'
 import { generateSdkTypeFiles } from './gentypes'
 import { findPrettierConfig, prettify } from './prettier'
 
 export default async function generatorCli(config: Config, sdkContent: SdkContent): Promise<void> {
-  const prettifyOutput = config.dontPrettify.match({
-    Some: (dont) => !dont,
-    None: () => true,
-  })
+  const prettifyOutput = config.dontPrettify !== true
 
   if (!prettifyOutput) {
     debug('NOTE: files will not be prettified with Prettier')
@@ -25,7 +22,7 @@ export default async function generatorCli(config: Config, sdkContent: SdkConten
   const output = path.resolve(process.cwd(), config.sdkOutput)
 
   if (fs.existsSync(output)) {
-    if (config.dontOverwriteOldOutputDir.unwrapOr(false)) {
+    if (config.dontOverwriteOldOutputDir) {
       panic("Please provide an output directory that doesn't exist yet")
     } else {
       if (!fs.existsSync(path.join(output, 'central.ts'))) {
@@ -44,6 +41,8 @@ export default async function generatorCli(config: Config, sdkContent: SdkConten
 
   fs.mkdirSync(output)
 
+  const prettierConfig = prettifyOutput ? findPrettierConfig(config) : {}
+
   const writeScriptTo = (parentDir: null | string, file: string, utf8Content: string) => {
     const fullPath = path.resolve(output, parentDir ?? '', file)
     fs.mkdirSync(path.dirname(fullPath), { recursive: true })
@@ -53,8 +52,6 @@ export default async function generatorCli(config: Config, sdkContent: SdkConten
       'utf8'
     )
   }
-
-  const prettierConfig = prettifyOutput ? findPrettierConfig(config) : None<JsonValue>()
 
   println('> Generating type files...')
 
@@ -70,5 +67,5 @@ export default async function generatorCli(config: Config, sdkContent: SdkConten
 
   const configScriptPath = path.resolve(process.cwd(), config.configScriptPath)
 
-  writeScriptTo(null, 'central.ts', CENTRAL_FILE(path.relative(output, configScriptPath), config.configNameToImport))
+  writeScriptTo(null, 'central.ts', CENTRAL_FILE(path.relative(output, configScriptPath), config.configNameToImport ?? null))
 }

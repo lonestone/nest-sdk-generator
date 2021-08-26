@@ -2,8 +2,6 @@
  * @file Analyzer for the source API's routes in controller methods
  */
 
-import { Collection, Err, ErrMsg, None, Ok, Option, Result, Some } from 'typescript-core'
-
 /**
  * A single URI part
  */
@@ -24,7 +22,7 @@ export interface Route {
  * Analyze an URI path
  * @param uriPath The URI path to analyze
  */
-export function analyzeUri(uriPath: string): Result<Route, string> {
+export function analyzeUri(uriPath: string): Route | Error {
   // Split the URI path into "parts"
   const rawParts = uriPath.split('/')
 
@@ -41,12 +39,8 @@ export function analyzeUri(uriPath: string): Result<Route, string> {
    * @param pattern The invalid characters to look for, as a regular expression
    * @returns An error message if an invalid character is found, nothing else
    */
-  function _findInvalid(part: string, pattern: RegExp): Option<string> {
-    if (part.match(pattern)) {
-      return Some(uriPath + '\n' + ' '.repeat(offset) + '^')
-    } else {
-      return None()
-    }
+  function _findInvalid(part: string, pattern: RegExp): string | null {
+    return part.match(pattern) ? uriPath + '\n' + ' '.repeat(offset) + '^' : null
   }
 
   // Treat all parts of the URI path
@@ -59,10 +53,9 @@ export function analyzeUri(uriPath: string): Result<Route, string> {
     // Ensure there is no generic character in the path as we don't support them
     const genericErr = _findInvalid(part, /[\*\+\?]/)
 
-    if (genericErr.isSome()) {
-      return Err(
-        'Generic symbols (* + ?) are not supported as they prevent from determining the right route to use. Found in URI:\n' +
-          genericErr.data
+    if (genericErr) {
+      return new Error(
+        'Generic symbols (* + ?) are not supported as they prevent from determining the right route to use. Found in URI:\n' + genericErr
       )
     }
 
@@ -71,8 +64,8 @@ export function analyzeUri(uriPath: string): Result<Route, string> {
       // URI parameters must follow a strict naming
       const paramErr = _findInvalid(part, /[^a-zA-Z0-9_:]/)
 
-      if (paramErr.isSome()) {
-        return Err('Invalid character detected in named parameter in URI:\n' + paramErr.data)
+      if (paramErr) {
+        return new Error('Invalid character detected in named parameter in URI:\n' + paramErr)
       }
 
       // We got a parameter
@@ -87,10 +80,10 @@ export function analyzeUri(uriPath: string): Result<Route, string> {
   }
 
   // Success!
-  return Ok({
+  return {
     isRoot: uriPath.startsWith('/'),
     parts,
-  })
+  }
 }
 
 /**
@@ -121,20 +114,20 @@ export function debugUri(route: Route, color: (str: string) => string): string {
  * @param route
  * @param params
  */
-export function resolveRoute(route: Route, params: Collection<string>): Result<string, string> {
+export function resolveRoute(route: Route, params: { [name: string]: string }): string | Error {
   let uri: string[] = []
 
   for (const part of route.parts) {
     if ('segment' in part) {
       uri.push(part.segment)
     } else if (!params.hasOwnProperty(part.param)) {
-      return ErrMsg('Missing route parameter {}', part.param)
+      return new Error('Missing route parameter ' + part.param)
     } else {
       uri.push(params[part.param])
     }
   }
 
-  return Ok((route.isRoot ? '/' : '') + uri.join('/'))
+  return (route.isRoot ? '/' : '') + uri.join('/')
 }
 
 /**
@@ -142,7 +135,7 @@ export function resolveRoute(route: Route, params: Collection<string>): Result<s
  * @param route
  * @param paramsProvider
  */
-export function resolveRouteWith(route: Route, paramsProvider: (param: string) => string | null): Result<string, string> {
+export function resolveRouteWith(route: Route, paramsProvider: (param: string) => string | null): string | Error {
   let uri: string[] = []
 
   for (const part of route.parts) {
@@ -152,12 +145,12 @@ export function resolveRouteWith(route: Route, paramsProvider: (param: string) =
       const param = paramsProvider(part.param)
 
       if (param === null) {
-        return ErrMsg('Missing route parameter {}', part.param)
+        return new Error('Missing route parameter ' + part.param)
       } else {
         uri.push(param)
       }
     }
   }
 
-  return Ok((route.isRoot ? '/' : '') + uri.join('/'))
+  return (route.isRoot ? '/' : '') + uri.join('/')
 }

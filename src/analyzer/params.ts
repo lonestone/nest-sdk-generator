@@ -3,7 +3,7 @@
  */
 
 import { ParameterDeclaration } from 'ts-morph'
-import { debug, Err, ErrMsg, format, None, Ok, Option, RecordDict, Result, Some, unreachable, warn } from 'typescript-core'
+import { debug, format, warn } from '../logging'
 import { expectSingleStrLitDecorator } from './decorator'
 import { SdkHttpMethodType } from './methods'
 import { paramsOfRoute, Route } from './route'
@@ -14,19 +14,19 @@ import { ResolvedTypeDeps, resolveTypeDependencies } from './typedeps'
  */
 export interface SdkMethodParams {
   /** Route parameters */
-  arguments: Option<RecordDict<ResolvedTypeDeps>>
+  arguments: Map<string, ResolvedTypeDeps> | null
 
   /** Query parameters */
-  query: Option<RecordDict<ResolvedTypeDeps>>
+  query: Map<string, ResolvedTypeDeps> | null
 
   /** Body parameters */
-  body: Option<SdkMethodBodyParam>
+  body: SdkMethodBodyParam | null
 }
 
 /**
  * Single body parameter in a SDK's method
  */
-export type SdkMethodBodyParam = { full: true; type: ResolvedTypeDeps } | { full: false; fields: RecordDict<ResolvedTypeDeps> }
+export type SdkMethodBodyParam = { full: true; type: ResolvedTypeDeps } | { full: false; fields: Map<string, ResolvedTypeDeps> }
 
 /**
  * Generate a SDK interface for a controller's method's parameters
@@ -43,12 +43,12 @@ export function analyzeParams(
   args: ParameterDeclaration[],
   filePath: string,
   absoluteSrcPath: string
-): Result<SdkMethodParams, string> {
+): SdkMethodParams | Error {
   // The collected informations we will return
   const collected: SdkMethodParams = {
-    arguments: None(),
-    query: None(),
-    body: None(),
+    arguments: null,
+    query: null,
+    body: null,
   }
 
   // Get the named parameters of the route
@@ -70,7 +70,7 @@ export function analyzeParams(
     } else if (decs.length > 1) {
       // If we have more than one decorator, this could mean we have for instance an @NotEmpty() @Query() or something like this,
       //  which is currently not supported.
-      return Err('Skipping this argument as it has multiple decorators, which is currently not supported')
+      return new Error('Skipping this argument as it has multiple decorators, which is currently not supported')
     }
 
     // Get the only decrator
@@ -85,41 +85,36 @@ export function analyzeParams(
       // which is the route parameter's name
       const paramName = expectSingleStrLitDecorator(dec)
 
-      if (paramName.isErr()) return paramName.asErr()
+      if (paramName instanceof Error) return paramName
 
       // If there is no argument, this argument is a global receiver which maps the full set of parameters
       // We theorically *could* extract the type informations from this object type, but this would be insanely complex
       // So, we just skip it as it's a lot more simple, and is not commonly used anyway as it has a set of downsides
-      if (paramName.data.isNone()) {
+      if (paramName === null) {
         warn('>>> Skipping this argument as it is a generic parameters receiver, which is currently not supported')
         continue
       }
 
       // Ensure the specified parameter appears in the method's route
-      if (!routeParams.includes(paramName.data.data)) return ErrMsg('>>> Cannot map unknown parameter {yellow}', paramName.data.data)
+      if (!routeParams.includes(paramName)) return new Error(format('>>> Cannot map unknown parameter {yellow}', paramName))
 
-      debug('>>> Mapping argument to parameter: {yellow}', paramName.data.data)
+      debug('>>> Mapping argument to parameter: {yellow}', paramName)
 
       // Get the route parameter's type
       const typ = resolveTypeDependencies(arg.getType(), filePath, absoluteSrcPath)
 
-      if (typ.isErr()) return typ.asErr()
-
-      debug('>>> Detected parameter type: {yellow} ({magentaBright} dependencies)', typ.data.resolvedType, typ.data.dependencies.size)
+      debug('>>> Detected parameter type: {yellow} ({magentaBright} dependencies)', typ.resolvedType, typ.dependencies.size)
 
       // Update the method's route parameters
 
-      if (paramName.data.data in {}) {
-        return Err(
-          format(`Detected @Param() field whose name {yellow} collides with a JavaScript's native object property`, paramName.data.data)
+      if (paramName in {}) {
+        return new Error(
+          format(`Detected @Param() field whose name {yellow} collides with a JavaScript's native object property`, paramName)
         )
       }
 
-      if (collected.arguments.isNone()) {
-        collected.arguments = Some(new RecordDict())
-      }
-
-      collected.arguments.unwrap().set(paramName.data.data, typ.data)
+      collected.arguments ??= new Map()
+      collected.arguments.set(paramName, typ)
     }
 
     // Treat the @Query() decorator
@@ -130,38 +125,33 @@ export function analyzeParams(
       // which is the query parameter's name
       const queryName = expectSingleStrLitDecorator(dec)
 
-      if (queryName.isErr()) return queryName.asErr()
+      if (queryName instanceof Error) return queryName
 
       // If there is no argument, this argument is a global receiver which maps the full set of parameters
       // We theorically *could* extract the type informations from this object type, but this would be insanely complex
       // So, we just skip it as it's a lot more simple, and is not commonly used anyway as it has a set of downsides
-      if (queryName.data.isNone()) {
+      if (queryName === null) {
         warn('>>> Skipping this argument as it is a generic query receiver')
         continue
       }
 
-      debug('>>> Mapping argument to query: {yellow}', queryName.data.data)
+      debug('>>> Mapping argument to query: {yellow}', queryName)
 
       // Get the parameter's type
       const typ = resolveTypeDependencies(arg.getType(), filePath, absoluteSrcPath)
 
-      if (typ.isErr()) return typ.asErr()
-
-      debug(`>>> Detected query type: {yellow} ({magentaBright} dependencies)`, typ.data.resolvedType, typ.data.dependencies.size)
+      debug(`>>> Detected query type: {yellow} ({magentaBright} dependencies)`, typ.resolvedType, typ.dependencies.size)
 
       // Update the method's query parameter
 
-      if (queryName.data.data in {}) {
-        return Err(
-          format(`Detected @Query() field whose name {yellow} collides with a JavaScript's native object property`, queryName.data.data)
+      if (queryName in {}) {
+        return new Error(
+          format(`Detected @Query() field whose name {yellow} collides with a JavaScript's native object property`, queryName)
         )
       }
 
-      if (collected.query.isNone()) {
-        collected.query = Some(new RecordDict())
-      }
-
-      collected.query.unwrap().set(queryName.data.data, typ.data)
+      collected.query ??= new Map()
+      collected.query.set(queryName, typ)
     }
 
     // Treat the @Body() decorator
@@ -170,34 +160,32 @@ export function analyzeParams(
 
       // GET requests cannot have a BODY
       if (httpMethod === SdkHttpMethodType.Get) {
-        return Err('GET requests cannot have a BODY!')
+        return new Error('GET requests cannot have a BODY!')
       }
 
       // We expect a single string argument for this decorator,
       // which is the body field's name
       const fieldName = expectSingleStrLitDecorator(dec)
 
-      if (fieldName.isErr()) return fieldName.asErr()
+      if (fieldName instanceof Error) return fieldName
 
       // Get the field's type
       const typ = resolveTypeDependencies(arg.getType(), filePath, absoluteSrcPath)
 
-      if (typ.isErr()) return typ.asErr()
-
-      const depsCount = typ.data.dependencies.size
+      const depsCount = typ.dependencies.size
 
       debug(
         `>>> Detected BODY type: {cyan} ({magentaBright} ${
           depsCount === 0 ? 'no dependency' : depsCount > 1 ? 'dependencies' : 'dependency'
         })`,
-        typ.data.resolvedType,
+        typ.resolvedType,
         depsCount
       )
 
       // If there no name was provided to the decorator, then the decorator is a generic receiver which means it maps to the full body type
       // This also means we can map the BODY type to this argument's type
-      if (fieldName.data.isNone()) {
-        const body = collected.body.toNullable()
+      if (fieldName === null) {
+        const body = collected.body
 
         // If we previously had an @Body(<name>) decorator on another argument, we have an important risk of mistyping
         // => e.g. `@Body("a") a: string, @Body() body: { a: number }` is invalid as the type for the `a` field mismatches
@@ -209,49 +197,45 @@ export function analyzeParams(
           warn('>>> Detected full @Body() decorator after a single parameter. This is considered a bad practice, avoid it if you can!')
         // Having two generic @Body() decorators is meaningless and will likey lead to errors, so we return a precise error here
         else if (body?.full) {
-          return ErrMsg(
-            `Detected two @Body() decorators: found {yellow} previously, while method argument {yellow} indicates type {yellow}`,
-            body.type.resolvedType,
-            name,
-            typ.data.resolvedType
+          return new Error(
+            format(
+              `Detected two @Body() decorators: found {yellow} previously, while method argument {yellow} indicates type {yellow}`,
+              body.type.resolvedType,
+              name,
+              typ.resolvedType
+            )
           )
         }
 
         debug(">>> Mapping argument to full request's body")
 
         // Update the whole BODY type
-        collected.body = Some({ full: true, type: typ.data })
+        collected.body = { full: true, type: typ }
       } else {
         // Here we have an @Body(<string>) decorator
 
         // If we previously had an @Body() decorator, this can lead to several types of errors (see the big comment above for more informations)
-        if (collected.body.mapOr((body) => body.full, false)) {
+        if (collected.body?.full) {
           warn('>>> Detected single @Body() decorator after a full parameter. This is considered a bad practice, avoid it if you can!')
         } else {
-          debug('>>> Mapping argument to BODY field: {yellow}', fieldName.data.data)
+          debug('>>> Mapping argument to BODY field: {yellow}', fieldName)
 
           // Update the BODY type by adding the current field to it
 
-          if (fieldName.data.data in {}) {
-            return Err(
-              format(`Detected @Body() field whose name {yellow} collides with a JavaScript's native object property`, fieldName.data.data)
+          if (fieldName in {}) {
+            return new Error(
+              format(`Detected @Body() field whose name {yellow} collides with a JavaScript's native object property`, fieldName)
             )
           }
 
-          if (collected.body.isNone()) {
-            collected.body = Some({ full: false, fields: new RecordDict() })
-          }
+          collected.body ??= { full: false, fields: new Map() }
 
-          const body = collected.body.unwrap()
-
-          if (body.full) unreachable()
-
-          body.fields.set(fieldName.data.data, typ.data)
+          collected.body.fields.set(fieldName, typ)
         }
       }
     }
   }
 
   // Success!
-  return Ok(collected)
+  return collected
 }

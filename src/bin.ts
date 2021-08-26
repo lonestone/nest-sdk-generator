@@ -1,19 +1,12 @@
 #!/usr/bin/node
 
 import * as path from 'path'
-import { Option, println, setupTypeScriptCore } from 'typescript-core'
 import { analyzerCli } from './analyzer'
-import { loadConfigFile } from './config-loader'
-import { tsCoreEnv } from './env'
+import { config } from './config-loader'
 import generatorCli from './generator'
+import { println } from './logging'
 
 async function main() {
-  // Set up TSCore
-  setupTypeScriptCore(tsCoreEnv)
-
-  // Load the configuration file
-  const config = loadConfigFile(Option.maybe(process.argv[3]).expect('Please provide a path to the configuration file'))
-
   process.chdir(path.dirname(path.resolve(process.argv[3])))
 
   const started = Date.now()

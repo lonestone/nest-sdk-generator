@@ -3,16 +3,16 @@
  */
 
 import * as path from 'path'
-import { List, RecordDict } from 'typescript-core'
 import { SdkModules } from '../analyzer/controllers'
 import { SdkMethod } from '../analyzer/methods'
 import { SdkMethodParams } from '../analyzer/params'
 import { resolveRouteWith, unparseRoute } from '../analyzer/route'
 import { ResolvedTypeDeps } from '../analyzer/typedeps'
+import { panic } from '../logging'
 
 // Returned codes are not formatted yet
-export function generateSdkModules(modules: SdkModules): RecordDict<string> {
-  const genFiles = new RecordDict<string>()
+export function generateSdkModules(modules: SdkModules): Map<string, string> {
+  const genFiles = new Map<string, string>()
 
   for (const [moduleName, controllers] of modules) {
     for (const [controllerName, controller] of controllers) {
@@ -27,22 +27,48 @@ export function generateSdkModules(modules: SdkModules): RecordDict<string> {
       out.push('')
       out.push('import { request } from "../central";')
 
-      const imports = new RecordDict<List<string>>()
+      const imports = new Map<string, string[]>()
 
-      const depsToImport = new List<ResolvedTypeDeps>()
+      const depsToImport = new Array<ResolvedTypeDeps>()
 
       for (const controller of controllers.values()) {
         for (const method of controller.methods.values()) {
+          const { arguments: args, query, body } = method.params
+
           depsToImport.push(method.returnType)
-          method.params.arguments.ifSome((deps) => depsToImport.push(...deps.values()))
-          method.params.query.ifSome((deps) => depsToImport.push(...deps.values()))
-          method.params.body.ifSome((body) => (body.full ? depsToImport.push(body.type) : depsToImport.push(...body.fields.values())))
+
+          if (args) {
+            depsToImport.push(...args.values())
+          }
+
+          if (query) {
+            depsToImport.push(...query.values())
+          }
+
+          if (body) {
+            if (body.full) {
+              depsToImport.push(body.type)
+            } else {
+              depsToImport.push(...body.fields.values())
+            }
+          }
         }
       }
 
       for (const dep of depsToImport) {
         for (const [file, types] of dep.dependencies) {
-          imports.getOrSet(file, new List()).pushNew(...types)
+          let imported = imports.get(file)
+
+          if (!imported) {
+            imported = []
+            imports.set(file, imported)
+          }
+
+          for (const typ of types) {
+            if (!imported.includes(typ)) {
+              imported.push(typ)
+            }
+          }
         }
       }
 
@@ -91,25 +117,29 @@ export function generateSdkModules(modules: SdkModules): RecordDict<string> {
 }
 
 export function stringifySdkMethodParams(params: SdkMethodParams): string {
-  const args = params.arguments.map((rec) => rec.mapToArray((name, type) => `${name}: ${type.resolvedType}`).join(', '))
+  const args = params.arguments ? [...params.arguments].map(([name, type]) => `${name}: ${type.resolvedType}`) : []
 
-  const query = params.query.map((rec) => rec.mapToArray((name, type) => `${name}: ${type.resolvedType}`).join(', '))
+  const query = params.query ? [...params.query].map(([name, type]) => `${name}: ${type.resolvedType}`) : []
 
-  const body = params.body.map((body) =>
-    body.full ? body.type.resolvedType : '{ ' + body.fields.mapToArray((name, type) => `${name}: ${type.resolvedType}`).join(', ') + ' }'
-  )
+  const body = params.body
+    ? params.body.full
+      ? params.body.type.resolvedType
+      : '{ ' + [...params.body.fields].map(([name, type]) => `${name}: ${type.resolvedType}`).join(', ') + ' }'
+    : null
 
   return [
-    `args: {${args.mapStr((args) => ' ' + args + ' ')}}${args.isNone() && body.isNone() && query.isNone() ? ' = {}' : ''}`,
-    `body: ${body.unwrapOr('{}')}${body.isNone() && query.isNone() ? ' = {}' : ''}`,
-    `query: {${query.mapStr((query) => ' ' + query + ' ')}}${query.isNone() ? ' = {}' : ''}`,
+    `args: {${' ' + args.join(', ') + ' '}}${args.length === 0 && !body && query.length === 0 ? ' = {}' : ''}`,
+    `body: ${body ?? '{}'}${!body && query.length === 0 ? ' = {}' : ''}`,
+    `query: {${' ' + query.join(', ') + ' '}}${query.length === 0 ? ' = {}' : ''}`,
   ].join(', ')
 }
 
 export function generateCentralRequest(method: SdkMethod): string {
-  const resolvedRoute = resolveRouteWith(method.route, (param) => '${args.' + param + '}').unwrapWith((err, p) =>
-    p('Internal error: failed to resolve route: {}', err)
-  )
+  const resolvedRoute = resolveRouteWith(method.route, (param) => '${args.' + param + '}')
+
+  if (resolvedRoute instanceof Error) {
+    panic('Internal error: failed to resolve route: ' + resolvedRoute.message)
+  }
 
   return `return request('${method.type}', \`${resolvedRoute}\`, query, body)`
 }

@@ -3,7 +3,7 @@
  */
 
 import { ClassDeclaration, MethodDeclaration, Node } from 'ts-morph'
-import { debug, Err, ErrMsg, Ok, Option, RecordDict, Result } from 'typescript-core'
+import { debug, format } from '../logging'
 import { analyzeParams, SdkMethodParams } from './params'
 import { analyzeUri, debugUri, Route } from './route'
 import { ResolvedTypeDeps, resolveTypeDependencies } from './typedeps'
@@ -11,7 +11,7 @@ import { ResolvedTypeDeps, resolveTypeDependencies } from './typedeps'
 /**
  * SDK interface for a controller's methods
  */
-export type SdkMethods = RecordDict<SdkMethod>
+export type SdkMethods = Map<string, SdkMethod>
 
 /**
  * SDK interface for a single controller's method
@@ -45,12 +45,12 @@ export enum SdkHttpMethodType {
  */
 export function analyzeMethods(
   controllerClass: ClassDeclaration,
-  controllerUriPrefix: Option<string>,
+  controllerUriPrefix: string | null,
   filePath: string,
   absoluteSrcPath: string
-): Result<SdkMethods, string> {
+): SdkMethods | Error {
   // Output variable
-  const collected = new RecordDict<SdkMethod>()
+  const collected = new Map<string, SdkMethod>()
 
   // Get the list of all methods
   const methods = controllerClass.forEachChildAsArray().filter((node) => node instanceof MethodDeclaration) as MethodDeclaration[]
@@ -66,7 +66,9 @@ export function analyzeMethods(
     // We expect to have exactly one HTTP decorator
     if (decorators.length > 1) {
       // If there is more than one decorator, that's invalid, so we can't analyze the method
-      return Err('>> Detected multiple HTTP decorators on method: {yellow}' + decorators.map((dec) => dec.getName()).join(','))
+      return new Error(
+        format('>> Detected multiple HTTP decorators on method: {yellow}' + decorators.map((dec) => dec.getName()).join(','))
+      )
     } else if (decorators.length === 0) {
       // If there isn't any HTTP decorator, this is simply not a method available from the outside and so we won't generate an interface for it
       debug('>> Skipping this method as it does not have an HTTP decorator')
@@ -91,7 +93,7 @@ export function analyzeMethods(
     // We expect the decorator to have exactly one argument
     if (decArgs.length > 1) {
       // If we have more than one argument, that's invalid (or at least not supported here), so we can't analyze the method
-      return Err(`Multiple (${decArgs.length}) arguments were provided to the HTTP decorator`)
+      return new Error(`Multiple (${decArgs.length}) arguments were provided to the HTTP decorator`)
     } else if (decArgs.length === 0) {
       // If there is no argument, we take the method's name as the URI path
       debug('>> No argument found for decorator, using base URI path.')
@@ -102,7 +104,7 @@ export function analyzeMethods(
 
       // Variables are not supported
       if (!Node.isStringLiteral(uriNameDec)) {
-        return ErrMsg('>> The argument provided to the HTTP decorator is not a string literal:\n>> {cyan}', uriNameDec.getText())
+        return new Error(format('>> The argument provided to the HTTP decorator is not a string literal:\n>> {cyan}', uriNameDec.getText()))
       }
 
       // Update the method's URI path
@@ -115,49 +117,42 @@ export function analyzeMethods(
 
     // Analyze the method's URI
 
-    const route = analyzeUri(
-      controllerUriPrefix.match({
-        Some: (uriPrefix) => (uriPath ? `/${uriPrefix}/${uriPath}` : `/` + uriPrefix),
-        None: () => uriPath,
-      })
-    )
+    const route = analyzeUri(controllerUriPrefix ? (uriPath ? `/${controllerUriPrefix}/${uriPath}` : `/` + controllerUriPrefix) : uriPath)
 
-    if (route.isErr()) {
-      return Err(
+    if (route instanceof Error) {
+      return new Error(
         '>> Detected unsupported URI format:\n' +
-          route.err
+          route.message
             .split('\n')
             .map((line) => '>>> ' + line)
             .join('\n')
       )
     }
 
-    debug('>> Parsed URI name to route: {yellow}', debugUri(route.data, require('chalk').blue))
+    debug('>> Parsed URI name to route: {yellow}', debugUri(route, require('chalk').blue))
 
     // Analyze the method's arguments
     debug('>> Analyzing arguments...')
-    const params = analyzeParams(httpMethod, route.data, method.getParameters(), filePath, absoluteSrcPath)
+    const params = analyzeParams(httpMethod, route, method.getParameters(), filePath, absoluteSrcPath)
 
-    if (params.isErr()) return params.asErr()
+    if (params instanceof Error) return params
 
     // Get the method's return type
     debug('>> Resolving return type...')
     const returnType = resolveTypeDependencies(method.getReturnType(), filePath, absoluteSrcPath)
 
-    if (returnType.isErr()) return returnType.asErr()
-
-    debug('>> Detected return type: {cyan}', returnType.data.resolvedType)
+    debug('>> Detected return type: {cyan}', returnType.resolvedType)
 
     // Success!
     collected.set(methodName, {
       name: methodName,
       type: httpMethod,
-      returnType: returnType.data,
-      route: route.data,
-      uriPath: uriPath,
-      params: params.data,
+      returnType,
+      route,
+      uriPath,
+      params,
     })
   }
 
-  return Ok(collected)
+  return collected
 }
