@@ -1,3 +1,7 @@
+/**
+ * @file This file is the generator for Central, the main request interface used by all of the generated SDK's route methods
+ */
+
 import { Option } from 'typescript-core'
 
 export const CENTRAL_FILE = (relativePath: string, nameToImport: Option<string>) =>

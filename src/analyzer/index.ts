@@ -1,3 +1,7 @@
+/**
+ * @file Entrypoint of the source API analyzer, used to generate the final SDK
+ */
+
 import * as fs from 'fs'
 import * as path from 'path'
 import { Project } from 'ts-morph'

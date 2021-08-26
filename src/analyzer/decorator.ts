@@ -1,3 +1,7 @@
+/**
+ * @file Utilities for analyzing the source API's decorators
+ */
+
 import { Decorator, Node } from 'ts-morph'
 import { Err, ErrMsg, None, Ok, Option, Result, Some } from 'typescript-core'
 

@@ -8,8 +8,10 @@ import { tsCoreEnv } from './env'
 import generatorCli from './generator'
 
 async function main() {
+  // Set up TSCore
   setupTypeScriptCore(tsCoreEnv)
 
+  // Load the configuration file
   const config = loadConfigFile(Option.maybe(process.argv[3]).expect('Please provide a path to the configuration file'))
 
   process.chdir(path.dirname(path.resolve(process.argv[3])))

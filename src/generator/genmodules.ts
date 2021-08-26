@@ -1,3 +1,7 @@
+/**
+ * @file Generate SDK modules
+ */
+
 import * as path from 'path'
 import { List, RecordDict } from 'typescript-core'
 import { SdkModules } from '../analyzer/controllers'

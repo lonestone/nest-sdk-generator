@@ -1,3 +1,7 @@
+/**
+ * @file Analyzer for the source API's controllers' methods' parameters
+ */
+
 import { ParameterDeclaration } from 'ts-morph'
 import { debug, Err, ErrMsg, format, None, Ok, Option, RecordDict, Result, Some, unreachable, warn } from 'typescript-core'
 import { expectSingleStrLitDecorator } from './decorator'

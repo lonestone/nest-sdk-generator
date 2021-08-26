@@ -1,3 +1,7 @@
+/**
+ * @file Analyzer for the source API's modules
+ */
+
 import * as path from 'path'
 import { Node, Project } from 'ts-morph'
 import { Err, ErrMsg, format, Ok, Result } from 'typescript-core'

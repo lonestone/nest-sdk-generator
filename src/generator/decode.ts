@@ -1,3 +1,7 @@
+/**
+ * @file This file contains the decoder for the analyzer's output
+ */
+
 import { Decoders as d, DecodingError, Err, JsonDecoder, JsonDecoders as j, JsonValue, matchString, Ok, state } from 'typescript-core'
 import { SdkContent } from '../analyzer'
 import { SdkController } from '../analyzer/controller'

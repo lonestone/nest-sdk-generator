@@ -1,3 +1,7 @@
+/**
+ * @file Type dependencies builders from the source API
+ */
+
 import * as path from 'path'
 import { ts, Type } from 'ts-morph'
 import { List, match, Ok, RecordDict, Result, unreachable } from 'typescript-core'

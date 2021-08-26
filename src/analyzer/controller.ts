@@ -1,8 +1,16 @@
+/**
+ * @file Analyzer for the source API's controllers (singles)
+ */
+
 import * as path from 'path'
 import { Node, Project } from 'ts-morph'
 import { debug, Err, None, Ok, Option, Result, Some, warn } from 'typescript-core'
 import { analyzeMethods, SdkMethods } from './methods'
 
+/**
+ * Convert a string to camel case
+ * @param str
+ */
 function camelcase(str: string): string {
   return str
     .split(/[^a-zA-Z0-9_]/g)

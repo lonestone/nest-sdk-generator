@@ -1,3 +1,7 @@
+/**
+ * @file Entrypoint of the SDK generator
+ */
+
 import * as fs from 'fs'
 import * as path from 'path'
 import { debug, JsonValue, None, panic, println } from 'typescript-core'

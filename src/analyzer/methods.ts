@@ -1,3 +1,7 @@
+/**
+ * @file Analyzer for the source API's methods
+ */
+
 import { ClassDeclaration, MethodDeclaration, Node } from 'ts-morph'
 import { debug, Err, ErrMsg, Ok, Option, RecordDict, Result } from 'typescript-core'
 import { analyzeParams, SdkMethodParams } from './params'

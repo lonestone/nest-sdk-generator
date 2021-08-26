@@ -1,3 +1,7 @@
+/**
+ * @file Analyzer for the source API's controllers
+ */
+
 import * as os from 'os'
 import * as path from 'path'
 import { Project } from 'ts-morph'

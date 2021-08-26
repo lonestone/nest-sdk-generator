@@ -1,5 +1,8 @@
 import { Decoders as d, JsonDecoder, JsonDecoders as j, Option } from 'typescript-core'
 
+/**
+ * The configuration file's content
+ */
 export interface Config {
   readonly verbosity: Option<'verbose' | 'default' | 'warnings' | 'silent' | 'full-silent'>
   readonly noColor: Option<boolean>
@@ -19,6 +22,9 @@ export interface Config {
   readonly dontOverwriteOldOutputDir: Option<boolean>
 }
 
+/**
+ * Magic type used to replace a non-compatible type in the generated SDK
+ */
 export interface MagicType {
   readonly nodeModuleFilePath: string
   readonly typeName: string

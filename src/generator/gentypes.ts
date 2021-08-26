@@ -1,3 +1,7 @@
+/**
+ * @file Generate type files for the SDK
+ */
+
 import * as path from 'path'
 import { RecordDict } from 'typescript-core'
 import { TypesExtractorContent } from '../analyzer/extractor'

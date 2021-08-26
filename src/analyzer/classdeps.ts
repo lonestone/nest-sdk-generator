@@ -1,3 +1,7 @@
+/**
+ * @file Analyze the dependencies of a class analyzed by the TypeScript compiler
+ */
+
 import * as path from 'path'
 import { ClassDeclaration, InterfaceDeclaration, ts, Type } from 'ts-morph'
 import { List, O, Result, unreachable } from 'typescript-core'

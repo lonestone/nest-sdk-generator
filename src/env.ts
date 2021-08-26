@@ -1,3 +1,7 @@
+/**
+ * @file This file sets up the configuration for TSCore
+ */
+
 import * as chalk from 'chalk'
 import * as fs from 'fs'
 import { formatAdvanced, matchString, None, panic, Stringifyable, TSCoreEnvUpdater } from 'typescript-core'
@@ -6,20 +10,21 @@ import { config } from './config-loader'
 export const tsCoreEnv: TSCoreEnvUpdater = (prev) => ({
   devMode: () => false,
 
-  verbosity: (devMode, context) =>
-    matchString(
-      config
-        .value()
-        .andThen((config) => config.verbosity)
-        .unwrapOr('default'),
-      {
-        'full-silent': () => false,
-        silent: () => context === 'error',
-        warnings: () => context === 'error' || context === 'warn',
-        default: () => (context !== 'debug' && context !== 'dump') || devMode,
-        verbose: () => true,
-      }
-    ),
+  // Set the verbosity based on the provided configuration option
+  verbosity: (devMode, context) => {
+    const configLevel = config
+      .value()
+      .andThen((config) => config.verbosity)
+      .unwrapOr('default')
+
+    return matchString(configLevel, {
+      'full-silent': () => false,
+      silent: () => context === 'error',
+      warnings: () => context === 'error' || context === 'warn',
+      default: () => (context !== 'debug' && context !== 'dump') || devMode,
+      verbose: () => true,
+    })
+  },
 
   defaultFormattingOptions: () => ({
     ...prev.defaultFormattingOptions(),
@@ -29,6 +34,7 @@ export const tsCoreEnv: TSCoreEnvUpdater = (prev) => ({
     stringifyOptions: (devMode, context, prettify) => ({
       ...prev.defaultFormattingOptions().stringifyOptions(devMode, context, prettify),
 
+      // Set up color highlighting
       highlighter: (type, content) =>
         config.mapKeyOr('noColor', None()).unwrapOr(false)
           ? content
@@ -110,6 +116,7 @@ export const tsCoreEnv: TSCoreEnvUpdater = (prev) => ({
   },
 })
 
+/** List of valid colors */
 export const COLORS = [
   'black',
   'red',

@@ -1,3 +1,7 @@
+/**
+ * @file Analyzer for the source API's routes in controller methods
+ */
+
 import { Collection, Err, ErrMsg, None, Ok, Option, Result, Some } from 'typescript-core'
 
 /**

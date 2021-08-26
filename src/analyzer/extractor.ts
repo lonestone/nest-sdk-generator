@@ -1,3 +1,7 @@
+/**
+ * @file Types extractor to use in the generated SDK
+ */
+
 import * as path from 'path'
 import { Node, Project } from 'ts-morph'
 import {
