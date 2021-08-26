@@ -7,6 +7,8 @@ The project is split in two parts:
 - The **analyzer** looks for all modules, controllers, methods and types in the Nest.js server, and builds a JSON schema containing all informations
 - The **generator** takes this JSON schema and generates a directory containing the SDK
 
+The project has been created and is currently maintained by developers at [LoneStone](https://lonestone.io/).
+
 **Table of contents:**
 
 - [What is NSdkGen and why should I use it?](#what-is-nsdkgen-and-why-should-i-use-it)

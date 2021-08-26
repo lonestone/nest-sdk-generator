@@ -9,9 +9,7 @@
   "scripts": {
     "prepare": "npm run build",
     "build": "tsc -p tsconfig.json --outDir build",
-    "start-built": "node build/bin.js",
-    "start": "npm run build && node build/bin.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run build && node build/bin.js"
   },
   "bin": "./build/bin.js",
   "private": true,
