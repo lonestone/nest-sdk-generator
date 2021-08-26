@@ -28,7 +28,7 @@ export const config: CentralConfig = {...importedCentralConfig}
 
 config.init?.()
 
-export async function req(
+export async function request(
     method: CentralMethodType,
     uri: string,
     query: Record<string, unknown>,

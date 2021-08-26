@@ -21,7 +21,7 @@ export function generateSdkModules(modules: SdkModules): RecordDict<string> {
       out.push('/// Parent module: ' + moduleName)
       out.push(`/// Controller: "${controllerName}" registered as "${controller.registrationName}" (${controller.methods.size} routes)`)
       out.push('')
-      out.push('import * as central from "../central";')
+      out.push('import { request } from "../central";')
 
       const imports = new RecordDict<List<string>>()
 
@@ -107,5 +107,5 @@ export function generateCentralRequest(method: SdkMethod): string {
     p('Internal error: failed to resolve route: {}', err)
   )
 
-  return `return central.req('${method.type}', \`${resolvedRoute}\`, query, body)`
+  return `return request('${method.type}', \`${resolvedRoute}\`, query, body)`
 }
