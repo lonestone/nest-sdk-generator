@@ -1,6 +1,4 @@
-# NSdkGen - A Nest.js SDK generator
-
-[![](https://user-images.githubusercontent.com/73881870/130991041-a4a1f0f4-21f5-4a54-a085-974f80f56ed2.png)](https://lonestone.io/)
+# NSdkGen - A Nest.js SDK generator by [![](https://user-images.githubusercontent.com/73881870/130991041-a4a1f0f4-21f5-4a54-a085-974f80f56ed2.png)](https://lonestone.io/)
 
 The Nest.js NSdkGen is a tool that aims to build a SDK for client applications to consume a Nest.js server's API.
 
