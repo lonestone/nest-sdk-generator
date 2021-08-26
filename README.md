@@ -31,6 +31,7 @@ The project has been created and is currently maintained by developers at [Lones
   - [Is the SDK documented?](#is-the-sdk-documented)
   - [Can I add header or other data on-the-fly when making requests?](#can-i-add-header-or-other-data-on-the-fly-when-making-requests)
   - [Is there a way to log the requests or responses somewhere?](#is-there-a-way-to-log-the-requests-or-responses-somewhere)
+- [License](#license)
 
 ## What is NSdkGen and why should I use it?
 
@@ -257,3 +258,7 @@ All of the SDK's methods use a central handler which calls a function you provid
 
 All of the SDK's methods use a central handler which calls a function you provided, where you can do absolutely everything you can. You are in charge of making 
 the requests thanks to the provided URI and query/body parameters, which means you can write the requests and responses to the local storage, send them to a log server, or anything else.
+
+## License
+
+This project is published under the terms of the [MIT License](LICENSE.md).
