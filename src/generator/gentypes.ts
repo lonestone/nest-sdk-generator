@@ -24,7 +24,7 @@ export function generateSdkTypeFiles(sdkTypes: TypesExtractorContent): Map<strin
             imports.set(dep.relativePathNoExt, imported)
           }
 
-          if (imported.includes(dep.typename)) {
+          if (!imported.includes(dep.typename)) {
             imported.push(dep.typename)
           }
         }
