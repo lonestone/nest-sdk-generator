@@ -41,7 +41,7 @@ export function analyzeControllers(controllers: string[], absoluteSrcPath: strin
     const basePath = path.dirname(absoluteControllerPath)
 
     // Check if the module's name is in cache
-    modulesCache.getOrSetWith(basePath, () => {
+    if (!modulesCache.has(basePath)) {
       // Else, find the nearest module file
       const absoluteModulePath = findFileAbove(/^.*\.module\.ts$/, path.resolve(absoluteSrcPath, basePath))
 
@@ -72,8 +72,8 @@ export function analyzeControllers(controllers: string[], absoluteSrcPath: strin
           )
         )
 
-      return moduleName.data
-    })
+      modulesCache.set(basePath, moduleName.data)
+    }
 
     const moduleName = modulesCache.get(basePath).unwrap()
 
