@@ -29,11 +29,11 @@ export class ArticleService {
   }
 
   async getAll(): Promise<Article[]> {
-    return this.articleRepo.findAll()
+    return this.articleRepo.findAll({ populate: true })
   }
 
   async getBySlug(slug: string): Promise<Article | null> {
-    return this.articleRepo.findOne({ slug })
+    return this.articleRepo.findOne({ slug }, true)
   }
 
   async create(dto: ArticleCreateDTO): Promise<Article> {

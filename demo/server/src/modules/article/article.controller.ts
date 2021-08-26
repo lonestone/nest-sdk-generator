@@ -13,6 +13,11 @@ export class ArticleController {
     return this.articleService.getAll()
   }
 
+  @Get(':slug')
+  getOne(@Param('slug') slug: string) {
+    return this.articleService.getBySlug(slug)
+  }
+
   @Post()
   create(@Body() dto: ArticleCreateDTO) {
     return this.articleService.create(dto)
