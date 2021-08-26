@@ -5,7 +5,7 @@ import { articleController } from '../sdk/articleModule'
 import type { Article } from '../sdk/_types/modules/article/article.entity'
 
 export function HomePage() {
-  const [articles, setArticles] = useState<Article[]>([])
+  const [articles, setArticles] = useState<Article[] | null>(null)
 
   useEffect(() => {
     articleController.getAll().then(setArticles)
@@ -15,7 +15,9 @@ export function HomePage() {
     <>
       <h1>Home page</h1>
       <p>
-        {articles.length === 0 ? (
+        {!articles ? (
+          <em>Loading...</em>
+        ) : articles.length === 0 ? (
           <em>No article to display</em>
         ) : (
           <ol>
