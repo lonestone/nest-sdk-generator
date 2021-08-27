@@ -13,7 +13,7 @@ import { findPrettierConfig, prettify } from './prettier'
 import { defaultSdkInterface } from './sdk-interface'
 
 export default async function generatorCli(config: Config, sdkContent: SdkContent): Promise<void> {
-  const prettifyOutput = config.dontPrettify !== true
+  const prettifyOutput = config.prettify !== false
 
   if (!prettifyOutput) {
     debug('NOTE: files will not be prettified with Prettier')
@@ -22,7 +22,7 @@ export default async function generatorCli(config: Config, sdkContent: SdkConten
   const output = path.resolve(process.cwd(), config.sdkOutput)
 
   if (fs.existsSync(output)) {
-    if (config.dontOverwriteOldOutputDir) {
+    if (config.overwriteOldOutputDir !== false) {
       panic("Please provide an output directory that doesn't exist yet")
     } else {
       if (!fs.existsSync(path.join(output, 'central.ts'))) {
