@@ -22,6 +22,7 @@ The project has been created and is currently maintained by our developers at [L
 - [SDK usage](#sdk-usage)
     - [Importing API types](#importing-api-types)
   - [External files](#external-files)
+- [Configuration options](#configuration-options)
 - [Frequently-asked questions](#frequently-asked-questions)
   - [Does this replace Swagger?](#does-this-replace-swagger)
   - [I have a GraphQL API, what can this project do for me?](#i-have-a-graphql-api-what-can-this-project-do-for-me)
@@ -204,6 +205,25 @@ const user: UserDTO = await userController.getOne({ id: 'some_id' })
 In some situations, some of the types you are importing may belong to an external directory than the provided API source directory. For instance, if you use a mono-repository, you may have your API in `apps/api` but your DTOs built as a package in `node_modules/@apps/dtos`. In such case, the files will be placed in a special directory in `_types` called `_externalX` where `X` is the depth level (the farest the exernal file is, the larger this number will be).
 
 This will make no difference when using these types, but this is a special case where the types hierarchy isn't perfectly respected.
+
+## Configuration options
+
+Here is the list of the configuration options you can use in the JSON file:
+
+| Option name                   | Required? | Value type    | Description                                                                           |
+| ----------------------------- | --------- | ------------- | ------------------------------------------------------------------------------------- |
+| `apiInputPath`                | Yes       | `string`      | Path to your API's source folder (e.g. `apps/api/src`)                                |
+| `sdkOutput`                   | Yes       | `string`      | Path to generate the SDK at (e.g. `apps/front/src/sdk`)                               |
+| `sdkInterfacePath`            | Yes       | `string`      | Path to the SDK interface (e.g. `apps/front/src/sdk-interface.ts`)                    |
+| `magicTypes`                  | No        | `MagicType[]` | Magic types (see below)                                                               |
+| `jsonOutput`                  | No        | `string`      | Write the analyzer's output to a file                                                 |
+| `jsonPrettyOutput`            | No        | `boolean`     | Prettify the output JSON if the option above is enabled                               |
+| `prettierConfig`              | No        | `string`      | Use a specific Prettier config (otherwise will try to find one in a parent directory) |
+| `prettify`                    | No        | `boolean`     | Set to `false` to disable SDK files prettifying                                       |
+| `overwriteOldOutputDir`       | No        | `boolean`     | Set to `false` to not remove the old SDK directory when re-generating it              |
+| `generateDefaultSdkInterface` | No        | `boolean`     | Set to `false` to not generate a default SDK interface when it does not exist yet     |
+| `verbose`                     | No        | `boolean`     | Display verbose informations                                                          |
+| `noColor`                     | No        | `boolean`     | Disable colored output                                                                |
 
 ## Frequently-asked questions
 
