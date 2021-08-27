@@ -2,7 +2,7 @@
 
 import * as path from 'path'
 import { analyzerCli } from './analyzer'
-import { config } from './config-loader'
+import { config } from './config'
 import generatorCli from './generator'
 import { println } from './logging'
 

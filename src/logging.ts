@@ -1,5 +1,5 @@
 import * as chalk from 'chalk'
-import { config } from './config-loader'
+import { config } from './config'
 
 export function format(message: string, ...params: Array<number | string>): string {
   return message.replace(
