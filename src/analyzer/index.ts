@@ -99,7 +99,7 @@ export async function analyzerCli(config: Config): Promise<SdkContent> {
 
   const modules = analyzeControllers(controllers, sourcePath, project)
 
-  const typesCache = new TypesExtractor(project, sourcePath, config.magicTypes)
+  const typesCache = new TypesExtractor(project, sourcePath, config.magicTypes ?? [])
 
   const typesToExtract = locateTypesFile(flattenSdkResolvedTypes(modules))
 
