@@ -8,25 +8,23 @@ export function HomePage() {
   const [articles, setArticles] = useState<Article[] | null>(null)
 
   useEffect(() => {
+    // Fetch all articles
     articleController.getAll().then(setArticles)
   }, [])
 
   return (
     <>
       <h1>Home page</h1>
-      <p>
-        {!articles ? (
-          <em>Loading...</em>
-        ) : articles.length === 0 ? (
-          <em>No article to display</em>
-        ) : (
-          <ol>
-            {articles.map((article) => (
-              <ArticleCard article={article} />
-            ))}
-          </ol>
-        )}
-      </p>
+      {!articles ? (
+        <em>Loading...</em>
+      ) : articles.length === 0 ? (
+        <em>No article to display</em>
+      ) : (
+        articles.map((article) => (
+          <ArticleCard key={article.id} article={article} />
+        ))
+      )}
+
       <Link to="/new-article">Create a new article</Link>
     </>
   )

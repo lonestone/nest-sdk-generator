@@ -3,10 +3,18 @@ import { Link } from 'react-router-dom'
 import { categoryController } from '../sdk/categoryModule'
 import type { Category } from '../sdk/_types/modules/category/category.entity'
 
-export function CategoryDropdown(props: { onSelect: (id: string) => void }) {
-  const [categories, setCategories] = useState<Category[] | null>(null)
+interface Props {
+  value: string | undefined
+  onChange: (id: string) => void
+}
+
+export function CategoryDropdown({ value, onChange }: Props) {
+  const [categories, setCategories] = useState<Category[] | undefined>(
+    undefined,
+  )
 
   useEffect(() => {
+    // Fetch all categories
     categoryController.getAll().then(setCategories, (error) => alert(error))
   }, [])
 
@@ -19,8 +27,10 @@ export function CategoryDropdown(props: { onSelect: (id: string) => void }) {
       {categories.length === 0 ? (
         <em>No category available</em>
       ) : (
-        <select onChange={(e) => props.onSelect(e.target.value)}>
-          <option key="" value="" disabled={true} selected={true}></option>
+        <select value={value} onChange={(e) => onChange(e.target.value)}>
+          <option value="" disabled selected>
+            Select a category
+          </option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
               {category.title}

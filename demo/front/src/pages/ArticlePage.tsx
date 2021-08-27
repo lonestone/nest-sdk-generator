@@ -4,18 +4,18 @@ import { articleController } from '../sdk/articleModule'
 import type { Article } from '../sdk/_types/modules/article/article.entity'
 
 export function ArticlePage() {
-  const { slug }: { slug: string } = useParams()
-
+  const { slug } = useParams<{ slug: string }>()
   const [article, setArticle] = useState<Article | null>(null)
-
   const history = useHistory()
 
   useEffect(() => {
+    // Fetch article
     articleController.getOne({ slug }).then(setArticle)
   }, [])
 
-  async function deleteIt() {
+  const handleDelete = async () => {
     if (article && confirm('Do you really want to delete this article?')) {
+      // Delete article
       await articleController.delete({ id: article.id })
       alert('Article was succesfully removed!')
       history.push('/')
@@ -41,13 +41,10 @@ export function ArticlePage() {
       <pre style={{ width: '50%', whiteSpace: 'break-spaces' }}>
         {article.content}
       </pre>
+      <p>
+        <button onClick={handleDelete}>Delete this article</button>
+      </p>
       <Link to="/">&lt;- Home page</Link>
-      {article && (
-        <>
-          {' '}
-          | <button onClick={deleteIt}>Delete this article</button>
-        </>
-      )}
     </>
   )
 }

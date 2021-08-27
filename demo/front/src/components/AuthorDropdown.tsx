@@ -3,10 +3,16 @@ import { Link } from 'react-router-dom'
 import { authorController } from '../sdk/authorModule'
 import type { Author } from '../sdk/_types/modules/author/author.entity'
 
-export function AuthorDropdown(props: { onSelect: (id: string) => void }) {
-  const [authors, setAuthors] = useState<Author[] | null>(null)
+interface Props {
+  value: string | undefined
+  onChange: (id: string) => void
+}
+
+export function AuthorDropdown({ value, onChange }: Props) {
+  const [authors, setAuthors] = useState<Author[] | undefined>(undefined)
 
   useEffect(() => {
+    // Fetch all authors
     authorController.getAll().then(setAuthors, (error) => alert(error))
   }, [])
 
@@ -19,8 +25,10 @@ export function AuthorDropdown(props: { onSelect: (id: string) => void }) {
       {authors.length === 0 ? (
         <em>No author available</em>
       ) : (
-        <select onChange={(e) => props.onSelect(e.target.value)}>
-          <option key="" value="" disabled={true} selected={true}></option>
+        <select value={value} onChange={(e) => onChange(e.target.value)}>
+          <option value="" disabled selected>
+            Select an author
+          </option>
           {authors.map((author) => (
             <option key={author.id} value={author.id}>
               {author.displayName}
