@@ -207,6 +207,8 @@ const user = await userController.getOne({ id: 'some_id' })
 // typeof user == UserDTO
 ```
 
+Each method takes three arguments: the parameters (`:xxx` in the original method's route), the body's content, and the query (`?xxx=yyy`). The query is always optional, while the body is only optional if nothing or an empty object is expected. The parameters are only optional if no parameter, nor body, is expected.
+
 #### Importing API types
 
 It's also possible to manually import types the API depends on.
