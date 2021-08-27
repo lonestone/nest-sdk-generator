@@ -12,8 +12,8 @@ The project has been created and is currently maintained by our developers at [L
 **Table of contents:**
 
 - [What is nest-sdk-generator and why should I use it?](#what-is-nest-sdk-generator-and-why-should-i-use-it)
+- [Quick usage example](#quick-usage-example)
 - [Features](#features)
-- [Examples](#examples)
 - [Limitations](#limitations)
 - [Using the SDK](#using-the-sdk)
 - [Architecture](#architecture)
@@ -46,6 +46,12 @@ This brings several advantages, including:
 
 The generator also allows you to (re-)generate a full SDK in seconds with a single command. And in case something goes wrong, you'll be able to pinpoint exactly what the problem is thanks to the colorful (can be disabled) verbose output. A log file can also be used to store all output informations in one place.
 
+## Quick usage example
+
+The SDK generator only requires you to create a small JSON configuration file to indicate where you API is located at, and to run a simple `npx nest-sdk-generator <path to the configuration file>` command. This will generate a client-side SDK hierarchised in modules, controllers and methods that will allow you to call your API's routes without manually writing the URIs yourself. The query parameters and body content is also strictly typed and automatically converted to be sent to your API.
+
+You can find a complete demonstration API in the [`demo/server`](demo/server) directory, as well as a frontend using a SDK based on this API in [`demo/front`](demo/front). The SDK configuration is located in [`demo/sdk-generator.json`](demo/sdk-generator.json).
+
 ## Features
 
 - Full support for idiomatic Nest.js modules and controllers
@@ -55,10 +61,6 @@ The generator also allows you to (re-)generate a full SDK in seconds with a sing
 - Compatible with alternative package managers like PNPM
 - Extremely detailed output by default for easier debugging in case of errors
 - Tree-shaking so the compiled code will only contain the methods you use from the generated SDK, no matter its size
-
-## Examples
-
-You can find a demonstration API in the [`demo/server`](demo/server) directory, as well as a frontend using a SDK based on this API in [`demo/front`](demo/front). The SDK configuration is located in [`demo/sdk-generator.json`](demo/sdk-generator.json).
 
 ## Limitations
 
