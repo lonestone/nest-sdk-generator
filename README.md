@@ -50,6 +50,14 @@ The generator also allows you to (re-)generate a full SDK in seconds with a sing
 
 The SDK generator only requires you to create a small JSON configuration file to indicate where you API is located at, and to run a simple `npx nest-sdk-generator <path to the configuration file>` command. This will generate a client-side SDK hierarchised in modules, controllers and methods that will allow you to call your API's routes without manually writing the URIs yourself. The query parameters and body content is also strictly typed and automatically converted to be sent to your API.
 
+Calling methods will look like this:
+
+```typescript
+import { userController } from "../sdk/userModule"
+
+const adminUser = await userController.getByUsername("admin")
+```
+
 You can find a complete demonstration API in the [`demo/server`](demo/server) directory, as well as a frontend using a SDK based on this API in [`demo/front`](demo/front). The SDK configuration is located in [`demo/sdk-generator.json`](demo/sdk-generator.json).
 
 ## Features
