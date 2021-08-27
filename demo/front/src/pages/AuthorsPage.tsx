@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { authorController } from '../sdk/authorModule'
 import type { Author } from '../sdk/_types/modules/author/author.entity'
 
@@ -30,10 +29,7 @@ export function AuthorsPage() {
       ) : (
         <ul>
           {authors.map((author) => (
-            <li key={author.id}>
-              {author.displayName}{' '}
-              <Link to={`/articles/from/${author.id}`}>(written articles)</Link>
-            </li>
+            <li key={author.id}>{author.displayName}</li>
           ))}
         </ul>
       )}

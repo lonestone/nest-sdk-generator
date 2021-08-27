@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { categoryController } from '../sdk/categoryModule'
 import type { Category } from '../sdk/_types/modules/category/category.entity'
 
@@ -31,10 +30,7 @@ export function CategoriesPage() {
       ) : (
         <ul>
           {categories.map((category) => (
-            <li key={category.id}>
-              {category.title}{' '}
-              <Link to={`/categories/${category.id}`}>(articles)</Link>
-            </li>
+            <li key={category.id}>{category.title}</li>
           ))}
         </ul>
       )}
