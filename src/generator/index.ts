@@ -22,7 +22,7 @@ export default async function generatorCli(config: Config, sdkContent: SdkConten
   const output = path.resolve(process.cwd(), config.sdkOutput)
 
   if (fs.existsSync(output)) {
-    if (config.overwriteOldOutputDir !== false) {
+    if (config.overwriteOldOutputDir === false) {
       panic("Please provide an output directory that doesn't exist yet")
     } else {
       if (!fs.existsSync(path.join(output, 'central.ts'))) {
