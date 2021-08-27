@@ -54,8 +54,16 @@ Calling methods will look like this:
 
 ```typescript
 import { userController } from "../sdk/userModule"
+import { articleController } from "../sdk/articleModule"
 
-const adminUser = await userController.getByUsername("admin")
+const user = await userController.profile({ username: "jack" })
+
+const userArticles = await articleController.getAll({ author: user.id })
+
+const user = await articleController.publish({}, {
+  author: user.id,
+  content: `${user.pseudo} has already published ${userArticles.length} articles!`
+})
 ```
 
 You can find a complete demonstration API in the [`demo/server`](demo/server) directory, as well as a frontend using a SDK based on this API in [`demo/front`](demo/front). The SDK configuration is located in [`demo/sdk-generator.json`](demo/sdk-generator.json).
