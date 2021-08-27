@@ -14,7 +14,6 @@ The project has been created and is currently maintained by our developers at [L
 - [What is nest-sdk-generator and why should I use it?](#what-is-nest-sdk-generator-and-why-should-i-use-it)
 - [Features](#features)
 - [Examples](#examples)
-- [Instructions](#instructions)
 - [Limitations](#limitations)
 - [Using the SDK](#using-the-sdk)
 - [Architecture](#architecture)
@@ -61,11 +60,6 @@ The generator also allows you to (re-)generate a full SDK in seconds with a sing
 ## Examples
 
 You can find a demonstration API in the [`demo/server`](demo/server) directory, as well as a frontend using a SDK based on this API in [`demo/front`](demo/front). The SDK configuration is located in [`demo/sdk-generator.json`](demo/sdk-generator.json).
-
-## Instructions
-
-1. Create a configuration file exporting your API's url (`{ apiUrl: '<some_url>' }`)
-2. Run `sdk-generator <nest api path> <sdk output path> -c <path of config file relative to sdk output path>`
 
 ## Limitations
 
