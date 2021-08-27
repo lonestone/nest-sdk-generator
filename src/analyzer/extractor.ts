@@ -249,7 +249,7 @@ export class TypesExtractor {
 
       for (const member of decl.getMembers()) {
         if (!Node.isPropertyDeclaration(member)) {
-          warn('Found non-property member: {magenta}', member.getText())
+          warn('Found non-property member in class {cyan}: {magenta}', decl.getName() ?? '<anonymous>', member.getText())
           continue
         }
 
