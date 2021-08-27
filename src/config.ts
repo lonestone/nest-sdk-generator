@@ -10,7 +10,7 @@ export interface Config {
   readonly magicTypes: MagicType[]
 
   readonly sdkOutput: string
-  readonly configScriptPath: string
+  readonly sdkInterfacePath: string
 
   readonly configNameToImport?: string
   readonly jsonOutput?: string

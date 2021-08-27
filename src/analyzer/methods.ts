@@ -29,11 +29,11 @@ export interface SdkMethod {
  * HTTP method of a controller's method
  */
 export enum SdkHttpMethodType {
-  Get = 'get',
-  Post = 'post',
-  Put = 'put',
-  Patch = 'patch',
-  Delete = 'delete',
+  Get = 'GET',
+  Post = 'POST',
+  Put = 'PUT',
+  Patch = 'PATCH',
+  Delete = 'DELETE',
 }
 
 /**

@@ -7,10 +7,10 @@ import * as path from 'path'
 import { SdkContent } from '../analyzer'
 import { Config } from '../config'
 import { debug, panic, println } from '../logging'
-import { CENTRAL_FILE } from './central'
 import { generateSdkModules } from './genmodules'
 import { generateSdkTypeFiles } from './gentypes'
 import { findPrettierConfig, prettify } from './prettier'
+import { defaultSdkInterface } from './sdk-interface'
 
 export default async function generatorCli(config: Config, sdkContent: SdkContent): Promise<void> {
   const prettifyOutput = config.dontPrettify !== true
@@ -65,7 +65,18 @@ export default async function generatorCli(config: Config, sdkContent: SdkConten
     writeScriptTo(null, file, content)
   }
 
-  const configScriptPath = path.resolve(process.cwd(), config.configScriptPath)
+  const sdkInterfacePath = path.resolve(process.cwd(), config.sdkInterfacePath)
 
-  writeScriptTo(null, 'central.ts', CENTRAL_FILE(path.relative(output, configScriptPath), config.configNameToImport ?? null))
+  const relativeSdkInterfacePath = path
+    .relative(output, sdkInterfacePath)
+    .replace(/\\/g, '/')
+    .replace(/\.([jt]sx?)$/, '')
+
+  writeScriptTo(null, 'central.ts', `export { request } from "${relativeSdkInterfacePath}"`)
+
+  if (!fs.existsSync(sdkInterfacePath)) {
+    println('> Generating default SDK interface...')
+
+    fs.writeFileSync(sdkInterfacePath, defaultSdkInterface, 'utf8')
+  }
 }

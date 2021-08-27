@@ -9,6 +9,5 @@
     }
   ],
   "sdkOutput": "front/src/sdk",
-  "configScriptPath": "front/src/sdk-config.ts",
-  "configNameToImport": "config"
+  "sdkInterfacePath": "front/src/sdk-interface.ts"
 }

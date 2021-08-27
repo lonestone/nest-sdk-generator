@@ -18,7 +18,6 @@ The project has been created and is currently maintained by our developers at [L
 - [Using the SDK](#using-the-sdk)
 - [Architecture](#architecture)
 - [Step-by-step generation tutorial](#step-by-step-generation-tutorial)
-    - [Typing the configuration object](#typing-the-configuration-object)
     - [Recommandations](#recommandations)
 - [SDK usage](#sdk-usage)
     - [Importing API types](#importing-api-types)
@@ -128,41 +127,7 @@ First, we must create a configuration file. Let's put it in `sdk-generator.json`
     }
   ],
   "sdkOutput": "apps/front/sdk",
-  "configScriptPath": "apps/front/src/sdk-config.ts",
-  "configNameToImport": "config",
-  "prettify": true,
-  "verbosity": "verbose"
-}
-```
-
-Now we have to create a SDK configuration file, in `apps/front/src/sdk-config.ts` (for the sake of this tutorial we'll use Axios to make the requests simply):
-
-```typescript
-import { AxiosRequestConfig, default as axios } from 'axios'
-import { CentralConfig } from './sdk/central'
-
-// Base Axios configuration, used for all requests
-const axiosConfig: AxiosRequestConfig = {
-  baseURL: 'http://localhost:3000',
-}
-
-// SDK configuration
-export const config: CentralConfig = {
-  // The method that is called on every request
-  handler: async ({ method, uri, query, body }) => {
-    // Axios configuration to use
-    const reqConfig = { ...axiosConfig, params: query }
-
-    // Make a request and get the server's response
-    const res = method === 'get' || method === 'delete' ? axios[method](uri, reqConfig) : axios[method](uri, body, reqConfig)
-
-    return res.then(
-      (res) => res.data,
-      (err) => {
-        throw !err.response ? 'Unknown error happened: ' + err.code : `Request failed: ${err.response.status} - ${err.response.data?.message ?? err.response.statusText}`
-      },
-    )
-  },
+  "sdkInterfacePath": "apps/front/sdk-interface.ts"
 }
 ```
 
@@ -172,17 +137,7 @@ Let's now generate the SDK:
 sdk-generator generate sdk-generator.json
 ```
 
-We now have a `apps/front/sdk` directory with our SDK inside!
-
-#### Typing the configuration object
-
-Note, if you want to get strict typing for the configuration object, you can generate the SDK a first time and then add in your file:
-
-```typescript
-import { CentralConfig } from '../sdk/central'
-
-const config: CentralConfig = // ...
-```
+We now have a `apps/front/sdk` directory with our SDK inside, and a default interface located in `apps/front/sdk-interface.ts`, which will handle the requests. It will only be generated if it doesn't exist, so you can edit it and commit in your repository without worrying about it being overwritten.
 
 #### Recommandations
 
