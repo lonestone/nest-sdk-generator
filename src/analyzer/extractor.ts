@@ -369,7 +369,7 @@ export function flattenSdkResolvedTypes(sdkModules: SdkModules): ResolvedTypeDep
   for (const module of sdkModules.values()) {
     for (const controller of module.values()) {
       for (const method of controller.methods.values()) {
-        const { arguments: args, query, body } = method.params
+        const { parameters: args, query, body } = method.params
 
         flattened.push(method.returnType)
 

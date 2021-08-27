@@ -14,7 +14,7 @@ import { ResolvedTypeDeps, resolveTypeDependencies } from './typedeps'
  */
 export interface SdkMethodParams {
   /** Route parameters */
-  arguments: Map<string, ResolvedTypeDeps> | null
+  parameters: Map<string, ResolvedTypeDeps> | null
 
   /** Query parameters */
   query: Map<string, ResolvedTypeDeps> | null
@@ -46,7 +46,7 @@ export function analyzeParams(
 ): SdkMethodParams | Error {
   // The collected informations we will return
   const collected: SdkMethodParams = {
-    arguments: null,
+    parameters: null,
     query: null,
     body: null,
   }
@@ -113,8 +113,8 @@ export function analyzeParams(
         )
       }
 
-      collected.arguments ??= new Map()
-      collected.arguments.set(paramName, typ)
+      collected.parameters ??= new Map()
+      collected.parameters.set(paramName, typ)
     }
 
     // Treat the @Query() decorator

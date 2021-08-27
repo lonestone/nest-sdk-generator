@@ -33,7 +33,7 @@ export function generateSdkModules(modules: SdkModules): Map<string, string> {
 
       for (const controller of controllers.values()) {
         for (const method of controller.methods.values()) {
-          const { arguments: args, query, body } = method.params
+          const { parameters: args, query, body } = method.params
 
           depsToImport.push(method.returnType)
 
@@ -117,7 +117,7 @@ export function generateSdkModules(modules: SdkModules): Map<string, string> {
 }
 
 export function stringifySdkMethodParams(params: SdkMethodParams): string {
-  const args = params.arguments ? [...params.arguments].map(([name, type]) => `${name}: ${type.resolvedType}`) : []
+  const parameters = params.parameters ? [...params.parameters].map(([name, type]) => `${name}: ${type.resolvedType}`) : []
 
   const query = params.query ? [...params.query].map(([name, type]) => `${name}: ${type.resolvedType}`) : []
 
@@ -128,14 +128,14 @@ export function stringifySdkMethodParams(params: SdkMethodParams): string {
     : null
 
   return [
-    `args: {${' ' + args.join(', ') + ' '}}${args.length === 0 && !body && query.length === 0 ? ' = {}' : ''}`,
+    `params: {${' ' + parameters.join(', ') + ' '}}${parameters.length === 0 && !body && query.length === 0 ? ' = {}' : ''}`,
     `body: ${body ?? '{}'}${!body && query.length === 0 ? ' = {}' : ''}`,
     `query: {${' ' + query.join(', ') + ' '}}${query.length === 0 ? ' = {}' : ''}`,
   ].join(', ')
 }
 
 export function generateCentralRequest(method: SdkMethod): string {
-  const resolvedRoute = resolveRouteWith(method.route, (param) => '${args.' + param + '}')
+  const resolvedRoute = resolveRouteWith(method.route, (param) => '${params.' + param + '}')
 
   if (resolvedRoute instanceof Error) {
     panic('Internal error: failed to resolve route: ' + resolvedRoute.message)
