@@ -5,7 +5,7 @@
 import * as fs from 'fs'
 import * as prettier from 'prettier'
 import { Config } from '../config'
-import { findFileAbove } from '../fileUtils'
+import { findFileAbove } from '../file-utils'
 import { panic } from '../logging'
 
 /**

@@ -5,7 +5,7 @@
 import * as os from 'os'
 import * as path from 'path'
 import { Project } from 'ts-morph'
-import { findFileAbove } from '../fileUtils'
+import { findFileAbove } from '../file-utils'
 import { debug, format, panic, warn } from '../logging'
 import { analyzeController, SdkController } from './controller'
 import { getModuleName } from './module'
