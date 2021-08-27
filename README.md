@@ -21,6 +21,7 @@ The project has been created and is currently maintained by our developers at [L
     - [Recommandations](#recommandations)
 - [SDK usage](#sdk-usage)
     - [Importing API types](#importing-api-types)
+  - [External files](#external-files)
 - [Frequently-asked questions](#frequently-asked-questions)
   - [Does this replace Swagger?](#does-this-replace-swagger)
   - [I have a GraphQL API, what can this project do for me?](#i-have-a-graphql-api-what-can-this-project-do-for-me)
@@ -199,6 +200,12 @@ import { UserDTO } from '<sdk path>/_types/node_modules/@project/dtos/user.d'
 
 const user: UserDTO = await userController.getOne({ id: 'some_id' })
 ```
+
+### External files
+
+In some situations, some of the types you are importing may belong to an external directory than the provided API source directory. For instance, if you use a mono-repository, you may have your API in `apps/api` but your DTOs built as a package in `node_modules/@apps/dtos`. In such case, the files will be placed in a special directory in `_types` called `_externalX` where `X` is the depth level (the farest the exernal file is, the larger this number will be).
+
+This will make no difference when using these types, but this is a special case where the types hierarchy isn't perfectly respected.
 
 ## Frequently-asked questions
 

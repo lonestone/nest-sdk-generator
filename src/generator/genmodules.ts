@@ -7,7 +7,7 @@ import { SdkModules } from '../analyzer/controllers'
 import { SdkMethod } from '../analyzer/methods'
 import { SdkMethodParams } from '../analyzer/params'
 import { resolveRouteWith, unparseRoute } from '../analyzer/route'
-import { ResolvedTypeDeps } from '../analyzer/typedeps'
+import { normalizeExternalFilePath, ResolvedTypeDeps } from '../analyzer/typedeps'
 import { panic } from '../logging'
 
 // Returned codes are not formatted yet
@@ -73,7 +73,7 @@ export function generateSdkModules(modules: SdkModules): Map<string, string> {
       }
 
       for (const [file, types] of imports) {
-        out.push(`import type { ${types.join(', ')} } from "../_types/${file.replace(/\\/g, '/')}";`)
+        out.push(`import type { ${types.join(', ')} } from "../_types/${normalizeExternalFilePath(file.replace(/\\/g, '/'))}";`)
       }
 
       out.push('')

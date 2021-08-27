@@ -4,6 +4,7 @@
 
 import * as path from 'path'
 import { TypesExtractorContent } from '../analyzer/extractor'
+import { normalizeExternalFilePath } from '../analyzer/typedeps'
 
 // Returned codes are not formatted yet
 export function generateSdkTypeFiles(sdkTypes: TypesExtractorContent): Map<string, string> {
@@ -34,7 +35,7 @@ export function generateSdkTypeFiles(sdkTypes: TypesExtractorContent): Map<strin
     out.push(
       [...imports]
         .map(([depFile, types]) => {
-          let depPath = path.relative(path.dirname(file), depFile).replace(/\\/g, '/')
+          let depPath = path.relative(path.dirname(file), normalizeExternalFilePath(depFile)).replace(/\\/g, '/')
           if (!depPath.includes('/')) depPath = './' + depPath
           return `import type { ${types.join(', ')} } from "${
             depPath.startsWith('./') || depPath.startsWith('../') ? depPath : './' + depPath

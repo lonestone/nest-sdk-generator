@@ -5,6 +5,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import { SdkContent } from '../analyzer'
+import { normalizeExternalFilePath } from '../analyzer/typedeps'
 import { Config } from '../config'
 import { debug, panic, println } from '../logging'
 import { generateSdkModules } from './genmodules'
@@ -56,7 +57,7 @@ export default async function generatorCli(config: Config, sdkContent: SdkConten
   println('> Generating type files...')
 
   for (const [file, content] of generateSdkTypeFiles(sdkContent.types)) {
-    writeScriptTo('_types', file, content)
+    writeScriptTo('_types', normalizeExternalFilePath(file), content)
   }
 
   println('> Generating modules...')

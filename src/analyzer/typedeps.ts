@@ -97,3 +97,20 @@ export function resolveTypeDependencies(type: Type<ts.Type>, relativeFilePath: s
 export function getImportResolvedType(type: Type<ts.Type>): string {
   return type.getText().replace(IMPORTED_TYPE_REGEX, (_, __, typename) => typename)
 }
+
+/**
+ * Convert paths for external files
+ * @param importedFilePath
+ */
+export function normalizeExternalFilePath(importedFilePath: string): string {
+  if (!importedFilePath.startsWith('../')) return importedFilePath
+
+  let level = 0
+
+  while (importedFilePath.startsWith('../')) {
+    level++
+    importedFilePath = importedFilePath.substr(3)
+  }
+
+  return `_external${level}/${importedFilePath}`
+}
