@@ -1,4 +1,4 @@
-# nest-sdk-generator - A client-side REST SDK generator by [![](https://user-images.githubusercontent.com/73881870/130991041-a4a1f0f4-21f5-4a54-a085-974f80f56ed2.png)](https://lonestone.io/)
+# nest-sdk-generator - A REST SDK generator by [![](https://user-images.githubusercontent.com/73881870/130991041-a4a1f0f4-21f5-4a54-a085-974f80f56ed2.png)](https://lonestone.io/)
 
 The Nest.js nest-sdk-generator is a tool that aims to build a SDK for client applications to consume a Nest.js server's API.
 
