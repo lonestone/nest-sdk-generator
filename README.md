@@ -1,6 +1,6 @@
-# NSdkGen - A Nest.js SDK generator by [![](https://user-images.githubusercontent.com/73881870/130991041-a4a1f0f4-21f5-4a54-a085-974f80f56ed2.png)](https://lonestone.io/)
+# nest-sdk-generator - A client-side REST SDK generator by [![](https://user-images.githubusercontent.com/73881870/130991041-a4a1f0f4-21f5-4a54-a085-974f80f56ed2.png)](https://lonestone.io/)
 
-The Nest.js NSdkGen is a tool that aims to build a SDK for client applications to consume a Nest.js server's API.
+The Nest.js nest-sdk-generator is a tool that aims to build a SDK for client applications to consume a Nest.js server's API.
 
 The project is split in two parts:
 
@@ -11,7 +11,7 @@ The project has been created and is currently maintained by our developers at [L
 
 **Table of contents:**
 
-- [What is NSdkGen and why should I use it?](#what-is-nsdkgen-and-why-should-i-use-it)
+- [What is nest-sdk-generator and why should I use it?](#what-is-nest-sdk-generator-and-why-should-i-use-it)
 - [Features](#features)
 - [Examples](#examples)
 - [Instructions](#instructions)
@@ -33,9 +33,9 @@ The project has been created and is currently maintained by our developers at [L
   - [Is there a way to log the requests or responses somewhere?](#is-there-a-way-to-log-the-requests-or-responses-somewhere)
 - [License](#license)
 
-## What is NSdkGen and why should I use it?
+## What is nest-sdk-generator and why should I use it?
 
-NSdkGen is a tool that creates a client-side SDK based on a Nest.js REST API. The SDK can be used to call the API's routes seamlessly without any friction, and also enforces type safety by typing all parameters and return values based on the API itself.
+nest-sdk-generator is a tool that creates a client-side SDK based on a Nest.js REST API. The SDK can be used to call the API's routes seamlessly without any friction, and also enforces type safety by typing all parameters and return values based on the API itself.
 
 This brings several advantages, including:
 
@@ -60,20 +60,20 @@ The generator also allows you to (re-)generate a full SDK in seconds with a sing
 
 ## Examples
 
-You can find a demonstration API in the [`demo/server`](demo/server) directory, as well as a frontend using a SDK based on this API in [`demo/front`](demo/front). The SDK configuration is located in [`demo/nsdkgen.json`](demo/nsdkgen.json).
+You can find a demonstration API in the [`demo/server`](demo/server) directory, as well as a frontend using a SDK based on this API in [`demo/front`](demo/front). The SDK configuration is located in [`demo/sdk-generator.json`](demo/sdk-generator.json).
 
 ## Instructions
 
 1. Create a configuration file exporting your API's url (`{ apiUrl: '<some_url>' }`)
-2. Run `nsdkgen <nest api path> <sdk output path> -c <path of config file relative to sdk output path>`
+2. Run `sdk-generator <nest api path> <sdk output path> -c <path of config file relative to sdk output path>`
 
 ## Limitations
 
-NSdkGen comes with a set of limitations which can find below:
+nest-sdk-generator comes with a set of limitations which can find below:
 
-1. NSdkGen does not check if the source files compile correctly. Therefore, if you try to use a type that doesn't exist, the generation may still succeed although compiling the code would fail. In such case, the resulting output type is `any`.
+1. nest-sdk-generator does not check if the source files compile correctly. Therefore, if you try to use a type that doesn't exist, the generation may still succeed although compiling the code would fail. In such case, the resulting output type is `any`.
 
-2. A current limitation of NSdkGen is that it finds a controller's module by looking for a `.module.ts` file in the current directory, and parent directories if none is found in the controller's one. This means controller files must be put under a module's directory, and two module files cannot be put in the same directory.
+2. A current limitation of nest-sdk-generator is that it finds a controller's module by looking for a `.module.ts` file in the current directory, and parent directories if none is found in the controller's one. This means controller files must be put under a module's directory, and two module files cannot be put in the same directory.
 
 3. Types belonging to namespaces are currently not supported and will result in error in the generated code
 
@@ -97,14 +97,14 @@ Methods return a typed `Promise<>` with the original method's return type.
 
 ## Architecture
 
-NSdkGen analyzes your Nest.js API using a provided configuration file, and produces a client-side SDK. This SDK is made of modules containing route methods that all call a central handler with the corresponding URI and parameters. The handler makes the request to the server and transmits the response. This is where you can customize the data to send to the server, if they need normalization, encryption, hashing, parsing, authentication, or anything else.
+nest-sdk-generator analyzes your Nest.js API using a provided configuration file, and produces a client-side SDK. This SDK is made of modules containing route methods that all call a central handler with the corresponding URI and parameters. The handler makes the request to the server and transmits the response. This is where you can customize the data to send to the server, if they need normalization, encryption, hashing, parsing, authentication, or anything else.
 
 ## Step-by-step generation tutorial
 
 Generating a SDK is made in two steps:
 
 - Creating a configuration file for the generator
-- Performing the generation through `nsdkgen generate`
+- Performing the generation through `sdk-generator generate`
 
 Let's suppose we have a monorepo, with our server being in `apps/api` and running at `http://localhost:3000`, while our frontend is located in `apps/front`. We have the following structure:
 
@@ -121,7 +121,7 @@ Let's suppose we have a monorepo, with our server being in `apps/api` and runnin
 
 We want the SDK to be located in `apps/front/sdk`.
 
-First, we must create a configuration file. Let's put it in `nsdkgen.json` in the root directory:
+First, we must create a configuration file. Let's put it in `sdk-generator.json` in the root directory:
 
 ```json
 {
@@ -175,7 +175,7 @@ export const config: CentralConfig = {
 Let's now generate the SDK:
 
 ```shell
-nsdkgen generate nsdkgen.json
+sdk-generator generate sdk-generator.json
 ```
 
 We now have a `apps/front/sdk` directory with our SDK inside!
@@ -234,11 +234,11 @@ const user: UserDTO = await userController.getOne({ id: 'some_id' })
 
 ### Does this replace Swagger?
 
-No, NSdkGen only generates a client-side SDK to make requests more easily to the server ; it doesn't generate a documentation by itself. Although all routes are organized with their original name and split across controllers and modules the same way they were in the API, that doesn't make a full documentation in itself.
+No, nest-sdk-generator only generates a client-side SDK to make requests more easily to the server ; it doesn't generate a documentation by itself. Although all routes are organized with their original name and split across controllers and modules the same way they were in the API, that doesn't make a full documentation in itself.
 
 ### I have a GraphQL API, what can this project do for me?
 
-Unfortunately, NSdkGen isn't compatible with GraphQL API, and for a good reason: the whole point of this project is to bring structural typing to an API, but GraphQL already provides that. So there would be no point in this tool being compatible with GraphQL projects.
+Unfortunately, nest-sdk-generator isn't compatible with GraphQL API, and for a good reason: the whole point of this project is to bring structural typing to an API, but GraphQL already provides that. So there would be no point in this tool being compatible with GraphQL projects.
 
 ### Does the SDK has any performance overhead?
 

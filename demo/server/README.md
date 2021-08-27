@@ -1,4 +1,4 @@
-# NSdkGen demo server
+# nest-sdk-generator demo server
 
 To set up the demo server, simply run:
 
