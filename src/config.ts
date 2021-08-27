@@ -17,8 +17,9 @@ export interface Config {
   readonly jsonPrettyOutput?: boolean
   readonly prettierConfig?: string
 
-  readonly dontPrettify?: boolean
-  readonly dontOverwriteOldOutputDir?: boolean
+  readonly prettify?: boolean
+  readonly overwriteOldOutputDir?: boolean
+  readonly generateDefaultSdkInterface?: boolean
 }
 
 /**

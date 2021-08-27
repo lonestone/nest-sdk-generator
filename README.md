@@ -139,6 +139,8 @@ sdk-generator generate sdk-generator.json
 
 We now have a `apps/front/sdk` directory with our SDK inside, and a default interface located in `apps/front/sdk-interface.ts`, which will handle the requests. It will only be generated if it doesn't exist, so you can edit it and commit in your repository without worrying about it being overwritten.
 
+**NOTE:** You can disable this generation by setting the `generateDefaultSdkInterface` setting to `false` in the `sdk-generator.json` file.
+
 #### Recommandations
 
 In most cases, you should add the SDK's output path to your `.gitignore` and perform the generation automatically in your CI.
