@@ -10,44 +10,80 @@ import { analyzeClassDeps } from './classdeps'
 import { SdkModules } from './controllers'
 import { getImportResolvedType, ResolvedTypeDeps, resolveTypeDependencies } from './typedeps'
 
+/** Valid extensions for TypeScript module files */
 export const MODULE_EXTENSIONS = ['.ts', '.d.ts', '.tsx', '.d.tsx', '.js', '.jsx']
 
+/**
+ * Location of an imported type
+ */
 export interface TypeLocation {
   readonly typename: string
   readonly relativePathNoExt: string
 }
 
+/**
+ * Location of an imported type after figuring out its extension
+ */
 export interface TypeLocationWithExt extends TypeLocation {
   readonly relativePath: string
 }
 
+/**
+ * Extracted imported type
+ */
 export interface ExtractedType extends TypeLocationWithExt {
+  /** Type's declaration */
   readonly content: string
+
+  /** Type parameters (e.g. <T>) */
   readonly typeParams: string[]
+
+  /** Types this one depends on */
   readonly dependencies: TypeLocationWithExt[]
 }
 
 // Maps files to records mapping themselves type names to their declaration code
 export type TypesExtractorContent = Map<string, Map<string, ExtractedType>>
 
+/**
+ * Types extractor
+ */
 export class TypesExtractor {
   constructor(
+    /** TS-Morph project */
     public readonly project: Project,
+
+    /** Absolute source path */
     public readonly absoluteSrcPath: string,
+
+    /** Magic types to replace non-portable types */
     public readonly magicTypes: Array<MagicType>,
+
+    /** Extracted types */
     public readonly extracted: TypesExtractorContent = new Map()
   ) {}
 
+  /**
+   * Check if a type has already been extracted
+   */
   hasExtractedType(loc: TypeLocationWithExt): boolean {
     const files = this.extracted.get(loc.relativePath)
     return files ? files.has(loc.typename) : false
   }
 
+  /**
+   * Get a type that was previously extracted
+   */
   getExtractedType(loc: TypeLocationWithExt): ExtractedType | null {
     return this.extracted.get(loc.relativePath)?.get(loc.typename) ?? null
   }
 
-  guessExtractedTypeExt(loc: TypeLocation): string | null {
+  /**
+   * Find the extension of a TypeScript module
+   * @param loc
+   * @returns
+   */
+  guessExtractedTypeModuleFileExt(loc: TypeLocation): string | null {
     for (const ext of MODULE_EXTENSIONS) {
       if (this.extracted.has(loc.relativePathNoExt + ext)) {
         return loc.relativePathNoExt + ext
@@ -57,6 +93,11 @@ export class TypesExtractor {
     return null
   }
 
+  /**
+   * Find if a type has previously been extracted, without providing its extension
+   * @param loc
+   * @returns
+   */
   findExtractedTypeWithoutExt(loc: TypeLocation): ExtractedType | null {
     for (const ext of MODULE_EXTENSIONS) {
       const typ = this.extracted.get(loc.relativePathNoExt + ext)?.get(loc.typename)
@@ -69,6 +110,11 @@ export class TypesExtractor {
     return null
   }
 
+  /**
+   * Memorize an extracted type so it can be reused later on
+   * @param loc
+   * @param extracted
+   */
   memorizeExtractedType(loc: TypeLocationWithExt, extracted: ExtractedType) {
     let files = this.extracted.get(loc.relativePath)
 
@@ -82,6 +128,11 @@ export class TypesExtractor {
     }
   }
 
+  /**
+   * Find the relative file location of a type
+   * @param loc
+   * @returns
+   */
   findTypeRelativeFilePath(loc: TypeLocation): string | Error {
     if (path.isAbsolute(loc.relativePathNoExt)) {
       unreachable(
@@ -117,6 +168,12 @@ export class TypesExtractor {
     )
   }
 
+  /**
+   * Extract a type
+   * @param loc
+   * @param typesPath
+   * @returns
+   */
   extractType(loc: TypeLocation, typesPath: string[] = []): ExtractedType | Error {
     if (path.isAbsolute(loc.relativePathNoExt)) {
       unreachable(
@@ -125,14 +182,18 @@ export class TypesExtractor {
       )
     }
 
+    // Get the absolute path of the type's parent file
+    // We don't know its extension yet as imported file names in import statements don't have an extension
     const absolutePathNoExt = path.resolve(this.absoluteSrcPath, loc.relativePathNoExt)
 
+    // If the type is already in cache, return it directly
     const cached = this.findExtractedTypeWithoutExt(loc)
 
     if (cached) {
       return cached
     }
 
+    // Try to find the path with extension of the file and get it as a TS-Morph file
     let fileAndPath: [SourceFile, string] | null = null
 
     for (const ext of MODULE_EXTENSIONS) {
@@ -151,6 +212,7 @@ export class TypesExtractor {
 
     const [file, relativeFilePath] = fileAndPath
 
+    // Use magic types to replace non-portable types
     for (const magicType of this.magicTypes) {
       if (relativeFilePath.endsWith(`/node_modules/${magicType.nodeModuleFilePath}`) && loc.typename === magicType.typeName) {
         debug(
@@ -186,6 +248,7 @@ export class TypesExtractor {
 
     debug('-> '.repeat(typesPath.length + 1) + 'Extracting type {yellow} from file {magentaBright}...', loc.typename, relativeFilePath)
 
+    // Analyze the type's declaration
     const decl = file.forEachChildAsArray().find((node) => {
       return (
         (Node.isEnumDeclaration(node) ||
@@ -201,6 +264,8 @@ export class TypesExtractor {
       return new Error(format(`Type {yellow} was not found in file {magenta}`, loc.typename, relativeFilePath))
     }
 
+    // Handle a limitation of the tool: you can't import two types from two files at the same path with just two different extensions
+    // Example: importing a type named "User" from two files in the same directory called "user.entity.ts" and "user.entity.js"
     const typ = this.findExtractedTypeWithoutExt(loc)
 
     if (typ) {
@@ -213,9 +278,13 @@ export class TypesExtractor {
       }
     }
 
+    /** Resolved type's dependencies */
     let resolvedDeps: ResolvedTypeDeps[]
+
+    /** Type's parameters (e.g. <T>) */
     let typeParams: string[]
 
+    /** Type declaration */
     let extractedDecl = decl.getText()
 
     // Handle enumerations
@@ -238,6 +307,8 @@ export class TypesExtractor {
 
     // Handle classes
     // Methods are not handled because they shouldn't be used as DTOs and won't be decodable from JSON in all cases
+    // This part is tricky as we remake the class from scratch using the informations we have on it, given we have to get rid
+    //  of methods as well as removing decorators
     else if (Node.isClassDeclaration(decl)) {
       const classHead = decl.getText().match(/\b(export[^{]+class[^{]+{)/)
 
@@ -247,6 +318,7 @@ export class TypesExtractor {
 
       extractedDecl = classHead[1]
 
+      // Export all members
       for (const member of decl.getMembers()) {
         if (!Node.isPropertyDeclaration(member)) {
           warn('Found non-property member in class {cyan}: {magenta}', decl.getName() ?? '<anonymous>', member.getText())
@@ -272,24 +344,29 @@ export class TypesExtractor {
       typeParams = []
     }
 
-    // Handle unreachable types
+    // Handle unknown types
     else {
       unreachable('Unknown node type when extracting types: ' + decl.getKindName())
     }
 
+    /** Normalized dependencies */
     const dependencies: TypeLocationWithExt[] = []
 
     typesPath.push(loc.typename)
 
+    // Ensure we're not stuck in an infinite loop where we analyze a type A, then its dependency B, which itself depends on A, and so on
     if ([...new Set([...typesPath])].length !== typesPath.length) {
       unreachable('Internal error: types path contains at least one duplicate type during extraction')
     }
 
+    // Analyze all dependencies
     for (const dependencyLoc of locateTypesFile(resolvedDeps)) {
+      // If the "dependency" is one of the type's parameters (e.g. "T"), ignore this part
       if (typeParams.includes(dependencyLoc.typename)) {
         continue
       }
 
+      // Find the dependency's relative path
       let fallibleRelativePath: string | Error
 
       const cached = this.findExtractedTypeWithoutExt(dependencyLoc)
@@ -315,6 +392,7 @@ export class TypesExtractor {
         )
       }
 
+      // Update dependencies
       dependencies.push({ ...dependencyLoc, relativePath: fallibleRelativePath })
     }
 
@@ -335,12 +413,18 @@ export class TypesExtractor {
       this.extracted.set(relativeFilePath, types)
     }
 
+    // Save the dependency
     types.set(loc.typename, extracted)
 
     return extracted
   }
 }
 
+/**
+ * Locate the files containing a list of a resolved types
+ * @param resolvedTypes
+ * @returns
+ */
 export function locateTypesFile(resolvedTypes: Array<ResolvedTypeDeps>): TypeLocation[] {
   const out = new Array<TypeLocation>()
 
@@ -363,6 +447,11 @@ export function locateTypesFile(resolvedTypes: Array<ResolvedTypeDeps>): TypeLoc
   return out
 }
 
+/**
+ * Flatten a tree of resolved type dependencies
+ * @param sdkModules 
+ * @returns 
+ */
 export function flattenSdkResolvedTypes(sdkModules: SdkModules): ResolvedTypeDeps[] {
   const flattened = new Array<ResolvedTypeDeps>()
 
