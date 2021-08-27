@@ -103,8 +103,8 @@ Each controller file exposes a simple record object with keys being your control
 
 Methods return a typed `Promise<>` with the original method's return type.
 
-- If the requests succeeds and returns a valid JSON string, it is parse and returned by the method
-- If the requests fail or cannot be decoded correctly, the promise fails with an `AxiosResponse` object
+- If the requests succeeds and returns a valid JSON string, it is parsed and returned by the method
+- If the requests fail or cannot be decoded correctly, the promise fails
 
 ## Architecture
 
@@ -211,7 +211,7 @@ Unfortunately, nest-sdk-generator isn't compatible with GraphQL API, and for a g
 
 ### Does the SDK has any performance overhead?
 
-Absolutely not. The generated SDK is only made of simple objets that will call the handler you provided through the configuration script, and the said script will be in charge of making the request (e.g. with Axios). This means that no kind of data transformation/conversion happens behind-the-scenes.
+Absolutely not. The generated SDK is only made of simple objets that will call the handler you provided through the interface script, and the said script will be in charge of making the request (with `fetch` by default). This means that no kind of data transformation/conversion happens behind-the-scenes.
 
 ### How do I update the SDK once I change the API's source code?
 
