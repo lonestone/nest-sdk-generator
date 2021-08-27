@@ -256,7 +256,7 @@ export class TypesExtractor {
         const memberType = member.getType()
 
         extractedDecl += `\npublic ${member.getName()}${
-          member.getText().includes('?') ? '?' : member.getText().includes('!:') || member.getText().includes('=') ? '!' : ''
+          member.getText().includes('?') ? '?' : member.getText().includes('!:') ? '!' : ''
         }: ${getImportResolvedType(memberType)};`
       }
 
