@@ -318,6 +318,12 @@ export class TypesExtractor {
 
       extractedDecl = classHead[1]
 
+      const index = decl.getType().getStringIndexType() ?? decl.getType().getNumberIndexType()
+
+      if (index) {
+        extractedDecl += '\npublic [input: string | number]: ' + getImportResolvedType(index)
+      }
+
       // Export all members
       for (const member of decl.getMembers()) {
         if (!Node.isPropertyDeclaration(member)) {
@@ -449,8 +455,8 @@ export function locateTypesFile(resolvedTypes: Array<ResolvedTypeDeps>): TypeLoc
 
 /**
  * Flatten a tree of resolved type dependencies
- * @param sdkModules 
- * @returns 
+ * @param sdkModules
+ * @returns
  */
 export function flattenSdkResolvedTypes(sdkModules: SdkModules): ResolvedTypeDeps[] {
   const flattened = new Array<ResolvedTypeDeps>()
