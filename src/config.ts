@@ -8,15 +8,12 @@ import { panic } from './logging'
 export interface Config {
   readonly verbose?: boolean
   readonly noColor?: boolean
-  readonly logFile?: string
 
   readonly apiInputPath: string
-  readonly magicTypes: MagicType[]
-
   readonly sdkOutput: string
   readonly sdkInterfacePath: string
 
-  readonly configNameToImport?: string
+  readonly magicTypes?: MagicType[]
   readonly jsonOutput?: string
   readonly jsonPrettyOutput?: boolean
   readonly prettierConfig?: string
