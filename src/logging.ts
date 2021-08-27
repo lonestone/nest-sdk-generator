@@ -6,7 +6,7 @@ export function format(message: string, ...params: Array<number | string>): stri
     /\{(black|red|green|yellow|blue|magenta|cyan|white|gray|grey|blackBright|redBright|greenBright|yellowBright|blueBright|magentaBright|cyanBright|whiteBright|)\}/g,
     (match, color) => {
       const param = params.shift() ?? panicRaw(`In message:\n> ${message}\nMissing parameter:\n> ${match}`)
-      return color ? (chalk as any)[color](param) : param
+      return color && config.noColor !== false ? (chalk as any)[color](param) : param
     }
   )
 }
