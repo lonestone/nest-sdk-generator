@@ -7,21 +7,17 @@ export function AuthorsPage() {
   const [authors, setAuthors] = useState<Author[] | null>(null)
 
   useEffect(() => {
+    // Fetch all authors
     authorController.getAll().then(setAuthors, (error) => alert(error))
   }, [])
 
-  async function create() {
+  const handleCreate = async () => {
     const displayName = prompt("Author's name?")
-
-    if (!displayName) {
-      return
-    }
-
+    if (!displayName) return
+    // Create new author
     const author = await authorController.create({}, { displayName })
-
-    alert('Success!')
-
     setAuthors(authors ? [...authors, author] : [author])
+    alert('Success!')
   }
 
   return (
@@ -42,7 +38,7 @@ export function AuthorsPage() {
         </ul>
       )}
       <p>
-        <button type="button" onClick={create}>
+        <button type="button" onClick={handleCreate}>
           Create a new author
         </button>
       </p>

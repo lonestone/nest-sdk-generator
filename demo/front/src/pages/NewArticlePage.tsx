@@ -8,16 +8,15 @@ export function NewArticlePage() {
   const [title, setTitle] = useState('')
   const [slug, setSlug] = useState('')
   const [content, setContent] = useState('')
-  const [authorId, setAuthorId] = useState<string | null>('')
-  const [categoryId, setCategoryId] = useState<string | null>('')
+  const [authorId, setAuthorId] = useState<string | undefined>(undefined)
+  const [categoryId, setCategoryId] = useState<string | undefined>(undefined)
 
   const history = useHistory()
 
-  async function submit() {
+  const handleSubmit = async () => {
     if (!authorId) {
       return alert('Please select an author')
     }
-
     if (!categoryId) {
       return alert('Please select a category')
     }
@@ -40,10 +39,11 @@ export function NewArticlePage() {
     <>
       <h1>New article</h1>
       <p>
-        Author: <AuthorDropdown onSelect={setAuthorId} />
+        Author: <AuthorDropdown value={authorId} onChange={setAuthorId} />
       </p>
       <p>
-        Category: <CategoryDropdown onSelect={setCategoryId} />
+        Category:{' '}
+        <CategoryDropdown value={categoryId} onChange={setCategoryId} />
       </p>
       <p>
         <input
@@ -69,7 +69,7 @@ export function NewArticlePage() {
         onChange={(e) => setContent(e.target.value)}
       ></textarea>
       <p>
-        <button type="submit" onClick={submit}>
+        <button type="submit" onClick={handleSubmit}>
           Submit
         </button>
       </p>

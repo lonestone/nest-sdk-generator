@@ -7,21 +7,18 @@ export function CategoriesPage() {
   const [categories, setCategories] = useState<Category[] | null>(null)
 
   useEffect(() => {
+    // Fetch all categories
     categoryController.getAll().then(setCategories, (error) => alert(error))
   }, [])
 
-  async function create() {
+  const handleCreate = async () => {
     const title = prompt("Category's name?")
+    if (!title) return
 
-    if (!title) {
-      return
-    }
-
+    // Create category
     const category = await categoryController.create({}, { title })
-
-    alert('Success!')
-
     setCategories(categories ? [...categories, category] : [category])
+    alert('Success!')
   }
 
   return (
@@ -42,9 +39,9 @@ export function CategoriesPage() {
         </ul>
       )}
       <p>
-        <button type="button" onClick={create}>
+        <button type="button" onClick={handleCreate}>
           Create a new category
-        </button>{' '}
+        </button>
       </p>
     </>
   )
