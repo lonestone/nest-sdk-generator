@@ -17,6 +17,7 @@
     "noEmit": true,
     /* Additional Options */
     "strict": true,
+    "strictPropertyInitialization": false,
     "skipLibCheck": true,
     "types": ["mocha", "snowpack-env"],
     "forceConsistentCasingInFileNames": true,

@@ -1,6 +1,8 @@
 {
-  "verbose": true,
   "apiInputPath": "server/src",
+  "sdkOutput": "front/src/sdk",
+  "sdkInterfacePath": "front/src/sdk-interface.ts",
+
   "magicTypes": [
     {
       "nodeModuleFilePath": "@mikro-orm/core/entity/Collection.d.ts",
@@ -8,6 +10,6 @@
       "placeholderContent": "export type Collection<T, _> = Array<T>;"
     }
   ],
-  "sdkOutput": "front/src/sdk",
-  "sdkInterfacePath": "front/src/sdk-interface.ts"
+
+  "verbose": true
 }
