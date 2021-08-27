@@ -1,4 +1,9 @@
 {
+  "version": "0.0.1",
+  "description": "A demo frontend for the SDK generator",
+  "author": "Lonestone <contact@lonestone.studio>",
+  "private": true,
+  "license": "MIT",
   "scripts": {
     "start": "snowpack dev --port 5000",
     "build": "snowpack build",

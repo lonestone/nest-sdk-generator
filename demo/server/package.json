@@ -1,10 +1,9 @@
 {
-  "name": "server",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "A demo server for the SDK generator",
+  "author": "Lonestone <contact@lonestone.studio>",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
