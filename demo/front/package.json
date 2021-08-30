@@ -10,7 +10,7 @@
     "test": "web-test-runner \"src/**/*.test.tsx\"",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
-    "sdkgen": "nest-sdk-generator ../sdk-generator.json"
+    "sdkgen": "nest-sdk-generator sdk-generator.json"
   },
   "dependencies": {
     "react": "^17.0.2",
