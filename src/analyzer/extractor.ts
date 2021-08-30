@@ -359,7 +359,7 @@ export class TypesExtractor {
     typesPath.push(loc.typename)
 
     // Ensure we're not stuck in an infinite loop where we analyze a type A, then its dependency B, which itself depends on A, and so on
-    if ([...new Set([...typesPath])].length !== typesPath.length) {
+    if (new Set(typesPath).size !== typesPath.length) {
       unreachable('Internal error: types path contains at least one duplicate type during extraction')
     }
 
