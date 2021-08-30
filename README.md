@@ -156,15 +156,15 @@ First, we must create a configuration file. Let's put it in `front/sdk-generator
       "placeholderContent": "export type Collection<T, _> = Array<T>;"
     }
   ],
-  "sdkOutput": "front/sdk",
-  "sdkInterfacePath": "front/sdk-interface.ts"
+  "sdkOutput": "sdk",
+  "sdkInterfacePath": "sdk-interface.ts"
 }
 ```
 
 Let's now generate the SDK:
 
 ```shell
-sdk-generator generate sdk-generator.json
+sdk-generator apps/front/sdk-generator.json
 ```
 
 We now have a `apps/front/sdk` directory with our SDK inside, and a default interface located in `apps/front/sdk-interface.ts`, which will handle the requests. It will only be generated if it doesn't exist, so you can edit it and commit in your repository without worrying about it being overwritten.
