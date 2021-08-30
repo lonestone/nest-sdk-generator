@@ -157,5 +157,5 @@ export function generateCentralRequest(method: SdkMethod): string {
     panic('Internal error: failed to resolve route: ' + resolvedRoute.message)
   }
 
-  return `return request('${method.type}', \`${resolvedRoute}\`, query, body)`
+  return `return request('${method.method}', \`${resolvedRoute}\`, query, body)`
 }

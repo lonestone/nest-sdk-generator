@@ -2,6 +2,7 @@
  * @file Analyzer for the source API's methods
  */
 
+import { blue } from 'chalk'
 import { ClassDeclaration, MethodDeclaration, Node } from 'ts-morph'
 import { debug, format } from '../logging'
 import { analyzeParams, SdkMethodParams } from './params'
@@ -18,7 +19,7 @@ export type SdkMethods = Map<string, SdkMethod>
  */
 export interface SdkMethod {
   readonly name: string
-  readonly type: SdkHttpMethodType
+  readonly method: SdkHttpMethod
   readonly returnType: ResolvedTypeDeps
   readonly route: Route
   readonly uriPath: string
@@ -28,7 +29,7 @@ export interface SdkMethod {
 /**
  * HTTP method of a controller's method
  */
-export enum SdkHttpMethodType {
+export enum SdkHttpMethod {
   Get = 'GET',
   Post = 'POST',
   Put = 'PUT',
@@ -61,7 +62,7 @@ export function analyzeMethods(
     debug('> Found method: {yellow}', methodName)
 
     // Get the HTTP decorator(s) of the method
-    const decorators = method.getDecorators().filter((dec) => Object.keys(SdkHttpMethodType).includes(dec.getName()))
+    const decorators = method.getDecorators().filter((dec) => Object.keys(SdkHttpMethod).includes(dec.getName()))
 
     // We expect to have exactly one HTTP decorator
     if (decorators.length > 1) {
@@ -80,7 +81,7 @@ export function analyzeMethods(
 
     // We need to put a '@ts-ignore' here because TypeScript doesn't like indexing an enumeration with a string key, although this works fine
     // @ts-ignore
-    const httpMethod = SdkHttpMethodType[dec.getName()]
+    const httpMethod = SdkHttpMethod[dec.getName()]
 
     debug('>> Detected HTTP method: {magentaBright}', httpMethod.toLocaleUpperCase())
 
@@ -116,7 +117,6 @@ export function analyzeMethods(
     debug('>> Detected URI name: {yellow}', uriPath)
 
     // Analyze the method's URI
-
     const route = analyzeUri(controllerUriPrefix ? (uriPath ? `/${controllerUriPrefix}/${uriPath}` : `/` + controllerUriPrefix) : uriPath)
 
     if (route instanceof Error) {
@@ -129,7 +129,7 @@ export function analyzeMethods(
       )
     }
 
-    debug('>> Parsed URI name to route: {yellow}', debugUri(route, require('chalk').blue))
+    debug('>> Parsed URI name to route: {yellow}', debugUri(route, blue))
 
     // Analyze the method's arguments
     debug('>> Analyzing arguments...')
@@ -146,7 +146,7 @@ export function analyzeMethods(
     // Success!
     collected.set(methodName, {
       name: methodName,
-      type: httpMethod,
+      method: httpMethod,
       returnType,
       route,
       uriPath,

@@ -5,7 +5,7 @@
 import { ParameterDeclaration } from 'ts-morph'
 import { debug, format, warn } from '../logging'
 import { expectSingleStrLitDecorator } from './decorator'
-import { SdkHttpMethodType } from './methods'
+import { SdkHttpMethod } from './methods'
 import { paramsOfRoute, Route } from './route'
 import { ResolvedTypeDeps, resolveTypeDependencies } from './typedeps'
 
@@ -38,7 +38,7 @@ export type SdkMethodBodyParam = { full: true; type: ResolvedTypeDeps } | { full
  * @returns A SDK interface for the method's parameters
  */
 export function analyzeParams(
-  httpMethod: SdkHttpMethodType,
+  httpMethod: SdkHttpMethod,
   route: Route,
   args: ParameterDeclaration[],
   filePath: string,
@@ -159,7 +159,7 @@ export function analyzeParams(
       debug('>>> Detected decorator {blue}', '@Body')
 
       // GET requests cannot have a BODY
-      if (httpMethod === SdkHttpMethodType.Get) {
+      if (httpMethod === SdkHttpMethod.Get) {
         return new Error('GET requests cannot have a BODY!')
       }
 
