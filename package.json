@@ -4,6 +4,7 @@
   "license": "MIT",
   "version": "1.0.2",
   "description": "A full-powered SDK generator for NestJS",
+  "keywords": [ "nest", "nestjs", "sdk", "generator", "typescript", "frontend", "api" ],
   "main": "build/bin.js",
   "scripts": {
     "prepare": "npm run build",
