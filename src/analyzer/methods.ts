@@ -18,11 +18,22 @@ export type SdkMethods = Map<string, SdkMethod>
  * SDK interface for a single controller's method
  */
 export interface SdkMethod {
+  /** Method's name */
   readonly name: string
-  readonly method: SdkHttpMethod
+
+  /** Method's HTTP method (e.g. GET / POST) */
+  readonly httpMethod: SdkHttpMethod
+
+  /** Method's return type with resolved dependencies */
   readonly returnType: ResolvedTypeDeps
+
+  /** Method's parsed route */
   readonly route: Route
+
+  /** Method's URI path */
   readonly uriPath: string
+
+  /** Method's parameters */
   readonly params: SdkMethodParams
 }
 
@@ -148,7 +159,7 @@ export function analyzeMethods(
     // Success!
     collected.set(methodName, {
       name: methodName,
-      method: httpMethod,
+      httpMethod,
       returnType,
       route,
       uriPath,
