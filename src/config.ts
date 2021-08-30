@@ -52,4 +52,4 @@ function loadConfigFile(configPath: string): Config {
   }
 }
 
-export const config: Config = loadConfigFile(process.argv[3] ?? panic('Please provide a path to the configuration file'))
+export const config = loadConfigFile(process.argv[3] ?? panic('Please provide a path to the configuration file'))
