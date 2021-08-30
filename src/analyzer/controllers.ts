@@ -91,6 +91,7 @@ export function analyzeControllers(controllers: string[], absoluteSrcPath: strin
     if (i === 0) {
       if (process.platform === 'linux' && os.release().toLocaleLowerCase().includes('microsoft') && absoluteSrcPath.startsWith('/mnt/')) {
         warn("NOTE: On WSL, the first type analysis on a project located in Windows's filesystem may take a long time to complete.")
+        warn('Please consider moving your project to WSL, or running this tool directly from Windows')
       }
     }
 
