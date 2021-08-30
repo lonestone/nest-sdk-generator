@@ -1,3 +1,4 @@
+import chalk = require('chalk')
 import * as fs from 'fs'
 import * as path from 'path'
 
@@ -39,7 +40,7 @@ export interface MagicType {
  */
 function loadConfigFile(configPath: string): Config {
   if (!fs.existsSync(configPath)) {
-    console.error('Config file was not found at path: {yellow}', path.resolve(configPath))
+    console.error(chalk.red('Config file was not found at path: ' + chalk.yellow(path.resolve(configPath))))
     process.exit(4)
   }
 
@@ -48,7 +49,7 @@ function loadConfigFile(configPath: string): Config {
   try {
     return JSON.parse(text)
   } catch (e) {
-    console.error('Failed to parse configuration file: ' + e)
+    console.error(chalk.red('Failed to parse configuration file: ' + e))
     process.exit(3)
   }
 }
@@ -56,7 +57,7 @@ function loadConfigFile(configPath: string): Config {
 export const configPath = process.argv[2]
 
 if (!configPath) {
-  console.error('Please provide a path to the configuration file')
+  console.error(chalk.red('Please provide a path to the configuration file'))
   process.exit(2)
 }
 
