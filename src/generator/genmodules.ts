@@ -88,7 +88,7 @@ export function generateSdkModules(modules: SdkModules): Map<string, string> {
         const promised = ret.startsWith('Promise<') ? ret : `Promise<${ret}>`
 
         out.push('')
-        out.push(`  // ${methodName} @ ${unparseRoute(method.route)}`)
+        out.push(`  // ${methodName} @ ${method.httpMethod} ${unparseRoute(method.route)}`)
         out.push(`  ${method.name}(${generateSdkMethodParams(method.params)}): ${promised} {`)
         out.push(generateCentralRequest(method).replace(/^/gm, '    '))
         out.push('  },')
