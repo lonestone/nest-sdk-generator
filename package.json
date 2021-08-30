@@ -11,8 +11,7 @@
     "build": "tsc -p tsconfig.json --outDir build",
     "start": "npm run build && node build/bin.js"
   },
-  "bin": "./build/bin.js",
-  "private": true,
+  "bin": "build/bin.js",
   "dependencies": {
     "chalk": "~4.1.2",
     "minimist": "~1.2.5",
