@@ -259,6 +259,34 @@ You simply run the same shell command you used to generate the source code origi
 
 Each file in the SDK uses a generic documentation, including the exact route model for route methods. This means you will be able to check what route is called by which method each time.
 
+Here is a quick glance at a generated file sample:
+
+```ts
+// ...
+/// Parent module: articleModule
+/// Controller: "articleController" registered as "article" (5 routes)
+
+// ...
+
+export default {
+  // getAll @ /article
+  getAll(params: {} = {}, body: {} = {}, query: {} = {}): Promise<Article[]> {
+    return request('GET', `/article`, query, body)
+  },
+
+  // getOne @ /article/:slug
+  getOne(
+    params: { slug: string },
+    body: {} = {},
+    query: {} = {},
+  ): Promise<Article> {
+    return request('GET', `/article/${params.slug}`, query, body)
+  },
+
+  // ...
+}
+```
+
 ### Can I add header or other data on-the-fly when making requests?
 
 All of the SDK's methods use a central handler which calls a function you provided, where you can absolutely everything you can. You are in charge of making the requests thanks to the provided URI and query/body parameters, which means you can add, edit or remove whatever data you want.
