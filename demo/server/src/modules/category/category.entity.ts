@@ -5,7 +5,7 @@ import { Article } from '../article/article.entity'
 @Entity()
 export class Category {
   @PrimaryKey({ type: 'string' })
-  id = v4()
+  id: string = v4()
 
   @Property({ unique: true })
   title!: string

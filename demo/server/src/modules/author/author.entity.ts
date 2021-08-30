@@ -5,7 +5,7 @@ import { Article } from '../article/article.entity'
 @Entity()
 export class Author {
   @PrimaryKey({ type: 'string' })
-  id = v4()
+  id: string = v4()
 
   @Property()
   displayName!: string
