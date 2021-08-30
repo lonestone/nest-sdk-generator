@@ -4,8 +4,7 @@
   "license": "MIT",
   "version": "1.0.1",
   "description": "A full-powered SDK generator for NestJS",
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
+  "main": "build/bin.js",
   "scripts": {
     "prepare": "npm run build",
     "build": "tsc -p tsconfig.json --outDir build",
