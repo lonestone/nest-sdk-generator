@@ -268,14 +268,12 @@ export class TypesExtractor {
     // Example: importing a type named "User" from two files in the same directory called "user.entity.ts" and "user.entity.js"
     const typ = this.findExtractedTypeWithoutExt(loc)
 
-    if (typ) {
-      if (typ.relativePath !== relativeFilePath) {
-        panic(
-          'Found two conflicting files at same path but with different extensions:\n> {magentaBright}\n> {magentaBright}',
-          typ.relativePath,
-          relativeFilePath
-        )
-      }
+    if (typ && typ.relativePath !== relativeFilePath) {
+      panic(
+        'Found two conflicting files at same path but with different extensions:\n> {magentaBright}\n> {magentaBright}',
+        typ.relativePath,
+        relativeFilePath
+      )
     }
 
     /** Resolved type's dependencies */
