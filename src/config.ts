@@ -4,6 +4,7 @@ import { panic } from './logging'
 
 /**
  * The configuration file's content
+ * For details on what these options do, see the project's README
  */
 export interface Config {
   readonly verbose?: boolean
