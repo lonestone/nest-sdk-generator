@@ -356,12 +356,12 @@ export class TypesExtractor {
     /** Normalized dependencies */
     const dependencies: TypeLocationWithExt[] = []
 
-    typesPath.push(loc.typename)
-
     // Ensure we're not stuck in an infinite loop where we analyze a type A, then its dependency B, which itself depends on A, and so on
-    if (new Set(typesPath).size !== typesPath.length) {
-      unreachable('Internal error: types path contains at least one duplicate type during extraction')
+    if (typesPath.includes(loc.typename)) {
+      unreachable(`Internal error: infinite loop detected in types extracted: {yellow}`, typesPath.join(' -> '))
     }
+
+    typesPath.push(loc.typename)
 
     // Analyze all dependencies
     for (const dependencyLoc of locateTypesFile(resolvedDeps)) {
