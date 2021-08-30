@@ -9,6 +9,8 @@ The project is split in two parts:
 
 The project has been created and is currently maintained by our developers at [Lonestone](https://lonestone.io/).
 
+For a quick glance at performances, check [here](#how-fast-is-it).
+
 **Table of contents:**
 
 - [What is nest-sdk-generator and why should I use it?](#what-is-nest-sdk-generator-and-why-should-i-use-it)
@@ -74,7 +76,9 @@ You can find a complete demonstration API in the [`demo/server`](demo/server) di
 
 ## How fast is it?
 
-On our internal test project, with 20 controllers and 80 routes, the full process takes 3 seconds (from a cold start) on a Core i7-8750H (6-core laptop CPU from 2018) to generate 84 file with 2246 lines of code. The duration should be roughly proportional to the quantity of routes and DTOs you use in your application.
+On our internal test project, with 20 controllers and 80 routes, the full process takes 3 seconds (from a cold start) on a Core i7-8750H (6-core laptop CPU from 2018) to generate 84 file with 2246 lines of code.
+
+The duration should be roughly proportional to the quantity of routes and DTOs you use in your application, although on very small applications in usually won't go below 2 seconds on such a CPU.
 
 ## Features
 
