@@ -53,7 +53,7 @@ function loadConfigFile(configPath: string): Config {
   }
 }
 
-const configPath = process.argv[3]
+export const configPath = process.argv[2]
 
 if (!configPath) {
   console.error('Please provide a path to the configuration file')
