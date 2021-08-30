@@ -280,6 +280,8 @@ Absolutely, that's what the MIT license is for. Although, if you could get in to
 
 Absolutely, the MIT license allows you to do that without any royalties or particular constraint.
 
+If you use this project to produce any kind of program, be it paid or not, we'd love to hear about it! Feel free to get in touch with us at [contact@lonestone.studio](contact@lonestone.studio) to tell us about your projects, so we can improve our tool even more with additional real-use cases.
+
 ## License
 
 This project is published under the terms of the [MIT License](LICENSE.md).
