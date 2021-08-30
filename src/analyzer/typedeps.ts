@@ -113,12 +113,6 @@ export function getImportResolvedType(type: Type<ts.Type>): string {
  * @param importedFilePath
  */
 export function normalizeExternalFilePath(importedFilePath: string): string {
-  let level = 0
-
-  while (importedFilePath.startsWith('../')) {
-    level++
-    importedFilePath = importedFilePath.substr(3)
-  }
-
-  return `_external${level}/${importedFilePath}`
+  const normalized = path.normalize(importedFilePath)
+  return `_external${normalized.match(/^\.\.\//g)?.length ?? 0}/${normalized}`
 }
