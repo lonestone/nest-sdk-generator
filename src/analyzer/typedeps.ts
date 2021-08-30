@@ -37,10 +37,18 @@ export interface ResolvedTypeDeps {
   readonly localTypes: string[]
 }
 
+/**
+ * Resolve the dependencies of a TS-Morph analyzed type
+ * @param type
+ * @param relativeFilePath
+ * @param absoluteSrcPath
+ * @returns
+ */
 export function resolveTypeDependencies(type: Type<ts.Type>, relativeFilePath: string, absoluteSrcPath: string): ResolvedTypeDeps {
-  const ret: Pick<ResolvedTypeDeps, 'rawType' | 'relativeFilePath'> = { rawType: type.getText(), relativeFilePath }
+  /** Raw type's text (e.g. `Array<import("somefile.ts").SomeType>`) */
+  const rawType = type.getText()
 
-  if (path.isAbsolute(ret.relativeFilePath)) {
+  if (path.isAbsolute(relativeFilePath)) {
     unreachable(
       'Internal error: got absolute file path in type dependencies resolver, when expecting a relative one (got {magentaBright})',
       relativeFilePath
@@ -50,7 +58,8 @@ export function resolveTypeDependencies(type: Type<ts.Type>, relativeFilePath: s
   let dependencies: ResolvedTypeDeps['dependencies'] = new Map()
   let localTypes: ResolvedTypeDeps['localTypes'] = []
 
-  const resolvedType: ResolvedTypeDeps['resolvedType'] = ret.rawType.replace(IMPORTED_TYPE_REGEX, (_, matchedFilePath, type) => {
+  /** Resolved type (without import statements) */
+  const resolvedType: ResolvedTypeDeps['resolvedType'] = rawType.replace(IMPORTED_TYPE_REGEX, (_, matchedFilePath, type) => {
     const filePath = path.isAbsolute(matchedFilePath) ? path.relative(absoluteSrcPath, matchedFilePath) : matchedFilePath
 
     const deps = dependencies.get(filePath)
@@ -81,7 +90,8 @@ export function resolveTypeDependencies(type: Type<ts.Type>, relativeFilePath: s
   }
 
   return {
-    ...ret,
+    rawType,
+    relativeFilePath,
     resolvedType,
     dependencies,
     localTypes,
