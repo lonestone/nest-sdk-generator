@@ -133,11 +133,11 @@ Let's suppose we have a monorepo, with our server being in `apps/api` and runnin
 
 We want the SDK to be located in `apps/front/sdk`.
 
-First, we must create a configuration file. Let's put it in `sdk-generator.json` in the root directory:
+First, we must create a configuration file. Let's put it in `front/sdk-generator.json`:
 
 ```json
 {
-  "apiInputPath": "apps/server/src",
+  "apiInputPath": "../server/src",
   "magicTypes": [
     {
       "nodeModuleFilePath": "@mikro-orm/core/entity/Collection.d.ts",
@@ -145,8 +145,8 @@ First, we must create a configuration file. Let's put it in `sdk-generator.json`
       "placeholderContent": "export type Collection<T, _> = Array<T>;"
     }
   ],
-  "sdkOutput": "apps/front/sdk",
-  "sdkInterfacePath": "apps/front/sdk-interface.ts"
+  "sdkOutput": "front/sdk",
+  "sdkInterfacePath": "front/sdk-interface.ts"
 }
 ```
 

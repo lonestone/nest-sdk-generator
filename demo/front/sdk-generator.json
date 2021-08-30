@@ -1,7 +1,7 @@
 {
-  "apiInputPath": "server/src",
-  "sdkOutput": "front/src/sdk",
-  "sdkInterfacePath": "front/src/sdk-interface.ts",
+  "apiInputPath": "../server/src",
+  "sdkOutput": "src/sdk",
+  "sdkInterfacePath": "src/sdk-interface.ts",
 
   "magicTypes": [
     {
