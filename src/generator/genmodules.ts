@@ -10,12 +10,20 @@ import { resolveRouteWith, unparseRoute } from '../analyzer/route'
 import { normalizeExternalFilePath, ResolvedTypeDeps } from '../analyzer/typedeps'
 import { panic } from '../logging'
 
-// Returned codes are not formatted yet
+/**
+ * Generate the SDK's module and controllers files
+ * @param modules
+ * @returns
+ */
 export function generateSdkModules(modules: SdkModules): Map<string, string> {
+  /** Generated module files */
   const genFiles = new Map<string, string>()
 
+  // Iterate over each module
   for (const [moduleName, controllers] of modules) {
+    // Iterate over each of the module's controllers
     for (const [controllerName, controller] of controllers) {
+      /** Generated controller's content */
       const out: string[] = []
 
       out.push('/// Parent module: ' + moduleName)
@@ -27,30 +35,30 @@ export function generateSdkModules(modules: SdkModules): Map<string, string> {
 
       const depsToImport = new Array<ResolvedTypeDeps>()
 
-      for (const controller of controllers.values()) {
-        for (const method of controller.methods.values()) {
-          const { parameters: args, query, body } = method.params
+      // Iterate over each controller
+      for (const method of controller.methods.values()) {
+        const { parameters: args, query, body } = method.params
 
-          depsToImport.push(method.returnType)
+        depsToImport.push(method.returnType)
 
-          if (args) {
-            depsToImport.push(...args.values())
-          }
+        if (args) {
+          depsToImport.push(...args.values())
+        }
 
-          if (query) {
-            depsToImport.push(...query.values())
-          }
+        if (query) {
+          depsToImport.push(...query.values())
+        }
 
-          if (body) {
-            if (body.full) {
-              depsToImport.push(body.type)
-            } else {
-              depsToImport.push(...body.fields.values())
-            }
+        if (body) {
+          if (body.full) {
+            depsToImport.push(body.type)
+          } else {
+            depsToImport.push(...body.fields.values())
           }
         }
       }
 
+      // Build the imports list
       for (const dep of depsToImport) {
         for (const [file, types] of dep.dependencies) {
           let imported = imports.get(file)
@@ -81,7 +89,7 @@ export function generateSdkModules(modules: SdkModules): Map<string, string> {
 
         out.push('')
         out.push(`  // ${methodName} @ ${unparseRoute(method.route)}`)
-        out.push(`  ${method.name}(${stringifySdkMethodParams(method.params)}): ${promised} {`)
+        out.push(`  ${method.name}(${generateSdkMethodParams(method.params)}): ${promised} {`)
         out.push(generateCentralRequest(method).replace(/^/gm, '    '))
         out.push('  },')
       }
@@ -92,7 +100,7 @@ export function generateSdkModules(modules: SdkModules): Map<string, string> {
       genFiles.set(path.join(moduleName, controller.camelClassName + '.ts'), out.join('\n'))
     }
 
-    // TODO: Generate module file that simply re-exports controllers
+    /** Generated module's content */
     const moduleContent: string[] = []
 
     moduleContent.push('/// Module name: ' + moduleName)
@@ -102,17 +110,26 @@ export function generateSdkModules(modules: SdkModules): Map<string, string> {
       moduleContent.push(`export { default as ${controller} } from "./${controller}";`)
     }
 
+    // Generate the SDK module file
     genFiles.set(path.join(moduleName, 'index.ts'), moduleContent.join('\n'))
   }
 
   return genFiles
 }
 
-export function stringifySdkMethodParams(params: SdkMethodParams): string {
+/**
+ * Generate the method parameters for a given SDK method
+ * @param params
+ * @returns
+ */
+export function generateSdkMethodParams(params: SdkMethodParams): string {
+  // List of parameters (e.g. `id` in `/get/:id`, analyzed from the usages of the `@Param` decorator)
   const parameters = params.parameters ? [...params.parameters].map(([name, type]) => `${name}: ${type.resolvedType}`) : []
 
+  // List of query values (e.g. `id` in `?id=xxx`, analyzed from the usages of the `@Query` decorator)
   const query = params.query ? [...params.query].map(([name, type]) => `${name}: ${type.resolvedType}`) : []
 
+  // Body's content (type used with the `@Body` decorator)
   const body = params.body
     ? params.body.full
       ? params.body.type.resolvedType
@@ -128,6 +145,11 @@ export function stringifySdkMethodParams(params: SdkMethodParams): string {
   ].join(', ')
 }
 
+/**
+ * Generate a request call to Central for the generated files
+ * @param method
+ * @returns
+ */
 export function generateCentralRequest(method: SdkMethod): string {
   const resolvedRoute = resolveRouteWith(method.route, (param) => '${params.' + param + '}')
 
