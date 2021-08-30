@@ -1,5 +1,7 @@
 # nest-sdk-generator by [![](https://user-images.githubusercontent.com/73881870/130991041-a4a1f0f4-21f5-4a54-a085-974f80f56ed2.png)](https://lonestone.io/)
 
+[![](https://img.shields.io/npm/v/nest-sdk-generator)](https://www.npmjs.com/package/nest-sdk-generator)
+
 `nest-sdk-generator` is a tool that allows you to build automatically and in seconds a SDK for client applications to consume a Nest.js server's API.
 
 The project is split in two parts:
