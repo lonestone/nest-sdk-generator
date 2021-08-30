@@ -76,7 +76,7 @@ const user = await articleController.publish({}, {
 })
 ```
 
-You can find a complete demonstration API in the [`demo/server`](demo/server) directory, as well as a frontend using a SDK based on this API in [`demo/front`](demo/front). The SDK configuration is located in [`demo/sdk-generator.json`](demo/sdk-generator.json).
+You can find a complete demonstration API in the [`demo/server`](demo/server) directory, as well as a frontend using a SDK based on this API in [`demo/front`](demo/front). The SDK configuration is located in [`demo/front/sdk-generator.json`](demo/front/sdk-generator.json).
 
 ## How fast is it?
 
