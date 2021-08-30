@@ -227,7 +227,7 @@ export class TypesExtractor {
           relativePath: relativeFilePath,
           relativePathNoExt: loc.relativePathNoExt,
           typename: loc.typename,
-          typeParams: [], // TODO: UNSAFE
+          typeParams: [],
           dependencies: [],
         }
 
