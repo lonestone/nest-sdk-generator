@@ -1,6 +1,5 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import { panic } from './logging'
 
 /**
  * The configuration file's content
@@ -40,7 +39,8 @@ export interface MagicType {
  */
 function loadConfigFile(configPath: string): Config {
   if (!fs.existsSync(configPath)) {
-    panic('Config file was not found at path: {yellow}', path.resolve(configPath))
+    console.error('Config file was not found at path: {yellow}', path.resolve(configPath))
+    process.exit(4)
   }
 
   const text = fs.readFileSync(configPath, 'utf8')
