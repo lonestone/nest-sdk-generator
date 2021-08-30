@@ -102,7 +102,7 @@ nest-sdk-generator comes with a set of limitations which can find below:
 
 3. Types belonging to namespaces are currently not supported and will result in error in the generated code
 
-4. Due to limitations of the TypeScript compiler, importing from the project's root (e.g. `import { SomeType } from "src/file.ts"` instead of `import { SomeType } from "../file.ts"`) will result in an `any` type at generation, because such types are not recognized when manipulating types
+4. Due to limitations of the TypeScript compiler, importing from the project's root (e.g. `import { SomeType } from "src/file.ts"` instead of `import { SomeType } from "../file.ts"`) will result in an `any` type at generation, because such types are not recognized when manipulating types. If you want to avoid this behaviour in Visual Studio Code, you can add `"typescript.preferences.importModuleSpecifier": "relative"` to your settings.
 
 ## Using the SDK
 
