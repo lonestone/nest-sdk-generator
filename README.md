@@ -13,6 +13,7 @@ The project has been created and is currently maintained by our developers at [L
 
 - [What is nest-sdk-generator and why should I use it?](#what-is-nest-sdk-generator-and-why-should-i-use-it)
 - [Quick usage example](#quick-usage-example)
+- [How fast is it?](#how-fast-is-it)
 - [Features](#features)
 - [Limitations](#limitations)
 - [Using the SDK](#using-the-sdk)
@@ -70,6 +71,10 @@ const user = await articleController.publish({}, {
 ```
 
 You can find a complete demonstration API in the [`demo/server`](demo/server) directory, as well as a frontend using a SDK based on this API in [`demo/front`](demo/front). The SDK configuration is located in [`demo/sdk-generator.json`](demo/sdk-generator.json).
+
+## How fast is it?
+
+On our internal test project, with 20 controllers and 80 routes, the full process takes 3 seconds (from a cold start) on a Core i7-8750H (6-core laptop CPU from 2018) to generate 84 file with 2246 lines of code. The duration should be roughly proportional to the quantity of routes and DTOs you use in your application.
 
 ## Features
 
