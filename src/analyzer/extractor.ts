@@ -311,7 +311,7 @@ export class TypesExtractor {
       const classHead = decl.getText().match(/\b(export[^{]+class[^{]+{)/)
 
       if (!classHead) {
-        unreachable('Failed to match class head in declaration: {yellow}', decl.getText())
+        unreachable('Internal error: failed to match class head in declaration: {yellow}', decl.getText())
       }
 
       extractedDecl = classHead[1]
@@ -350,7 +350,7 @@ export class TypesExtractor {
 
     // Handle unknown types
     else {
-      unreachable('Unknown node type when extracting types: ' + decl.getKindName())
+      panic('Unknown node type when extracting types: ' + decl.getKindName())
     }
 
     /** Normalized dependencies */
