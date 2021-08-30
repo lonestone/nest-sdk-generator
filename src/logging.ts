@@ -5,23 +5,19 @@ export function format(message: string, ...params: Array<number | string>): stri
   return message.replace(
     /\{(black|red|green|yellow|blue|magenta|cyan|white|gray|grey|blackBright|redBright|greenBright|yellowBright|blueBright|magentaBright|cyanBright|whiteBright|)\}/g,
     (match, color) => {
-      const param = params.shift() ?? panicRaw(`In message:\n> ${message}\nMissing parameter:\n> ${match}`)
+      const param = params.shift() ?? panic(`In message:\n> {}\nMissing parameter:\n> {}`, message, match)
       return color && config.noColor !== false ? (chalk as any)[color](param) : param
     }
   )
 }
 
-export function panicRaw(message: string): never {
-  console.error(chalk.redBright('ERROR: ' + message))
+export function panic(message: string, ...params: Array<number | string>): never {
+  console.error(chalk.redBright('ERROR: ' + format(message, ...params)))
   process.exit(1)
 }
 
-export function panic(message: string, ...params: Array<number | string>): never {
-  panicRaw(format(message, ...params))
-}
-
 export function unreachable(message: string, ...params: Array<number | string>): never {
-  panicRaw(format(message, ...params))
+  panic(message, ...params)
 }
 
 export function warn(message: string, ...params: Array<number | string>) {
