@@ -48,8 +48,16 @@ function loadConfigFile(configPath: string): Config {
   try {
     return JSON.parse(text)
   } catch (e) {
-    panic('Failed to parse configuration file: ' + e)
+    console.error('Failed to parse configuration file: ' + e)
+    process.exit(3)
   }
 }
 
-export const config = loadConfigFile(process.argv[3] ?? panic('Please provide a path to the configuration file'))
+const configPath = process.argv[3]
+
+if (!configPath) {
+  console.error('Please provide a path to the configuration file')
+  process.exit(2)
+}
+
+export const config = loadConfigFile(configPath)
