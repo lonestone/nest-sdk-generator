@@ -222,6 +222,7 @@ Here is the list of the configuration options you can use in the JSON file:
 | `prettify`                    | `true`  | `boolean`     | Set to `false` to disable SDK files prettifying                                       |
 | `overwriteOldOutputDir`       | `true`  | `boolean`     | Set to `false` to not remove the old SDK directory when re-generating it              |
 | `generateDefaultSdkInterface` | `true`  | `boolean`     | Set to `false` to not generate a default SDK interface when it does not exist yet     |
+| `generateTimestamps`          | `true`  | `boolean`     | Set to `false` to not put the timestamp in the generated SDK files                    |
 | `verbose`                     | `false` | `boolean`     | Display verbose informations                                                          |
 | `noColor`                     | `false` | `boolean`     | Disable colored output                                                                |
 

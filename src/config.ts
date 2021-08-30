@@ -21,6 +21,7 @@ export interface Config {
   readonly prettify?: boolean
   readonly overwriteOldOutputDir?: boolean
   readonly generateDefaultSdkInterface?: boolean
+  readonly generateTimestamps?: boolean
 }
 
 /**
