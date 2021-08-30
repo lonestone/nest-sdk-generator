@@ -210,20 +210,20 @@ This will make no difference when using these types, but this is a special case 
 
 Here is the list of the configuration options you can use in the JSON file:
 
-| Option name                   | Required? | Value type    | Description                                                                           |
-| ----------------------------- | --------- | ------------- | ------------------------------------------------------------------------------------- |
-| `apiInputPath`                | Yes       | `string`      | Path to your API's source folder (e.g. `apps/api/src`)                                |
-| `sdkOutput`                   | Yes       | `string`      | Path to generate the SDK at (e.g. `apps/front/src/sdk`)                               |
-| `sdkInterfacePath`            | Yes       | `string`      | Path to the SDK interface (e.g. `apps/front/src/sdk-interface.ts`)                    |
-| `magicTypes`                  | No        | `MagicType[]` | Magic types (see below)                                                               |
-| `jsonOutput`                  | No        | `string`      | Write the analyzer's output to a file                                                 |
-| `jsonPrettyOutput`            | No        | `boolean`     | Prettify the output JSON if the option above is enabled                               |
-| `prettierConfig`              | No        | `string`      | Use a specific Prettier config (otherwise will try to find one in a parent directory) |
-| `prettify`                    | No        | `boolean`     | Set to `false` to disable SDK files prettifying                                       |
-| `overwriteOldOutputDir`       | No        | `boolean`     | Set to `false` to not remove the old SDK directory when re-generating it              |
-| `generateDefaultSdkInterface` | No        | `boolean`     | Set to `false` to not generate a default SDK interface when it does not exist yet     |
-| `verbose`                     | No        | `boolean`     | Display verbose informations                                                          |
-| `noColor`                     | No        | `boolean`     | Disable colored output                                                                |
+| Option name                   | Default | Value type    | Description                                                                           |
+| ----------------------------- | ------- | ------------- | ------------------------------------------------------------------------------------- |
+| `apiInputPath`                | -       | `string`      | Path to your API's source folder (e.g. `apps/api/src`)                                |
+| `sdkOutput`                   | -       | `string`      | Path to generate the SDK at (e.g. `apps/front/src/sdk`)                               |
+| `sdkInterfacePath`            | -       | `string`      | Path to the SDK interface (e.g. `apps/front/src/sdk-interface.ts`)                    |
+| `magicTypes`                  | `[]`    | `MagicType[]` | Magic types (see below)                                                               |
+| `jsonOutput`                  | `null`  | `string`      | Write the analyzer's output to a file                                                 |
+| `jsonPrettyOutput`            | `null`  | `boolean`     | Prettify the output JSON if the option above is enabled                               |
+| `prettierConfig`              | `null`  | `string`      | Use a specific Prettier config (otherwise will try to find one in a parent directory) |
+| `prettify`                    | `true`  | `boolean`     | Set to `false` to disable SDK files prettifying                                       |
+| `overwriteOldOutputDir`       | `true`  | `boolean`     | Set to `false` to not remove the old SDK directory when re-generating it              |
+| `generateDefaultSdkInterface` | `true`  | `boolean`     | Set to `false` to not generate a default SDK interface when it does not exist yet     |
+| `verbose`                     | `false` | `boolean`     | Display verbose informations                                                          |
+| `noColor`                     | `false` | `boolean`     | Disable colored output                                                                |
 
 ## Frequently-asked questions
 
