@@ -371,33 +371,33 @@ export class TypesExtractor {
       }
 
       // Find the dependency's relative path
-      let fallibleRelativePath: string | Error
+      let relativePath: string | Error
 
       const cached = this.findExtractedTypeWithoutExt(dependencyLoc)
 
       if (cached) {
-        fallibleRelativePath = cached.relativePath
+        relativePath = cached.relativePath
       } else if (typesPath.includes(dependencyLoc.typename)) {
-        fallibleRelativePath = this.findTypeRelativeFilePath(dependencyLoc)
+        relativePath = this.findTypeRelativeFilePath(dependencyLoc)
       } else {
         const extracted = this.extractType(dependencyLoc, typesPath)
-        fallibleRelativePath = extracted instanceof Error ? extracted : extracted.relativePath
+        relativePath = extracted instanceof Error ? extracted : extracted.relativePath
       }
 
-      if (fallibleRelativePath instanceof Error) {
+      if (relativePath instanceof Error) {
         return new Error(
           format(
             '> Failed to extract type {yellow} due to an error in dependency type {yellow}\nfrom file {magenta} :\n{}',
             loc.typename,
             dependencyLoc.typename,
             relativeFilePath,
-            fallibleRelativePath.message.replace(/^/gm, '  ')
+            relativePath.message.replace(/^/gm, '  ')
           )
         )
       }
 
       // Update dependencies
-      dependencies.push({ ...dependencyLoc, relativePath: fallibleRelativePath })
+      dependencies.push({ ...dependencyLoc, relativePath })
     }
 
     const extracted: ExtractedType = {
