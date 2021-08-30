@@ -85,7 +85,7 @@ export default async function generatorCli(config: Config, sdkContent: SdkConten
   writeScriptTo(null, 'central.ts', `export { request } from "${relativeSdkInterfacePath}"`)
 
   if (!fs.existsSync(sdkInterfacePath) && config.generateDefaultSdkInterface !== false) {
-    println('> Generating default SDK interface...')
+    println('├─ Generating default SDK interface...')
 
     fs.writeFileSync(sdkInterfacePath, defaultSdkInterface, 'utf8')
   }

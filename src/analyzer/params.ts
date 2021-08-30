@@ -58,14 +58,14 @@ export function analyzeParams(
   for (const arg of args) {
     const name = arg.getName()
 
-    debug('>>> Detected argument: {yellow}', name)
+    debug('├───── Detected argument: {yellow}', name)
 
     // Arguments are collected as soon as they have a decorator like @Query() or @Body()
     const decs = arg.getDecorators()
 
     if (decs.length === 0) {
       // If we have no argument, this is not an argument we are interested in, so we just skip it
-      debug('>>> Skipping this argument as it does not have a decorator')
+      debug('├───── Skipping this argument as it does not have a decorator')
       continue
     } else if (decs.length > 1) {
       // If we have more than one decorator, this could mean we have for instance an @NotEmpty() @Query() or something like this,
@@ -79,7 +79,7 @@ export function analyzeParams(
 
     // Treat the @Param() decorator
     if (decName === 'Param') {
-      debug('>>> Detected decorator {blue}', '@Param')
+      debug('├───── Detected decorator {blue}', '@Param')
 
       // We expect a single string argument for this decorator,
       // which is the route parameter's name
@@ -91,19 +91,19 @@ export function analyzeParams(
       // We theorically *could* extract the type informations from this object type, but this would be insanely complex
       // So, we just skip it as it's a lot more simple, and is not commonly used anyway as it has a set of downsides
       if (paramName === null) {
-        warn('>>> Skipping this argument as it is a generic parameters receiver, which is currently not supported')
+        warn('├───── Skipping this argument as it is a generic parameters receiver, which is currently not supported')
         continue
       }
 
       // Ensure the specified parameter appears in the method's route
-      if (!routeParams.includes(paramName)) return new Error(format('>>> Cannot map unknown parameter {yellow}', paramName))
+      if (!routeParams.includes(paramName)) return new Error(format('├───── Cannot map unknown parameter {yellow}', paramName))
 
-      debug('>>> Mapping argument to parameter: {yellow}', paramName)
+      debug('├───── Mapping argument to parameter: {yellow}', paramName)
 
       // Get the route parameter's type
       const typ = resolveTypeDependencies(arg.getType(), filePath, absoluteSrcPath)
 
-      debug('>>> Detected parameter type: {yellow} ({magentaBright} dependencies)', typ.resolvedType, typ.dependencies.size)
+      debug('├───── Detected parameter type: {yellow} ({magentaBright} dependencies)', typ.resolvedType, typ.dependencies.size)
 
       // Update the method's route parameters
 
@@ -119,7 +119,7 @@ export function analyzeParams(
 
     // Treat the @Query() decorator
     else if (decName === 'Query') {
-      debug('>>> Detected decorator {blue}', '@Query')
+      debug('├───── Detected decorator {blue}', '@Query')
 
       // We expect a single string argument for this decorator,
       // which is the query parameter's name
@@ -131,16 +131,16 @@ export function analyzeParams(
       // We theorically *could* extract the type informations from this object type, but this would be insanely complex
       // So, we just skip it as it's a lot more simple, and is not commonly used anyway as it has a set of downsides
       if (queryName === null) {
-        warn('>>> Skipping this argument as it is a generic query receiver')
+        warn('├───── Skipping this argument as it is a generic query receiver')
         continue
       }
 
-      debug('>>> Mapping argument to query: {yellow}', queryName)
+      debug('├───── Mapping argument to query: {yellow}', queryName)
 
       // Get the parameter's type
       const typ = resolveTypeDependencies(arg.getType(), filePath, absoluteSrcPath)
 
-      debug(`>>> Detected query type: {yellow} ({magentaBright} dependencies)`, typ.resolvedType, typ.dependencies.size)
+      debug(`├───── Detected query type: {yellow} ({magentaBright} dependencies)`, typ.resolvedType, typ.dependencies.size)
 
       // Update the method's query parameter
 
@@ -156,7 +156,7 @@ export function analyzeParams(
 
     // Treat the @Body() decorator
     else if (decName === 'Body') {
-      debug('>>> Detected decorator {blue}', '@Body')
+      debug('├───── Detected decorator {blue}', '@Body')
 
       // GET requests cannot have a BODY
       if (httpMethod === SdkHttpMethod.Get) {
@@ -175,7 +175,7 @@ export function analyzeParams(
       const depsCount = typ.dependencies.size
 
       debug(
-        `>>> Detected BODY type: {cyan} ({magentaBright} ${
+        `├───── Detected BODY type: {cyan} ({magentaBright} ${
           depsCount === 0 ? 'no dependency' : depsCount > 1 ? 'dependencies' : 'dependency'
         })`,
         typ.resolvedType,
@@ -194,7 +194,7 @@ export function analyzeParams(
         // Also, that's not the kind of thing we make on purpose very often, so it's more likely it's an error, which makes it even more important
         //  to display a warning here.
         if (body?.full === false)
-          warn('>>> Detected full @Body() decorator after a single parameter. This is considered a bad practice, avoid it if you can!')
+          warn('├───── Detected full @Body() decorator after a single parameter. This is considered a bad practice, avoid it if you can!')
         // Having two generic @Body() decorators is meaningless and will likey lead to errors, so we return a precise error here
         else if (body?.full) {
           return new Error(
@@ -207,7 +207,7 @@ export function analyzeParams(
           )
         }
 
-        debug(">>> Mapping argument to full request's body")
+        debug("├───── Mapping argument to full request's body")
 
         // Update the whole BODY type
         collected.body = { full: true, type: typ }
@@ -216,9 +216,9 @@ export function analyzeParams(
 
         // If we previously had an @Body() decorator, this can lead to several types of errors (see the big comment above for more informations)
         if (collected.body?.full) {
-          warn('>>> Detected single @Body() decorator after a full parameter. This is considered a bad practice, avoid it if you can!')
+          warn('├───── Detected single @Body() decorator after a full parameter. This is considered a bad practice, avoid it if you can!')
         } else {
-          debug('>>> Mapping argument to BODY field: {yellow}', fieldName)
+          debug('├───── Mapping argument to BODY field: {yellow}', fieldName)
 
           // Update the BODY type by adding the current field to it
 

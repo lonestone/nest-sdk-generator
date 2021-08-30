@@ -124,6 +124,8 @@ export function analyzeController(project: Project, controllerPath: string, abso
   }
 
   // Success!
+  debug(`└─ Done for controller {yellow}`, controllerPath)
+
   return {
     path: controllerPath,
     camelClassName: camelcase(className),

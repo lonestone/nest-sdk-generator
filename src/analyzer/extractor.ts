@@ -387,7 +387,7 @@ export class TypesExtractor {
       if (relativePath instanceof Error) {
         return new Error(
           format(
-            '> Failed to extract type {yellow} due to an error in dependency type {yellow}\nfrom file {magenta} :\n{}',
+            '├─ Failed to extract type {yellow} due to an error in dependency type {yellow}\nfrom file {magenta} :\n{}',
             loc.typename,
             dependencyLoc.typename,
             relativeFilePath,

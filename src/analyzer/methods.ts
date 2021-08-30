@@ -59,7 +59,7 @@ export function analyzeMethods(
   for (const method of methods) {
     const methodName = method.getName()
 
-    debug('> Found method: {yellow}', methodName)
+    debug('├─ Found method: {yellow}', methodName)
 
     // Get the HTTP decorator(s) of the method
     const decorators = method.getDecorators().filter((dec) => Object.keys(SdkHttpMethod).includes(dec.getName()))
@@ -68,11 +68,11 @@ export function analyzeMethods(
     if (decorators.length > 1) {
       // If there is more than one decorator, that's invalid, so we can't analyze the method
       return new Error(
-        format('>> Detected multiple HTTP decorators on method: {yellow}' + decorators.map((dec) => dec.getName()).join(','))
+        format('├─── Detected multiple HTTP decorators on method: {yellow}' + decorators.map((dec) => dec.getName()).join(','))
       )
     } else if (decorators.length === 0) {
       // If there isn't any HTTP decorator, this is simply not a method available from the outside and so we won't generate an interface for it
-      debug('>> Skipping this method as it does not have an HTTP decorator')
+      debug('├─── Skipping this method as it does not have an HTTP decorator')
       continue
     }
 
@@ -83,7 +83,7 @@ export function analyzeMethods(
     // @ts-ignore
     const httpMethod = SdkHttpMethod[dec.getName()]
 
-    debug('>> Detected HTTP method: {magentaBright}', httpMethod.toLocaleUpperCase())
+    debug('├─── Detected HTTP method: {magentaBright}', httpMethod.toLocaleUpperCase())
 
     // Get the arguments provided to the HTTP decorator (we expect one, the URI path)
     const decArgs = dec.getArguments()
@@ -97,7 +97,7 @@ export function analyzeMethods(
       return new Error(`Multiple (${decArgs.length}) arguments were provided to the HTTP decorator`)
     } else if (decArgs.length === 0) {
       // If there is no argument, we take the method's name as the URI path
-      debug('>> No argument found for decorator, using base URI path.')
+      debug('├─── No argument found for decorator, using base URI path.')
       uriPath = ''
     } else {
       // If we have exactly one argument, hurray! That's our URI path.
@@ -105,43 +105,45 @@ export function analyzeMethods(
 
       // Variables are not supported
       if (!Node.isStringLiteral(uriNameDec)) {
-        return new Error(format('>> The argument provided to the HTTP decorator is not a string literal:\n>> {cyan}', uriNameDec.getText()))
+        return new Error(
+          format('├─── The argument provided to the HTTP decorator is not a string literal:\n>> {cyan}', uriNameDec.getText())
+        )
       }
 
       // Update the method's URI path
       uriPath = uriNameDec.getLiteralText()
 
-      debug('>> Detected argument in HTTP decorator, mapping this method to custom URI name')
+      debug('├─── Detected argument in HTTP decorator, mapping this method to custom URI name')
     }
 
-    debug('>> Detected URI name: {yellow}', uriPath)
+    debug('├─── Detected URI name: {yellow}', uriPath)
 
     // Analyze the method's URI
     const route = analyzeUri(controllerUriPrefix ? (uriPath ? `/${controllerUriPrefix}/${uriPath}` : `/` + controllerUriPrefix) : uriPath)
 
     if (route instanceof Error) {
       return new Error(
-        '>> Detected unsupported URI format:\n' +
+        '├─── Detected unsupported URI format:\n' +
           route.message
             .split('\n')
-            .map((line) => '>>> ' + line)
+            .map((line) => '├───── ' + line)
             .join('\n')
       )
     }
 
-    debug('>> Parsed URI name to route: {yellow}', debugUri(route, blue))
+    debug('├─── Parsed URI name to route: {yellow}', debugUri(route, blue))
 
     // Analyze the method's arguments
-    debug('>> Analyzing arguments...')
+    debug('├─── Analyzing arguments...')
     const params = analyzeParams(httpMethod, route, method.getParameters(), filePath, absoluteSrcPath)
 
     if (params instanceof Error) return params
 
     // Get the method's return type
-    debug('>> Resolving return type...')
+    debug('├─── Resolving return type...')
     const returnType = resolveTypeDependencies(method.getReturnType(), filePath, absoluteSrcPath)
 
-    debug('>> Detected return type: {cyan}', returnType.resolvedType)
+    debug('├─── Detected return type: {cyan}', returnType.resolvedType)
 
     // Success!
     collected.set(methodName, {
