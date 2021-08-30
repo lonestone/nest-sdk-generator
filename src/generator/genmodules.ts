@@ -119,6 +119,8 @@ export function stringifySdkMethodParams(params: SdkMethodParams): string {
       : '{ ' + [...params.body.fields].map(([name, type]) => `${name}: ${type.resolvedType}`).join(', ') + ' }'
     : null
 
+  // The ternary conditions below are made to eclipse useless parameters
+  // For instance, if we're not expecting any query nor body, these two parameters can be omitted when calling the method
   return [
     `params: {${' ' + parameters.join(', ') + ' '}}${parameters.length === 0 && !body && query.length === 0 ? ' = {}' : ''}`,
     `body: ${body ?? '{}'}${!body && query.length === 0 ? ' = {}' : ''}`,
