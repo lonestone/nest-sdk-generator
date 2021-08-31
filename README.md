@@ -266,7 +266,7 @@ Here is a quick glance at a generated file sample:
 export default {
   // GET @ /article
   getAll(params: {} = {}, body: {} = {}, query: {} = {}): Promise<Article[]> {
-    return request('GET', `/article`, query, body)
+    return request('GET', `/article`, body, query)
   },
 
   // GET @ /article/:slug
@@ -275,7 +275,7 @@ export default {
     body: {} = {},
     query: {} = {},
   ): Promise<Article> {
-    return request('GET', `/article/${params.slug}`, query, body)
+    return request('GET', `/article/${params.slug}`, body, query)
   },
 
   // ...
