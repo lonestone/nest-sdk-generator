@@ -5,6 +5,14 @@
   "version": "1.0.5",
   "description": "A full-powered SDK generator for NestJS",
   "keywords": [ "nest", "nestjs", "sdk", "generator", "typescript", "frontend", "api" ],
+  "homepage": "https://github.com/lonestone/nest-sdk-generator#readme",
+  "bugs": {
+    "url": "https://github.com/lonestone/nest-sdk-generator/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lonestone/nest-sdk-generator.git"
+  },
   "main": "build/bin.js",
   "scripts": {
     "prepare": "npm run build",
