@@ -5,7 +5,7 @@
 import * as path from 'path'
 import { Node, Project } from 'ts-morph'
 import { debug, warn } from '../logging'
-import { analyzeMethods, SdkMethods } from './methods'
+import { analyzeMethods, SdkMethod } from './methods'
 
 /**
  * Convert a string to camel case
@@ -32,7 +32,7 @@ export interface SdkController {
   /** Name the controller is registered under */
   readonly registrationName: string
   /** Controller's methods */
-  readonly methods: SdkMethods
+  readonly methods: SdkMethod[]
 }
 
 /**

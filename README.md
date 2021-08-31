@@ -265,12 +265,12 @@ Here is a quick glance at a generated file sample:
 // ...
 
 export default {
-  // getAll @ /article
+  // GET @ /article
   getAll(params: {} = {}, body: {} = {}, query: {} = {}): Promise<Article[]> {
     return request('GET', `/article`, query, body)
   },
 
-  // getOne @ /article/:slug
+  // GET @ /article/:slug
   getOne(
     params: { slug: string },
     body: {} = {},

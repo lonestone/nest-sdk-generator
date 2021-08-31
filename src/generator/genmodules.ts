@@ -27,7 +27,7 @@ export function generateSdkModules(modules: SdkModules): Map<string, string> {
       const out: string[] = []
 
       out.push('/// Parent module: ' + moduleName)
-      out.push(`/// Controller: "${controllerName}" registered as "${controller.registrationName}" (${controller.methods.size} routes)`)
+      out.push(`/// Controller: "${controllerName}" registered as "${controller.registrationName}" (${controller.methods.length} routes)`)
       out.push('')
       out.push('import { request } from "../central";')
 
@@ -83,12 +83,12 @@ export function generateSdkModules(modules: SdkModules): Map<string, string> {
       out.push('')
       out.push(`export default {`)
 
-      for (const [methodName, method] of controller.methods) {
+      for (const method of controller.methods) {
         const ret = method.returnType.resolvedType
         const promised = ret.startsWith('Promise<') ? ret : `Promise<${ret}>`
 
         out.push('')
-        out.push(`  // ${methodName} @ ${method.httpMethod} ${unparseRoute(method.route)}`)
+        out.push(`  // ${method.httpMethod} @ ${unparseRoute(method.route)}`)
         out.push(`  ${method.name}(${generateSdkMethodParams(method.params)}): ${promised} {`)
         out.push(generateCentralRequest(method).replace(/^/gm, '    '))
         out.push('  },')

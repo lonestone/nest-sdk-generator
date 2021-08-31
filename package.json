@@ -2,7 +2,7 @@
   "name": "nest-sdk-generator",
   "author": "Lonestone <contact@lonestone.io>",
   "license": "MIT",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A full-powered SDK generator for NestJS",
   "keywords": [ "nest", "nestjs", "sdk", "generator", "typescript", "frontend", "api" ],
   "main": "build/bin.js",

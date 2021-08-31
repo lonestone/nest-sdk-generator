@@ -10,11 +10,6 @@ import { analyzeUri, debugUri, Route } from './route'
 import { ResolvedTypeDeps, resolveTypeDependencies } from './typedeps'
 
 /**
- * SDK interface for a controller's methods
- */
-export type SdkMethods = Map<string, SdkMethod>
-
-/**
  * SDK interface for a single controller's method
  */
 export interface SdkMethod {
@@ -60,9 +55,9 @@ export function analyzeMethods(
   controllerUriPrefix: string | null,
   filePath: string,
   absoluteSrcPath: string
-): SdkMethods | Error {
+): SdkMethod[] | Error {
   // Output variable
-  const collected = new Map<string, SdkMethod>()
+  const collected = new Array<SdkMethod>()
 
   // Get the list of all methods
   const methods = controllerClass.forEachChildAsArray().filter((node) => node instanceof MethodDeclaration) as MethodDeclaration[]
@@ -157,7 +152,7 @@ export function analyzeMethods(
     debug('├─── Detected return type: {cyan}', returnType.resolvedType)
 
     // Success!
-    collected.set(methodName, {
+    collected.push({
       name: methodName,
       httpMethod,
       returnType,
