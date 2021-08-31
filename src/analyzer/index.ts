@@ -32,6 +32,21 @@ export async function analyzerCli(config: Config): Promise<SdkContent> {
   if (!fs.existsSync(sourcePath)) panic('Provided source path {magentaBright} does not exist', sourcePath)
   if (!fs.lstatSync(sourcePath).isDirectory()) panic('Provided source path is not a directory')
 
+  if (config.rejectIfNodeModules !== false && fs.existsSync(path.join(sourcePath, 'node_modules'))) {
+    if (fs.existsSync(path.join(sourcePath, 'src'))) {
+      panic(
+        "Found a {magentaBright} directory in the provided source code path. Don't you mean to use the {magentaBright} directory instead?",
+        'node_modules',
+        'src'
+      )
+    } else {
+      panic(
+        "Found a {magentaBright} directory in the provided path. Please provide a path to your API's source code directory.",
+        'node_modules'
+      )
+    }
+  }
+
   debug(`Analyzing from source directory {yellow}`, sourcePath)
 
   if (config.jsonOutput) {

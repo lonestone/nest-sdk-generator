@@ -23,6 +23,8 @@ export interface Config {
   readonly overwriteOldOutputDir?: boolean
   readonly generateDefaultSdkInterface?: boolean
   readonly generateTimestamps?: boolean
+
+  readonly rejectIfNodeModules?: boolean
 }
 
 /**
