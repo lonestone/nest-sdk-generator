@@ -151,13 +151,6 @@ First, we must create a configuration file. Let's put it in `front/sdk-generator
 ```json
 {
   "apiInputPath": "../server/src",
-  "magicTypes": [
-    {
-      "nodeModuleFilePath": "@mikro-orm/core/entity/Collection.d.ts",
-      "typeName": "Collection",
-      "placeholderContent": "export type Collection<T, _> = Array<T>;"
-    }
-  ],
   "sdkOutput": "sdk",
   "sdkInterfacePath": "sdk-interface.ts"
 }
