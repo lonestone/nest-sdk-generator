@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArticleCard } from '../components/ArticleCard'
 import { articleController } from '../sdk/articleModule'
-import type { Article } from '../sdk/_types/modules/article/article.entity'
+import type { Article } from '../sdk/_types/src/modules/article/article.entity'
 
 export function HomePage() {
   const [articles, setArticles] = useState<Article[] | null>(null)

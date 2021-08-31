@@ -1,47 +1,5 @@
-import * as chalk from 'chalk'
 import * as fs from 'fs'
 import * as path from 'path'
-import { debug, format, panic, println, warn } from './logging'
-
-/**
- * Find a file in the current directory or one of its parents
- * @param name Name of the file to find
- * @param dir Directory to start looking from
- * @returns The file's content, if found
- */
-export function findJsonConfig(
-  name: string,
-  dir: string
-): {
-  path: string
-  content: object
-} | null {
-  debug('Looking for a {yellow} file...', `"${name}"`)
-
-  const fpath = findFileAbove(name, dir)
-
-  if (fpath === null) {
-    warn('File was not found in destination directory or its parents.')
-    return null
-  }
-
-  println(chalk.green(format('{green} {magentaBright} {green} {yellow}', 'Found file', name, 'at path:', fpath)))
-
-  let text = fs.readFileSync(fpath, 'utf8')
-  let content: object
-
-  try {
-    content = JSON.parse(text)
-  } catch (err) {
-    // TODO: In next TypeScript version, rewrite this with "catch (err: Error) {" and remove the typecast
-    panic(`Failed to parse file "${name}" at "${dir}": ${(err as Error).message}`)
-  }
-
-  return {
-    path: fpath,
-    content,
-  }
-}
 
 export function findFileAbove(pattern: string | RegExp, dir: string): string | null {
   if (!path.isAbsolute(dir)) {

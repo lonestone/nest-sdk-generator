@@ -6,7 +6,6 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { Project } from 'ts-morph'
 import { Config } from '../config'
-import { findFilesRecursive, findJsonConfig } from '../file-utils'
 import { debug, panic } from '../logging'
 import { analyzeControllers, SdkModules } from './controllers'
 import { flattenSdkResolvedTypes, locateTypesFile, TypesExtractor, TypesExtractorContent } from './extractor'
@@ -32,21 +31,6 @@ export async function analyzerCli(config: Config): Promise<SdkContent> {
   if (!fs.existsSync(sourcePath)) panic('Provided source path {magentaBright} does not exist', sourcePath)
   if (!fs.lstatSync(sourcePath).isDirectory()) panic('Provided source path is not a directory')
 
-  if (config.rejectIfNodeModules !== false && fs.existsSync(path.join(sourcePath, 'node_modules'))) {
-    if (fs.existsSync(path.join(sourcePath, 'src'))) {
-      panic(
-        "Found a {magentaBright} directory in the provided source code path. Don't you mean to use the {magentaBright} directory instead?",
-        'node_modules',
-        'src'
-      )
-    } else {
-      panic(
-        "Found a {magentaBright} directory in the provided path. Please provide a path to your API's source code directory.",
-        'node_modules'
-      )
-    }
-  }
-
   debug(`Analyzing from source directory {yellow}`, sourcePath)
 
   if (config.jsonOutput) {
@@ -60,23 +44,19 @@ export async function analyzerCli(config: Config): Promise<SdkContent> {
   }
 
   // ====== Find & parse 'tsconfig.json' ====== //
-  const tsConfig = findJsonConfig('tsconfig.json', sourcePath)
+  const tsConfigFilePath = path.join(sourcePath, 'tsconfig.json')
 
-  if (!tsConfig) {
+  if (!fs.existsSync(tsConfigFilePath)) {
     panic('No {yellow} file found in provided source path {yellow}', 'tsconfig.json', sourcePath)
   }
 
-  debug('Found {yellow} file at {yellow}', 'tsconfig.json', tsConfig.path)
-
-  debug('Looking for source files...')
-
   // Create a 'ts-morph' project
   const project = new Project({
-    compilerOptions: tsConfig as any,
+    tsConfigFilePath,
   })
 
   // Get the list of all TypeScript files in the source directory
-  const sourceTSFiles = findFilesRecursive(/^.*\.ts$/, sourcePath)
+  const sourceTSFiles = project.getSourceFiles().map((file) => path.relative(sourcePath, file.getFilePath()))
   debug(`Found {magentaBright} source files.`, sourceTSFiles.length)
 
   // Add them
@@ -91,7 +71,6 @@ export async function analyzerCli(config: Config): Promise<SdkContent> {
 
   for (let i = 0; i < sourceTSFiles.length; i++) {
     const file = sourceTSFiles[i]
-    project.addSourceFileAtPath(path.resolve(sourcePath, file))
 
     if (file.endsWith('.controller.ts')) {
       controllers.push(file)

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { categoryController } from '../sdk/categoryModule'
-import type { Category } from '../sdk/_types/modules/category/category.entity'
+import type { Category } from '../sdk/_types/src/modules/category/category.entity'
 
 interface Props {
   value: string | undefined

@@ -214,7 +214,7 @@ export class TypesExtractor {
 
     // Use magic types to replace non-portable types
     for (const magicType of this.magicTypes) {
-      if (relativeFilePath.endsWith(`/node_modules/${magicType.nodeModuleFilePath}`) && loc.typename === magicType.typeName) {
+      if (relativeFilePath.endsWith(`node_modules/${magicType.nodeModuleFilePath}`) && loc.typename === magicType.typeName) {
         debug(
           '-> '.repeat(typesPath.length + 1) +
             'Found magic type {yellow} from external module file {magentaBright}, using provided placeholder.',

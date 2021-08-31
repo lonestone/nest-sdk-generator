@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { categoryController } from '../sdk/categoryModule'
-import type { Category } from '../sdk/_types/modules/category/category.entity'
+import type { Category } from '../sdk/_types/src/modules/category/category.entity'
 
 export function CategoriesPage() {
   const [categories, setCategories] = useState<Category[] | null>(null)

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { authorController } from '../sdk/authorModule'
-import type { Author } from '../sdk/_types/modules/author/author.entity'
+import type { Author } from '../sdk/_types/src/modules/author/author.entity'
 
 interface Props {
   value: string | undefined

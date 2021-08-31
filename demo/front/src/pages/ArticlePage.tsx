@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useHistory, useParams } from 'react-router-dom'
 import { articleController } from '../sdk/articleModule'
-import type { Article } from '../sdk/_types/modules/article/article.entity'
+import type { Article } from '../sdk/_types/src/modules/article/article.entity'
 
 export function ArticlePage() {
   const { slug } = useParams<{ slug: string }>()

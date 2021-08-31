@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { authorController } from '../sdk/authorModule'
-import type { Author } from '../sdk/_types/modules/author/author.entity'
+import type { Author } from '../sdk/_types/src/modules/author/author.entity'
 
 export function AuthorsPage() {
   const [authors, setAuthors] = useState<Author[] | null>(null)

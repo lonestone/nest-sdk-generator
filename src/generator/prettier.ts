@@ -5,8 +5,8 @@
 import * as fs from 'fs'
 import * as prettier from 'prettier'
 import { Config } from '../config'
-import { findFileAbove } from '../file-utils'
 import { panic } from '../logging'
+import { findFileAbove } from '../utils'
 
 /**
  * Find a .prettierrc configuration file in the current directory or above

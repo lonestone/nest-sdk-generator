@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import type { Article } from '../sdk/_types/modules/article/article.entity'
+import type { Article } from '../sdk/_types/src/modules/article/article.entity'
 
 interface Props {
   article: Article
