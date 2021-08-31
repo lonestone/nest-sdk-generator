@@ -474,12 +474,14 @@ export function flattenSdkResolvedTypes(sdkModules: SdkModules): ResolvedTypeDep
           flattened.push(...query.values())
         }
 
-        if (body) {
-          if (body.full) {
-            flattened.push(body.type)
-          } else {
-            flattened.push(...body.fields.values())
-          }
+        if (!body) {
+          continue
+        }
+
+        if (body.full) {
+          flattened.push(body.type)
+        } else {
+          flattened.push(...body.fields.values())
         }
       }
     }
