@@ -33,7 +33,8 @@ export function findJsonConfig(
   try {
     content = JSON.parse(text)
   } catch (err) {
-    panic(`Failed to parse file "${name}" at "${dir}": ${err.message}`)
+    // TODO: In next TypeScript version, rewrite this with "catch (err: Error) {" and remove the typecast
+    panic(`Failed to parse file "${name}" at "${dir}": ${(err as Error).message}`)
   }
 
   return {
