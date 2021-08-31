@@ -1,4 +1,5 @@
 {
+  "verbose": true,
   "apiInputPath": "../server/src",
   "sdkOutput": "src/sdk",
   "sdkInterfacePath": "src/sdk-interface.ts",
@@ -9,7 +10,5 @@
       "typeName": "Collection",
       "placeholderContent": "export type Collection<T, _> = Array<T>;"
     }
-  ],
-
-  "verbose": true
+  ]
 }
