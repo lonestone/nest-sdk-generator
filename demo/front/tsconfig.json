@@ -19,7 +19,7 @@
     "strict": true,
     "strictPropertyInitialization": false,
     "skipLibCheck": true,
-    "types": ["mocha", "snowpack-env"],
+    "types": ["snowpack-env"],
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
