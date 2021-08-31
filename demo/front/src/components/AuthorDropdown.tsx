@@ -25,8 +25,12 @@ export function AuthorDropdown({ value, onChange }: Props) {
       {authors.length === 0 ? (
         <em>No author available</em>
       ) : (
-        <select value={value} onChange={(e) => onChange(e.target.value)}>
-          <option value="" disabled selected>
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          defaultValue=""
+        >
+          <option value="" disabled>
             Select an author
           </option>
           {authors.map((author) => (
