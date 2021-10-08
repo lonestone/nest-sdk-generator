@@ -28,6 +28,7 @@ For a quick glance at performances, check [here](#how-fast-is-it).
     - [Importing API types](#importing-api-types)
   - [External files](#external-files)
 - [Configuration options](#configuration-options)
+- [Magic types](#magic-types)
 - [Frequently-asked questions](#frequently-asked-questions)
   - [Does this replace Swagger?](#does-this-replace-swagger)
   - [I have a GraphQL API, what can this project do for me?](#i-have-a-graphql-api-what-can-this-project-do-for-me)
@@ -231,6 +232,45 @@ Here is the list of the configuration options you can use in the JSON file:
 | `generateTimestamps`          | `true`  | `boolean`     | Set to `false` to not put the timestamp in the generated SDK files                    |
 | `verbose`                     | `false` | `boolean`     | Display verbose informations                                                          |
 | `noColor`                     | `false` | `boolean`     | Disable colored output                                                                |
+
+## Magic types
+
+In some cases, there are types that may not be exportable using the generator. For instance:
+
+```tsx
+// ...
+
+@Entity()
+export class Author {
+    // ...
+
+    @OneToMany(() => Article, (article) => article.author)
+    articles = new Collection<Article>(this)
+
+// ...
+}
+
+```
+
+Here, the `articles` field uses the `Collection<T>` type of Mikro-ORM, which is a circular type, meaning we can't export it. Plus, it contains lots of methods and depends on multiple Mikro-ORM types, which we don't want in our SDK.
+
+To solve this problem, we can add a `magicTypes` entry in our configuration file:
+
+```json
+{
+  // ...
+  "magicTypes": [
+      {
+        "nodeModuleFilePath": "@mikro-orm/core/entity/Collection.d.ts",
+        "typeName": "Collection",
+        "placeholderContent": "export type Collection<T, _> = Array<T>;"
+      }
+  ]
+}
+
+```
+
+Now, when the SDK generator encounters the `Collection` type when it's imported from `@mikro-orm/core/entity/Collection.d.ts`, it will link to the `placeholderContent` we provided instead.
 
 ## Frequently-asked questions
 
