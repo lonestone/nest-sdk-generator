@@ -27,12 +27,8 @@ export function CategoryDropdown({ value, onChange }: Props) {
       {categories.length === 0 ? (
         <em>No category available</em>
       ) : (
-        <select
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          defaultValue=""
-        >
-          <option value="" disabled>
+        <select value={value} onChange={(e) => onChange(e.target.value)}>
+          <option disabled selected>
             Select a category
           </option>
           {categories.map((category) => (
