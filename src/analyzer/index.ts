@@ -7,6 +7,7 @@ import * as path from 'path'
 import { Project } from 'ts-morph'
 import { Config } from '../config'
 import { debug, panic } from '../logging'
+import { builtinMagicTypes } from './builtin'
 import { analyzeControllers, SdkModules } from './controllers'
 import { flattenSdkResolvedTypes, locateTypesFile, TypesExtractor, TypesExtractorContent } from './extractor'
 
@@ -93,7 +94,11 @@ export async function analyzerCli(config: Config): Promise<SdkContent> {
 
   const modules = analyzeControllers(controllers, sourcePath, project)
 
-  const typesCache = new TypesExtractor(project, sourcePath, config.magicTypes ?? [])
+  // Builtin magic types are concatenated **after** the configuration's ones, as this allows users to
+  // override the builtin ones if they want. Do **not** change the concatenation order!
+  const magicTypes = (config.magicTypes ?? []).concat(builtinMagicTypes)
+
+  const typesCache = new TypesExtractor(project, sourcePath, magicTypes)
 
   const typesToExtract = locateTypesFile(flattenSdkResolvedTypes(modules))
 
