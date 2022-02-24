@@ -272,6 +272,8 @@ To solve this problem, we can add a `magicTypes` entry in our configuration file
 
 Now, when the SDK generator encounters the `Collection` type when it's imported from `@mikro-orm/core/entity/Collection.d.ts`, it will link to the `placeholderContent` we provided instead.
 
+Note that some magic types are already [built-in](src/analyzer/builtin.ts), such as the one we just saw. If you use a library very frequently and think others may benefit from a new magic type, feel free to [open a PR](https://github.com/lonestone/nest-sdk-generator/pulls)!
+
 ## Frequently-asked questions
 
 ### Does this replace Swagger?
