@@ -10,7 +10,7 @@ export async function request(
 
   const params: RequestInit = {
     method,
-    // Required for content to be correctly parsed by Nest.js
+    // Required for content to be correctly parsed by NestJS
     headers: { 'Content-Type': 'application/json' },
   }
 

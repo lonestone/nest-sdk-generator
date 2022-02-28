@@ -2,11 +2,11 @@
 
 [![](https://img.shields.io/npm/v/nest-sdk-generator)](https://www.npmjs.com/package/nest-sdk-generator)
 
-`nest-sdk-generator` is a tool that allows you to build automatically and in seconds a SDK for client applications to consume a Nest.js server's API.
+`nest-sdk-generator` is a tool that allows you to build automatically and in seconds a SDK for client applications to consume a NestJS server's API.
 
 The project is split in two parts:
 
-- The **analyzer** looks for all modules, controllers, methods and types in the Nest.js server, and builds a JSON schema containing all informations
+- The **analyzer** looks for all modules, controllers, methods and types in the NestJS server, and builds a JSON schema containing all informations
 - The **generator** takes this JSON schema and generates a directory containing the SDK
 
 The project has been created and is currently maintained by our developers at [Lonestone](https://lonestone.io/).
@@ -44,7 +44,7 @@ For a quick glance at performances, check [here](#how-fast-is-it).
 
 ## What is nest-sdk-generator and why should I use it?
 
-nest-sdk-generator is a tool that creates a client-side SDK based on a Nest.js REST API. The SDK can be used to call the API's routes seamlessly without any friction, and also enforces type safety by typing all parameters and return values based on the API itself.
+nest-sdk-generator is a tool that creates a client-side SDK based on a NestJS REST API. The SDK can be used to call the API's routes seamlessly without any friction, and also enforces type safety by typing all parameters and return values based on the API itself.
 
 This brings several advantages, including:
 
@@ -87,7 +87,7 @@ The duration should be roughly proportional to the quantity of routes and DTOs y
 
 ## Features
 
-- Full support for idiomatic Nest.js modules and controllers
+- Full support for idiomatic NestJS modules and controllers
 - Recursive extraction of types controllers depend on, including types located in `node_modules`
 - Can extract classes, interfaces, enumerations and type aliases
 - Fully compatible with WSL, even if packages are installed using symbolic links from Windows
@@ -111,7 +111,7 @@ nest-sdk-generator comes with a set of limitations which can find below:
 
 The SDK exposes several directories:
 
-- One directory for each module in your Nest.js application, with inside one file for each controller belonging to this module
+- One directory for each module in your NestJS application, with inside one file for each controller belonging to this module
 - `_types`, containing the types used by the controllers, with the same directory structure than in your original project
 
 Each controller file exposes a simple record object with keys being your controller's methods' name. Each method takes the route's arguments (e.g. the identifier in `/users/get/:id`), the request's BODY (JSON) as well as the query parameters (e.g. `?something=...`).
@@ -123,7 +123,7 @@ Methods return a typed `Promise<>` with the original method's return type.
 
 ## Architecture
 
-nest-sdk-generator analyzes your Nest.js API using a provided configuration file, and produces a client-side SDK. This SDK is made of modules containing route methods that all call a central handler with the corresponding URI and parameters. The handler makes the request to the server and transmits the response. This is where you can customize the data to send to the server, if they need normalization, encryption, hashing, parsing, authentication, or anything else.
+nest-sdk-generator analyzes your NestJS API using a provided configuration file, and produces a client-side SDK. This SDK is made of modules containing route methods that all call a central handler with the corresponding URI and parameters. The handler makes the request to the server and transmits the response. This is where you can customize the data to send to the server, if they need normalization, encryption, hashing, parsing, authentication, or anything else.
 
 ## Step-by-step generation tutorial
 
@@ -175,7 +175,7 @@ If you want to save time in the CI, you can save the generated SDK as an artifac
 
 ## SDK usage
 
-Let's suppose the Nest.js server has an `UserModule` module, containing an `UserController` controller with a `getOne(id: string): Promise<UserDTO>` method. We can use it from the SDK:
+Let's suppose the NestJS server has an `UserModule` module, containing an `UserController` controller with a `getOne(id: string): Promise<UserDTO>` method. We can use it from the SDK:
 
 ```typescript
 import { userController } from '<sdk path>/userModule/userController'
@@ -190,7 +190,7 @@ Each method takes three arguments: the parameters (`:xxx` in the original method
 
 It's also possible to manually import types the API depends on.
 
-For instance, let's suppose `UserDTO` comes from a shared DTO package which is installed in our Nest.js API's directory under `node_modules/@project/dtos/user.d.ts`.
+For instance, let's suppose `UserDTO` comes from a shared DTO package which is installed in our NestJS API's directory under `node_modules/@project/dtos/user.d.ts`.
 
 We can import it from the SDK like this:
 
