@@ -2356,10 +2356,10 @@ negotiator@^0.6.2:
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.2.tgz#feacf7ccf525a77ae9634436a64883ffeca346fb"
   integrity sha512-hZXc7K2e+PgeI1eDBe/10Ard4ekbfrrqG8Ep+8Jmf4JID2bNg7NvCPOZN+kfF574pFQI7mum2AUqDidoKqcTOw==
 
-nest-sdk-generator@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/nest-sdk-generator/-/nest-sdk-generator-1.1.0.tgz#97531d7f7447dd3c0ec430f3b2c8fffe1f5253af"
-  integrity sha512-ilLp9wDNuiZhoWnte3zYNAnoRhR/5n/sRZ/LtIx2Bg7rAxyz14ScvBJCTlaJIBy0VvshSnRAhXcaP3AQ9xPTWg==
+nest-sdk-generator@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/nest-sdk-generator/-/nest-sdk-generator-1.1.2.tgz#797581ed5f66994a968979093fa3a45ee679b747"
+  integrity sha512-Exe75CJEOGy7/UGdPJAn5/L9XTTI4SX59mXQPNN6qPLgFze0bBBGL//S/F32J3AcYejBeAS4nFhkVQD80l67og==
   dependencies:
     chalk "~4.1.2"
     minimist "~1.2.5"
