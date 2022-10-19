@@ -45,10 +45,11 @@ export async function analyzerCli(config: Config): Promise<SdkContent> {
   }
 
   // ====== Find & parse 'tsconfig.json' ====== //
-  const tsConfigFilePath = path.join(sourcePath, 'tsconfig.json')
+  const tsConfigFileName = config.tsconfigFile || 'tsconfig.json'
+  const tsConfigFilePath = path.join(sourcePath, tsConfigFileName)
 
   if (!fs.existsSync(tsConfigFilePath)) {
-    panic('No {yellow} file found in provided source path {yellow}', 'tsconfig.json', sourcePath)
+    panic('No {yellow} file found in provided source path {yellow}', tsConfigFileName, sourcePath)
   }
 
   // Create a 'ts-morph' project
