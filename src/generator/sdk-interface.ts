@@ -1,10 +1,10 @@
 export const defaultSdkInterface = `
-export async function request(
+export async function request<T = unknown>(
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
   uri: string,
   body: unknown,
   query: Record<string, string>
-): Promise<any> {
+): Promise<T> {
   const url = new URL('http://localhost:3000' + uri)
   url.search = new URLSearchParams(query).toString()
 
