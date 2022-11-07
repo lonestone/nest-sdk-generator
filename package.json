@@ -2,9 +2,17 @@
   "name": "nest-sdk-generator",
   "author": "Lonestone <contact@lonestone.io>",
   "license": "MIT",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "A full-powered SDK generator for NestJS",
-  "keywords": [ "nest", "nestjs", "sdk", "generator", "typescript", "frontend", "api" ],
+  "keywords": [
+    "nest",
+    "nestjs",
+    "sdk",
+    "generator",
+    "typescript",
+    "frontend",
+    "api"
+  ],
   "homepage": "https://github.com/lonestone/nest-sdk-generator#readme",
   "bugs": {
     "url": "https://github.com/lonestone/nest-sdk-generator/issues"
