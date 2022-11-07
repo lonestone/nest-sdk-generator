@@ -45,7 +45,11 @@ export async function analyzerCli(config: Config): Promise<SdkContent> {
   }
 
   // ====== Find & parse 'tsconfig.json' ====== //
-  const tsConfigFileName = config.tsconfigFile || 'tsconfig.json'
+  if (config.tsconfigFile && config.tsconfigFile.includes('/')) {
+    panic('Provided tsconfig file name contains slashes')
+  }
+
+  const tsConfigFileName = config.tsconfigFile ?? 'tsconfig.json'
   const tsConfigFilePath = path.join(sourcePath, tsConfigFileName)
 
   if (!fs.existsSync(tsConfigFilePath)) {
