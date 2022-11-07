@@ -37,6 +37,9 @@ export interface Config {
   /** Path to Prettier's configuration file */
   readonly prettierConfig?: string
 
+  /** Path to custom tsconfig file */
+  readonly tsconfigFile?: string
+
   /** If the output directory already exists, overwrite it (enabled by default) */
   readonly overwriteOldOutputDir?: boolean
 
