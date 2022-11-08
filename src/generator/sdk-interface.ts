@@ -4,7 +4,7 @@ export async function request(
   uri: string,
   body: unknown,
   query: Record<string, string>
-): Promise<any> {
+): Promise<unknown> {
   const url = new URL('http://localhost:3000' + uri)
   url.search = new URLSearchParams(query).toString()
 
