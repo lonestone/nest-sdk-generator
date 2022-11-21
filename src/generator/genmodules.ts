@@ -77,9 +77,7 @@ export function generateSdkModules(modules: SdkModules): Map<string, string> {
       }
 
       for (const [file, types] of imports) {
-        out.push(
-          `import type { ${types.join(', ')} } from "../_types/${normalizeExternalFilePath(file.replace(/\\/g, '/')).replace(/\\/g, '/')}";`
-        )
+        out.push(`import type { ${types.join(', ')} } from "../_types/${normalizeExternalFilePath(file.replace(/\\/g, '/'))}";`)
       }
 
       out.push('')

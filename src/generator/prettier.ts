@@ -1,7 +1,7 @@
 /**
  * @file Interface for prettifying generated files
  */
-
+import * as os from 'os'
 import * as fs from 'fs'
 import * as prettier from 'prettier'
 import { Config } from '../config'
@@ -39,6 +39,14 @@ export function findPrettierConfig(config: Config): object {
  * @returns
  */
 export function prettify(source: string, config: object, parser: 'typescript' | 'json'): string {
+  // Fix prettier // to /
+  if (os.platform() === 'win32') {
+    return prettier.format(source.replace(/\\/g, '/'), {
+      parser,
+      ...config,
+    })
+  }
+
   return prettier.format(source, {
     parser,
     ...config,
